@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('start_at')->nullable();
             $table->string('end_at')->nullable();
-            $table->string('customers')->default(0);
+            $table->string('total_customers')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->foreign('project_category_id')->references('id')->on('project_categories')->nullOnDelete()->cascadeOnUpdate();

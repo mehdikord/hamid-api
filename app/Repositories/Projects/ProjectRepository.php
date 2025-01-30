@@ -74,6 +74,7 @@ class ProjectRepository implements ProjectInterface
     public function add_customers($request,$item)
     {
         $exists_projects=[];
+        $counter=0;
         //check the Excel file
         if ($request->hasFile('excel')) {
             $excel = Excel::toArray([], request()->file('excel'));
@@ -99,6 +100,7 @@ class ProjectRepository implements ProjectInterface
                         'description' => $request->description,
                         'status' => Project_Customer::STATUS_PENDING,
                     ]);
+                    $counter++;
                 }
             }
 
@@ -123,11 +125,12 @@ class ProjectRepository implements ProjectInterface
                             'description' => $request->description,
                             'status' => Project_Customer::STATUS_PENDING,
                         ]);
+                        $counter++;
                     }
                 }
             }
         }
-
+        $item->update(['total_customers' => $counter + $item->total_customers]);
 
         return helper_response_created($exists_projects);
     }
