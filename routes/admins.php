@@ -33,6 +33,7 @@ Route::middleware('auth:admins')->group(function () {
     Route::prefix('projects')->as('projects.')->group(function () {
         Route::get('{project}/activation',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'activation'])->name('activation');
         Route::post('{project}/customers',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'add_customers'])->name('add_customers');
+        Route::get('{project}/customers',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customers'])->name('get_customers');
 
         Route::post('{project}/change/password',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'change_password'])->name('change.password');
     });

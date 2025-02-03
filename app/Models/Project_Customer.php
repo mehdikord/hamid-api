@@ -12,8 +12,8 @@ class Project_Customer extends Model
     protected $table = 'project_customers';
     protected $guarded=[];
 
-    const
-        STATUS_PENDING = 'pending' ,
+    public const
+        STATUS_PENDING = 'pending',
         STATUS_ASSIGNED = 'assigned'
 
 

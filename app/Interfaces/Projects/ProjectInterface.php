@@ -18,4 +18,6 @@ interface ProjectInterface
 
     public function add_customers($request,$item);
 
+    public function get_customers($item);
+
 }

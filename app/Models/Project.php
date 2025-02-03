@@ -36,4 +36,5 @@ class Project extends Model
     {
         return $this->hasMany(Project_Customer::class,'project_id');
     }
+
 }

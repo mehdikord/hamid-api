@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Projects;
 
+use App\Http\Resources\Projects\Projects\ProjectCustomerIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectSingleResource;
 use App\Interfaces\Projects\ProjectInterface;
@@ -35,6 +36,7 @@ class ProjectRepository implements ProjectInterface
            'description' => $request->description,
            'is_active' => true,
        ]);
+       $data->update(['code' => helper_core_code_generator($data->id)]);
        return helper_response_fetch(new ProjectIndexResource($data));
    }
 
@@ -133,6 +135,14 @@ class ProjectRepository implements ProjectInterface
         $item->update(['total_customers' => $counter + $item->total_customers]);
 
         return helper_response_created($exists_projects);
+    }
+
+    public function get_customers($item)
+    {
+        $data = $item->customers();
+        $data->orderBy(request('sort_by'),request('sort_type'));
+        return helper_response_fetch(ProjectCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
+
     }
 
 
