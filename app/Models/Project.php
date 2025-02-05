@@ -37,4 +37,9 @@ class Project extends Model
         return $this->hasMany(Project_Customer::class,'project_id');
     }
 
+    public function users(): HasMany
+    {
+        return $this->hasMany(User_Project::class,'project_id');
+    }
+
 }

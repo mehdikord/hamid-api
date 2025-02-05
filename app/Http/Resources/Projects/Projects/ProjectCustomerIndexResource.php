@@ -3,8 +3,8 @@
 namespace App\Http\Resources\Projects\Projects;
 
 use App\Http\Resources\Customers\CustomerIndexResource;
-use App\Http\Resources\Projects\Categories\ProjectCategoryShortResource;
-use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
+
+use App\Http\Resources\Users\UserProjectCustomerResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -31,6 +31,7 @@ class ProjectCustomerIndexResource extends JsonResource
             'import_at' => $this->import_at,
             'description' => $this->description,
             'customer' => new CustomerIndexResource($this->customer),
+            'user' => new UserProjectCustomerResource($this->user),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admins\Projects;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Projects\Categories\ProjectCategoryCreateRequest;
 use App\Http\Requests\Projects\Categories\ProjectCategoryUpdateRequest;
+use App\Http\Requests\Projects\Customers\ProjectCustomersAssignedRequest;
 use App\Http\Requests\Projects\Projects\ProjectCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectCustomersCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectUpdateRequest;
@@ -72,6 +73,11 @@ class ProjectController extends Controller
     public function get_customers(Project $project)
     {
         return $this->repository->get_customers($project);
+    }
+
+    public function assigned_customers(Project $project,ProjectCustomersAssignedRequest $request)
+    {
+        return $this->repository->assigned_customers($project,$request);
     }
 
 }

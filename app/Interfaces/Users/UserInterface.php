@@ -6,6 +6,8 @@ interface UserInterface
 {
     public function index();
 
+    public function all();
+
     public function store($request);
 
     public function show($item);

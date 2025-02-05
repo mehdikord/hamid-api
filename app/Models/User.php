@@ -86,8 +86,8 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(City::class);
     }
 
-    public function shops(): HasMany
+    public function projects(): HasMany
     {
-        return $this->hasMany(Shop::class,'user_id');
+        return $this->hasMany(User_Project::class,'user_id');
     }
 }

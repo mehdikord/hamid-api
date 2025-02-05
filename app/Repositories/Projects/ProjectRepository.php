@@ -8,6 +8,7 @@ use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Customer;
 use App\Models\Project;
 use App\Models\Project_Customer;
+use App\Models\User_Project_Customer;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Morilog\Jalali\Jalalian;
@@ -142,7 +143,32 @@ class ProjectRepository implements ProjectInterface
         $data = $item->customers();
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(ProjectCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
+    }
 
+    public function assigned_customers($item,$request)
+    {
+        if ($request->filled('divides') && is_array($request->divides)) {
+            foreach ($request->divides as $divide) {
+               $customers = $item->customers()->where('status',Project_Customer::STATUS_PENDING)->take($divide['amount'])->get();
+               $ids=[];
+               foreach ($customers as $customer) {
+                   User_Project_Customer::create([
+                       'user_id' => $divide['user_id'],
+                       'project_customer_id' => $customer->id,
+                       'description' => $request->description,
+                       'start_at' => Carbon::now(),
+                   ]);
+                   $ids[] = $customer->id;
+               }
+               Project_Customer::whereIn('id',$ids)->update(['status' => Project_Customer::STATUS_ASSIGNED]);
+               if (count($ids)){
+                   $item->users()->updateOrCreate(['user_id' => $divide['user_id']],[]);
+               }
+
+            }
+            return helper_response_created([]);
+        }
+        return helper_response_error('Invalid Request');
     }
 
 

@@ -3,6 +3,7 @@
 
 //All Admins Routing
 
+
 Route::prefix('auth')->group(function () {
 
     Route::post('login',[\App\Http\Controllers\Admins\Auth\AuthController::class, 'login'])->name('login');
@@ -15,6 +16,7 @@ Route::middleware('auth:admins')->group(function () {
 
 
     Route::prefix('users')->as('users.')->group(function () {
+        Route::get('all',[\App\Http\Controllers\Admins\Users\UserController::class, 'all'])->name('all');
         Route::get('{user}/activation',[\App\Http\Controllers\Admins\Users\UserController::class, 'activation'])->name('activation');
         Route::post('{user}/change/password',[\App\Http\Controllers\Admins\Users\UserController::class, 'change_password'])->name('change.password');
     });
@@ -33,6 +35,7 @@ Route::middleware('auth:admins')->group(function () {
     Route::prefix('projects')->as('projects.')->group(function () {
         Route::get('{project}/activation',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'activation'])->name('activation');
         Route::post('{project}/customers',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'add_customers'])->name('add_customers');
+        Route::post('{project}/customers/assigned',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'assigned_customers'])->name('assigned_customers');
         Route::get('{project}/customers',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customers'])->name('get_customers');
 
         Route::post('{project}/change/password',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'change_password'])->name('change.password');

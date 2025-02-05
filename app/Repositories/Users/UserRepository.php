@@ -3,6 +3,7 @@ namespace App\Repositories\Users;
 
 use App\Http\Resources\Profile\UserProfileResource;
 use App\Http\Resources\Users\UserIndexResource;
+use App\Http\Resources\Users\UserShortResource;
 use App\Http\Resources\Users\UserSingleResource;
 use App\Interfaces\Users\UserInterface;
 use App\Models\User;
@@ -17,6 +18,13 @@ class UserRepository implements UserInterface
        $data->orderBy(request('sort_by'),request('sort_type'));
        return helper_response_fetch(UserIndexResource::collection($data->paginate(request('per_page')))->resource);
    }
+
+    public function all()
+    {
+        $data = User::query();
+        $data->orderByDesc('id');
+        return helper_response_fetch(UserShortResource::collection($data->get()));
+    }
 
    public function store($request)
    {

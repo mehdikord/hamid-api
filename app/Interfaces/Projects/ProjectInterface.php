@@ -20,4 +20,6 @@ interface ProjectInterface
 
     public function get_customers($item);
 
+    public function assigned_customers($item,$request);
+
 }
