@@ -28,6 +28,7 @@ class UserIndexResource extends JsonResource
             'email' => $this->email,
             'image' => $this->image,
             'is_active' => $this->is_active,
+            'description' => $this->description,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];

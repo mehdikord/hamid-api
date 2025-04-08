@@ -12,7 +12,7 @@ class AuthRepository implements AuthInterface
     public function admin_login($request)
     {
         if (! $token = auth('admins')->attempt(request(['email', 'password']))){
-            return helper_response_unauthorized();
+            return helper_response_error('email or password is wrong');
         }
         $user = auth('admins')->user();
         return helper_response_main('user login success',[

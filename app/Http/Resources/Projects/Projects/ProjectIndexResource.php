@@ -34,6 +34,7 @@ class ProjectIndexResource extends JsonResource
             'end_at' => $this->end_at,
             'total_customers' => $this->total_customers,
             'pending_customers' => $this->customers()->where('status', 'pending')->count(),
+            'users_count' => $this->users_count,
             'is_active' => $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

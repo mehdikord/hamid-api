@@ -21,6 +21,7 @@ class ProjectRepository implements ProjectInterface
    {
        $data = Project::query();
        $data->orderBy(request('sort_by'),request('sort_type'));
+       $data->withCount('users');
        return helper_response_fetch(ProjectIndexResource::collection($data->paginate(request('per_page')))->resource);
    }
 
