@@ -39,7 +39,7 @@ class ProjectRepository implements ProjectInterface
            'is_active' => true,
        ]);
        $data->update(['code' => helper_core_code_generator($data->id)]);
-       return helper_response_fetch(new ProjectIndexResource($data));
+       return helper_response_fetch(new ProjectSingleResource($data));
    }
 
    public function show($item)

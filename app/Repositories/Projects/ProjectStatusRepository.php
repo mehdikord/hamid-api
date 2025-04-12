@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Projects;
 use App\Http\Resources\Projects\Statuses\ProjectStatusIndexResource;
+use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
 use App\Http\Resources\Projects\Statuses\ProjectStatusSingleResource;
 use App\Interfaces\Projects\ProjectStatusInterface;
 use App\Models\Project_Status;
@@ -21,7 +22,7 @@ class ProjectStatusRepository implements ProjectStatusInterface
     {
         $data = Project_Status::query();
         $data->orderByDesc('id');
-        return helper_response_fetch(ProjectStatusIndexResource::collection($data->get()));
+        return helper_response_fetch(ProjectStatusShortResource::collection($data->get()));
     }
 
    public function store($request)
