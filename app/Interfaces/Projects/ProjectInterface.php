@@ -21,5 +21,10 @@ interface ProjectInterface
     public function get_customers($item);
 
     public function assigned_customers($item,$request);
+    public function assigned_customers_single($item,$request);
+
+    public function get_latest_reports($item);
+
+    public function get_latest_invoices($item);
 
 }

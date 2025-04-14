@@ -32,10 +32,27 @@ Route::middleware('auth:admins')->group(function () {
     });
 
     Route::prefix('projects')->as('projects.')->group(function () {
+
         Route::get('{project}/activation',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'activation'])->name('activation');
-        Route::post('{project}/customers',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'add_customers'])->name('add_customers');
-        Route::post('{project}/customers/assigned',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'assigned_customers'])->name('assigned_customers');
-        Route::get('{project}/customers',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customers'])->name('get_customers');
+
+        //Customers
+        Route::prefix('{project}/customers')->as('customers.')->group(function () {
+            Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customers'])->name('get');
+            Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'add_customers'])->name('add');
+            Route::post('assigned',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'assigned_customers'])->name('assign');
+            Route::post('assigned/single',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'assigned_customers_single'])->name('assign.single');
+        });
+
+
+
+
+        Route::prefix('{project}/reports')->as('reports.')->group(function () {
+            Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_reports'])->name('get_latest_reports');
+        });
+        Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
+            Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_invoices'])->name('get_latest_invoices');
+
+        });
     });
 
     Route::apiResource('projects',\App\Http\Controllers\Admins\Projects\ProjectController::class);

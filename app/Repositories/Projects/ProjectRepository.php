@@ -1,9 +1,11 @@
 <?php
 namespace App\Repositories\Projects;
 
+use App\Http\Resources\Projects\Invoices\ProjectInvoiceIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectCustomerIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectSingleResource;
+use App\Http\Resources\Projects\Reports\ProjectReportIndexResource;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Customer;
 use App\Models\Project;
@@ -170,6 +172,36 @@ class ProjectRepository implements ProjectInterface
             return helper_response_created([]);
         }
         return helper_response_error('Invalid Request');
+    }
+
+    public function assigned_customers_single($item, $request)
+    {
+        if ($request->filled('user_id') && $request->filled('project_customer_id')) {
+            User_Project_Customer::create([
+                'user_id' => $request->user_id,
+                'project_customer_id' => $request->project_customer_id,
+                'description' => $request->description,
+                'start_at' => Carbon::now(),
+            ]);
+        }
+        //get project customer
+        $data = $item->customers()->find($request->project_customer_id);
+        $data->update(['status' => Project_Customer::STATUS_ASSIGNED]);
+        return helper_response_fetch(new ProjectCustomerIndexResource($data));
+    }
+
+    public function get_latest_reports($item)
+    {
+        $data = $item->reports()->orderByDesc('id')->take(request('count'))->get();
+        return helper_response_fetch(ProjectReportIndexResource::collection($data));
+
+    }
+
+    public function get_latest_invoices($item)
+    {
+        $data = $item->invoices()->orderByDesc('id')->take(request('count'))->get();
+        return helper_response_fetch(ProjectInvoiceIndexResource::collection($data));
+
     }
 
 

@@ -13,6 +13,7 @@ use App\Interfaces\Projects\ProjectCategoryInterface;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Project;
 use App\Models\Project_Category;
+use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
@@ -78,6 +79,22 @@ class ProjectController extends Controller
     public function assigned_customers(Project $project,ProjectCustomersAssignedRequest $request)
     {
         return $this->repository->assigned_customers($project,$request);
+    }
+
+    public function assigned_customers_single(Project $project,Request $request)
+    {
+        return $this->repository->assigned_customers_single($project,$request);
+
+    }
+
+    public function get_latest_reports(Project $project)
+    {
+        return $this->repository->get_latest_reports($project);
+    }
+
+    public function get_latest_invoices(Project $project)
+    {
+        return $this->repository->get_latest_invoices($project);
     }
 
 }

@@ -26,6 +26,7 @@ class ProjectCustomerIndexResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'project_id' => $this->project_id,
             'customer_id' => $this->customer_id,
             'status' => $this->status,
             'import_at' => $this->import_at,

@@ -42,4 +42,14 @@ class Project extends Model
         return $this->hasMany(User_Project::class,'project_id');
     }
 
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Project_Customer_Report::class,'project_id');
+    }
+
+    public function invoices():HasMany
+    {
+        return $this->hasMany(Project_Customer_Invoice::class,'project_id');
+    }
+
 }
