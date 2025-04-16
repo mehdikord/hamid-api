@@ -25,6 +25,11 @@ class Project_Customer extends Model
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
+    public function project_status() :BelongsTo
+    {
+        return $this->belongsTo(Project_Customer_Status::class, 'project_customer_status_id');
+    }
+
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class, 'project_id');

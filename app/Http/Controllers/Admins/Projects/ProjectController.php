@@ -13,6 +13,7 @@ use App\Interfaces\Projects\ProjectCategoryInterface;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Project;
 use App\Models\Project_Category;
+use App\Models\Project_Customer;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -76,6 +77,16 @@ class ProjectController extends Controller
         return $this->repository->get_customers($project);
     }
 
+    public function customers_change_status(Project $project,Request $request,)
+    {
+        return $this->repository->customers_change_status($request,$project);
+    }
+
+    public function delete_customers(Project $project,Project_Customer $customer)
+    {
+        return $this->repository->delete_customers($project,$customer);
+    }
+
     public function assigned_customers(Project $project,ProjectCustomersAssignedRequest $request)
     {
         return $this->repository->assigned_customers($project,$request);
@@ -96,5 +107,7 @@ class ProjectController extends Controller
     {
         return $this->repository->get_latest_invoices($project);
     }
+
+
 
 }

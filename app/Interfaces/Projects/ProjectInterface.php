@@ -20,6 +20,10 @@ interface ProjectInterface
 
     public function get_customers($item);
 
+    public function customers_change_status($request,$item);
+
+    public function delete_customers($project,$item);
+
     public function assigned_customers($item,$request);
     public function assigned_customers_single($item,$request);
 

@@ -33,6 +33,7 @@ class ProjectCustomerIndexResource extends JsonResource
             'description' => $this->description,
             'customer' => new CustomerIndexResource($this->customer),
             'user' => new UserProjectCustomerResource($this->user),
+            'project_status' => $this->project_status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
 

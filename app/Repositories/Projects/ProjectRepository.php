@@ -148,6 +148,29 @@ class ProjectRepository implements ProjectInterface
         return helper_response_fetch(ProjectCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
     }
 
+    public function customers_change_status($request, $item)
+    {
+        $project_customer = $item->customers()->find($request->project_customer_id);
+        if ($project_customer){
+            $project_customer->update(['project_customer_status_id' => $request->status_id]);
+            return helper_response_updated(new ProjectCustomerIndexResource($project_customer));
+        }
+        return helper_response_error('Project Customer not found');
+    }
+
+    public function delete_customers($project, $item)
+    {
+        //delete user
+        $item->user()->delete();
+        //delete reports
+        $item->reports()->delete();
+        //delete invoices
+        $item->invoices()->delete();
+        $item->delete();
+        $project->update(['total_customers' => $project->total_customers - 1]);
+        return helper_response_deleted();
+    }
+
     public function assigned_customers($item,$request)
     {
         if ($request->filled('divides') && is_array($request->divides)) {
