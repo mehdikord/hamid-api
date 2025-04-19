@@ -59,6 +59,9 @@ Route::middleware('auth:admins')->group(function () {
 
     Route::apiResource('projects',\App\Http\Controllers\Admins\Projects\ProjectController::class);
 
+    //import-methods
+    Route::apiResource('import-methods',\App\Http\Controllers\Admins\ImportMethods\ImportMethodController::class);
+
     //Customers
     Route::prefix('customers')->as('customers.')->group(function () {
         //Settings
