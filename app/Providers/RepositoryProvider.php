@@ -9,6 +9,7 @@ use App\Interfaces\Profile\ProfileInterface;
 use App\Interfaces\Projects\ProjectCategoryInterface;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Interfaces\Projects\ProjectStatusInterface;
+use App\Interfaces\Users\UserCustomerInterface;
 use App\Interfaces\Users\UserInterface;
 use App\Repositories\Auth\AuthRepository;
 use App\Repositories\Customers\CustomerSettingsStatusRepository;
@@ -17,6 +18,7 @@ use App\Repositories\Profile\ProfileRepository;
 use App\Repositories\Projects\ProjectCategoryRepository;
 use App\Repositories\Projects\ProjectRepository;
 use App\Repositories\Projects\ProjectStatusRepository;
+use App\Repositories\Users\UserCustomerRepository;
 use App\Repositories\Users\UserRepository;
 use Carbon\Laravel\ServiceProvider;
 
@@ -40,6 +42,8 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(CustomerSettingsStatusInterface::class,CustomerSettingsStatusRepository::class);
 
         $this->app->bind(importMethodInterface::class,ImportMethodRepository::class);
+
+        $this->app->bind(UserCustomerInterface::class,UserCustomerRepository::class);
 
     }
 

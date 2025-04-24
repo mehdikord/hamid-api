@@ -90,4 +90,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(User_Project::class,'user_id');
     }
+
+    public function customers(): HasMany
+    {
+        return $this->hasMany(User_Project_Customer::class,'user_id');
+    }
 }

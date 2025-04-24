@@ -62,8 +62,8 @@ class AuthRepository implements AuthInterface
 
     public function user_login($request)
     {
-        if (! $token = auth('users')->attempt(request(['email', 'password']))){
-            return helper_response_unauthorized();
+        if (! $token = auth('users')->attempt(request(['phone', 'password']))){
+            return helper_response_error('wrong info');
         }
         $user = auth('users')->user();
         return helper_response_main('user login success',[

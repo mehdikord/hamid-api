@@ -17,10 +17,15 @@ Route::group(['middleware' => ['auth:users']], function () {
     Route::prefix('profile')->as('profile.')->group(function () {
 
         Route::get('',[\App\Http\Controllers\Users\Profile\ProfileController::class,'index'])->name('index');
-
-
     });
 
+    //Customers
+    Route::prefix('customers')->as('customers.')->group(function () {
+        Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'index'])->name('index');
+
+        //Statuses
+        Route::get('statuses',[\App\Http\Controllers\Users\Customers\CustomerController::class,'statuses'])->name('statuses');
+    });
 
 
 });
