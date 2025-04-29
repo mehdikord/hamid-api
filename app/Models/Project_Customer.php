@@ -49,4 +49,9 @@ class Project_Customer extends Model
     {
         return $this->hasMany(Project_Customer_Invoice::class, 'project_customer_id');
     }
+
+    public function statuses():HasMany
+    {
+        return $this->hasMany(User_Project_Customer_Status::class, 'project_customer_id');
+    }
 }

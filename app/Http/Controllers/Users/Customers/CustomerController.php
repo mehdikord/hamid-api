@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Users\Customers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User_Customers\Invoices\UserCustomerInvoiceStoreRequest;
+use App\Http\Requests\User_Customers\Invoices\UserCustomerInvoiceTargetStoreRequest;
+use App\Http\Requests\User_Customers\Reports\UserCustomerReportStoreRequest;
+use App\Http\Requests\User_Customers\UserCustomerStatusStoreRequest;
 use App\Interfaces\Customers\CustomerSettingsStatusInterface;
 use App\Interfaces\Users\UserCustomerInterface;
+use App\Models\Project_Customer;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -29,4 +34,23 @@ class CustomerController extends Controller
         return $this->setting_repository->all();
     }
 
+    public function statuses_store(Project_Customer $customer,UserCustomerStatusStoreRequest $request)
+    {
+        return $this->repository->statuses_store($customer,$request);
+    }
+
+    public function reports_store(Project_Customer $customer,UserCustomerReportStoreRequest $request)
+    {
+        return $this->repository->reports_store($customer,$request);
+    }
+
+    public function invoices_store(Project_Customer $customer,UserCustomerInvoiceStoreRequest $request)
+    {
+        return $this->repository->invoices_store($customer,$request);
+    }
+
+    public function invoices_target_store(Project_Customer $customer,UserCustomerInvoiceTargetStoreRequest $request)
+    {
+        return $this->repository->invoices_target_store($customer,$request);
+    }
 }

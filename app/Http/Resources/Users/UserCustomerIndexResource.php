@@ -5,6 +5,7 @@ namespace App\Http\Resources\Users;
 use App\Http\Resources\Customers\CustomerIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectShortResource;
 use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
+use App\Http\Resources\User_Customers\UserCustomerReportResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,8 +25,10 @@ class UserCustomerIndexResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
             'id' => $this->id,
+            'project_customer_id' => $this->project_customer_id,
             'user_id' => $this->user_id,
             'customer' => new CustomerIndexResource($this->project_customer->customer),
             'project' => new ProjectShortResource($this->project_customer->project),
@@ -35,6 +38,9 @@ class UserCustomerIndexResource extends JsonResource
             'description' => $this->description,
             'status' => new ProjectStatusShortResource($this->project_customer->project_status),
             'is_active' => $this->is_active,
+            'last_report' => new UserCustomerReportResource($this->project_customer->reports()->latest()->first()),
+            'reports_count' => $this->project_customer->reports()->count(),
+            'invoices_count' => $this->project_customer->invoices()->count(),
         ];
     }
 }

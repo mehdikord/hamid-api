@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Http\Resources\User_Customers;
+
+use App\Http\Resources\Customers\CustomerIndexResource;
+use App\Http\Resources\Customers\Settings\Statuses\CustomerSettingsStatusShortResource;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use function Symfony\Component\Translation\t;
+
+/**
+ * @property mixed $id
+ * @property mixed $name
+ * @property mixed $email
+ * @property mixed $profile
+ * @property mixed $config
+ */
+class UserCustomerReportResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'project_customer_id' => $this->project_customer_id,
+            'project_customer' => new UserCustomerProjectCustomerResource($this->project_customer),
+            'report' => $this->report,
+            'file_name' => $this->file_name,
+            'file_url' => $this->file_url,
+            'created_at' => $this->created_at,
+        ];
+    }
+}
