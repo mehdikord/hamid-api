@@ -41,6 +41,7 @@ class UserCustomerIndexResource extends JsonResource
             'last_report' => new UserCustomerReportResource($this->project_customer->reports()->latest()->first()),
             'reports_count' => $this->project_customer->reports()->count(),
             'invoices_count' => $this->project_customer->invoices()->count(),
+            'sum_invoices' => $this->project_customer->invoices()->sum('amount'),
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Interfaces\Auth\AuthInterface;
+use App\Interfaces\Customers\CustomerInterface;
 use App\Interfaces\Customers\CustomerSettingsStatusInterface;
 use App\Interfaces\ImportMethods\importMethodInterface;
 use App\Interfaces\Profile\ProfileInterface;
@@ -12,6 +13,7 @@ use App\Interfaces\Projects\ProjectStatusInterface;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Interfaces\Users\UserInterface;
 use App\Repositories\Auth\AuthRepository;
+use App\Repositories\Customers\CustomerRepository;
 use App\Repositories\Customers\CustomerSettingsStatusRepository;
 use App\Repositories\ImportMethods\ImportMethodRepository;
 use App\Repositories\Profile\ProfileRepository;
@@ -44,6 +46,8 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(importMethodInterface::class,ImportMethodRepository::class);
 
         $this->app->bind(UserCustomerInterface::class,UserCustomerRepository::class);
+
+        $this->app->bind(CustomerInterface::class,CustomerRepository::class);
 
     }
 

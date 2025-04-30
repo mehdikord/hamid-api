@@ -65,6 +65,10 @@ class UserCustomerRepository implements UserCustomerInterface
     //Invoices
     public function invoices_store($customer, $request)
     {
+        //check sum invoices amount
+        if ($customer->invoices()->sum('amount') + $request->price > $customer->user->target_price ){
+            return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
+        }
         $date = Carbon::now();
         if ($request->filled('date')){
             $date = Carbon::make($request->date);
