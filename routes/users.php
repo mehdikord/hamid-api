@@ -21,6 +21,7 @@ Route::group(['middleware' => ['auth:users']], function () {
 
     //Customers
     Route::prefix('customers')->as('customers.')->group(function () {
+
         //Statuses
         Route::prefix('{customer}/statuses')->as('statuses.')->group(function () {
             Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'statuses_store'])->name('store');
@@ -39,15 +40,15 @@ Route::group(['middleware' => ['auth:users']], function () {
             Route::post('target',[\App\Http\Controllers\Users\Customers\CustomerController::class,'invoices_target_store'])->name('target_store');
         });
 
+        //Statuses
+        Route::get('statuses',[\App\Http\Controllers\Users\Customers\CustomerController::class,'statuses'])->name('statuses.all');
 
         Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'index'])->name('index');
 
+        Route::get('{customer}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'show'])->name('show');
+        Route::put('{customer}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'update'])->name('update');
 
 
-
-
-        //Statuses
-        Route::get('statuses',[\App\Http\Controllers\Users\Customers\CustomerController::class,'statuses'])->name('statuses.all');
     });
 
 

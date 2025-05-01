@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Users\Customers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Customers\CustomerUpdateRequest;
 use App\Http\Requests\User_Customers\Invoices\UserCustomerInvoiceStoreRequest;
 use App\Http\Requests\User_Customers\Invoices\UserCustomerInvoiceTargetStoreRequest;
 use App\Http\Requests\User_Customers\Reports\UserCustomerReportStoreRequest;
 use App\Http\Requests\User_Customers\UserCustomerStatusStoreRequest;
 use App\Interfaces\Customers\CustomerSettingsStatusInterface;
 use App\Interfaces\Users\UserCustomerInterface;
+use App\Models\Customer;
 use App\Models\Project_Customer;
-use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
@@ -27,6 +28,16 @@ class CustomerController extends Controller
     public function index()
     {
         return $this->repository->users_index(auth('users')->user());
+    }
+
+    public function show(Customer $customer)
+    {
+        return $this->repository->show($customer);
+    }
+
+    public function update(Customer $customer,CustomerUpdateRequest $request)
+    {
+        return $this->repository->update($customer,$request);
     }
 
     public function statuses()

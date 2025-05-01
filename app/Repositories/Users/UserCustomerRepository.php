@@ -1,5 +1,6 @@
 <?php
 namespace App\Repositories\Users;
+use App\Http\Resources\User_Customers\Customers\UserCustomerProfileResource;
 use App\Http\Resources\User_Customers\UserCustomerInvoiceResource;
 use App\Http\Resources\User_Customers\UserCustomerReportResource;
 use App\Http\Resources\User_Customers\UserCustomerStatusResource;
@@ -61,6 +62,26 @@ class UserCustomerRepository implements UserCustomerInterface
         return helper_response_fetch(new UserCustomerReportResource($item));
     }
 
+    public function show($customer)
+    {
+        return helper_response_fetch(new UserCustomerProfileResource($customer));
+
+    }
+
+    public function update($customer, $request)
+    {
+        //TODO create log for users
+        $customer->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'national_code' => $request->national_code,
+            'instagram_id' => $request->instagram_id,
+            'tel' => $request->tel,
+            'address' => $request->address,
+            'postal_code' => $request->postal_code,
+        ]);
+        return helper_response_updated(new UserCustomerProfileResource($customer));
+    }
 
     //Invoices
     public function invoices_store($customer, $request)
@@ -69,6 +90,18 @@ class UserCustomerRepository implements UserCustomerInterface
         if ($customer->invoices()->sum('amount') + $request->price > $customer->user->target_price ){
             return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
         }
+
+        $file_url = null;
+        $file_size = null;
+        $file_path = null;
+        $file_name = null;
+        if ($request->hasFile('file')){
+            $file_name = $request->file('file')->getClientOriginalName();
+            $file_size = $request->file('file')->getSize();
+            $file_path = Storage::put('public/users/invoices/'.$customer->id.'/', $request->file('file'),'public');
+            $file_url = Storage::url($file_path);
+        }
+
         $date = Carbon::now();
         if ($request->filled('date')){
             $date = Carbon::make($request->date);
@@ -79,6 +112,10 @@ class UserCustomerRepository implements UserCustomerInterface
             'description' => $request->description,
             'amount' => $request->price,
             'created_at' => $date,
+            'file_path' => $file_path,
+            'file_url' => $file_url,
+            'file_size' => $file_size,
+            'file_name' => $file_name,
         ]);
         return helper_response_fetch(new UserCustomerInvoiceResource($item));
     }

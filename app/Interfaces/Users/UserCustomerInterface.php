@@ -4,6 +4,10 @@ interface UserCustomerInterface
 {
     public function users_index($user);
 
+    public function show($customer);
+
+    public function update($customer,$request);
+
     public function statuses_store($customer,$request);
 
     //Reports
