@@ -1,5 +1,7 @@
 <?php
 namespace App\Interfaces\Users;
+use App\Models\Customer;
+
 interface UserCustomerInterface
 {
     public function users_index($user);
@@ -14,9 +16,14 @@ interface UserCustomerInterface
     public function reports_store($customer,$request);
 
 
+
+    public function all_reports_latest($customer);
+
     //invoices
     public function invoices_store($customer,$request);
     public function invoices_target_store($customer,$request);
+
+    public function dashboard($customer);
 
 
 }

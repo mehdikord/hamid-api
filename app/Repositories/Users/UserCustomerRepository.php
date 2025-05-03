@@ -6,6 +6,8 @@ use App\Http\Resources\User_Customers\UserCustomerReportResource;
 use App\Http\Resources\User_Customers\UserCustomerStatusResource;
 use App\Http\Resources\Users\UserCustomerIndexResource;
 use App\Interfaces\Users\UserCustomerInterface;
+use App\Models\Customer;
+use App\Models\Project_Customer_Report;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
@@ -62,6 +64,16 @@ class UserCustomerRepository implements UserCustomerInterface
         return helper_response_fetch(new UserCustomerReportResource($item));
     }
 
+    public function all_reports_latest($customer)
+    {
+        $projects = helper_core_get_user_customer_access($customer);
+        $data = Project_Customer_Report::query();
+        $data->whereIn('project_customer_id', $projects);
+        $data->orderByDesc('created_at');
+        return helper_response_fetch(UserCustomerReportResource::collection($data->take(5)->get()));
+
+    }
+
     public function show($customer)
     {
         return helper_response_fetch(new UserCustomerProfileResource($customer));
@@ -77,6 +89,9 @@ class UserCustomerRepository implements UserCustomerInterface
             'national_code' => $request->national_code,
             'instagram_id' => $request->instagram_id,
             'tel' => $request->tel,
+            'job' => $request->job,
+            'register_reason' => $request->register_reason,
+            'obstacles' => $request->obstacles,
             'address' => $request->address,
             'postal_code' => $request->postal_code,
         ]);
@@ -127,6 +142,13 @@ class UserCustomerRepository implements UserCustomerInterface
             return helper_response_fetch(new UserCustomerIndexResource($customer->user));
         }
         return helper_response_error('ُTarget price already exists !');
+    }
+
+    public function dashboard($customer)
+    {
+
+
+
     }
 
 

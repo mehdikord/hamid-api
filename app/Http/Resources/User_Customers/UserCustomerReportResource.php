@@ -4,6 +4,7 @@ namespace App\Http\Resources\User_Customers;
 
 use App\Http\Resources\Customers\CustomerIndexResource;
 use App\Http\Resources\Customers\Settings\Statuses\CustomerSettingsStatusShortResource;
+use App\Http\Resources\Users\UserShortResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use function Symfony\Component\Translation\t;
@@ -28,6 +29,7 @@ class UserCustomerReportResource extends JsonResource
             'id' => $this->id,
             'project_customer_id' => $this->project_customer_id,
             'project_customer' => new UserCustomerProjectCustomerResource($this->project_customer),
+            'user' => new UserShortResource($this->user),
             'report' => $this->report,
             'file_name' => $this->file_name,
             'file_url' => $this->file_url,
