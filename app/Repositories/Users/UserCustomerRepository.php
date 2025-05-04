@@ -7,6 +7,7 @@ use App\Http\Resources\User_Customers\UserCustomerStatusResource;
 use App\Http\Resources\Users\UserCustomerIndexResource;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Models\Customer;
+use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +16,16 @@ class UserCustomerRepository implements UserCustomerInterface
 {
     public function users_index($user)
     {
+
         $data = $user->customers();
+        if (request()->filled('search')) {
+            if (request()->search['status_id']){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->where('project_customer_status_id', request()->search['status_id']);
+                });
+            }
+        }
+
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(UserCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
     }
@@ -51,6 +61,22 @@ class UserCustomerRepository implements UserCustomerInterface
         if ($request->filled('date')){
             $date = Carbon::make($request->date);
         }
+
+        //check change status
+        if ($request->filled('status_id') && $request->status_id != $customer->project_customer_status_id ){
+
+             $customer->statuses()->create([
+                'customer_status_id' => $request->status_id,
+                'customer_id' => $customer->customer_id,
+                'user_id' => auth('users')->id(),
+                'description' => $request->report,
+            ]);
+            $customer->update([
+                'project_customer_status_id' => $request->status_id,
+            ]);
+        }
+
+
         $item = $customer->reports()->create([
             'user_id' => auth('users')->id(),
             'project_id' => $customer->project_id,
@@ -71,6 +97,16 @@ class UserCustomerRepository implements UserCustomerInterface
         $data->whereIn('project_customer_id', $projects);
         $data->orderByDesc('created_at');
         return helper_response_fetch(UserCustomerReportResource::collection($data->take(5)->get()));
+
+    }
+
+    public function all_invoice_latest($customer)
+    {
+        $projects = helper_core_get_user_customer_access($customer);
+        $data = Project_Customer_Invoice::query();
+        $data->whereIn('project_customer_id', $projects);
+        $data->orderByDesc('created_at');
+        return helper_response_fetch(UserCustomerInvoiceResource::collection($data->take(5)->get()));
 
     }
 

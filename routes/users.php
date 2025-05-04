@@ -32,10 +32,7 @@ Route::group(['middleware' => ['auth:users']], function () {
         Route::prefix('{customer}/reports')->as('reports.')->group(function () {
 
             Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'reports_store'])->name('store');
-
             Route::get('latest',[\App\Http\Controllers\Users\Customers\CustomerController::class,'all_reports_latest'])->name('latest');
-
-
 
         });
 
@@ -43,6 +40,8 @@ Route::group(['middleware' => ['auth:users']], function () {
         Route::prefix('{customer}/invoices')->as('invoices.')->group(function () {
 
             Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'invoices_store'])->name('store');
+            Route::get('latest',[\App\Http\Controllers\Users\Customers\CustomerController::class,'all_invoice_latest'])->name('latest');
+
             Route::post('target',[\App\Http\Controllers\Users\Customers\CustomerController::class,'invoices_target_store'])->name('target_store');
 
         });

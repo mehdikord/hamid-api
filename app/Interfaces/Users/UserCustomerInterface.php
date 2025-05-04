@@ -16,8 +16,9 @@ interface UserCustomerInterface
     public function reports_store($customer,$request);
 
 
-
     public function all_reports_latest($customer);
+
+    public function all_invoice_latest($customer);
 
     //invoices
     public function invoices_store($customer,$request);

@@ -65,6 +65,11 @@ class CustomerController extends Controller
         return $this->repository->all_reports_latest($customer);
     }
 
+    public function all_invoice_latest(Customer $customer)
+    {
+        return $this->repository->all_invoice_latest($customer);
+    }
+
     public function invoices_target_store(Project_Customer $customer,UserCustomerInvoiceTargetStoreRequest $request)
     {
         return $this->repository->invoices_target_store($customer,$request);
