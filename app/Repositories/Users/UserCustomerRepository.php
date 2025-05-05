@@ -18,10 +18,18 @@ class UserCustomerRepository implements UserCustomerInterface
     {
 
         $data = $user->customers();
+
         if (request()->filled('search')) {
-            if (request()->search['status_id']){
+            if (!empty(request()->search['status_id'])){
                 $data->whereHas('project_customer', function ($query) {
                     $query->where('project_customer_status_id', request()->search['status_id']);
+                });
+            }
+            if (!empty(request()->search['phone'])){
+                $data->whereHas('project_customer', function ($project) {
+                    $project->whereHas('customer', function ($customer) {
+                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%');
+                    });
                 });
             }
         }
