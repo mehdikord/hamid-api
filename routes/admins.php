@@ -62,6 +62,13 @@ Route::middleware('auth:admins')->group(function () {
     //import-methods
     Route::apiResource('import-methods',\App\Http\Controllers\Admins\ImportMethods\ImportMethodController::class);
 
+    Route::prefix('fields')->as('fields.')->group(function () {
+        Route::get('all',[\App\Http\Controllers\Admins\Fields\FieldController::class, 'all'])->name('all');
+    });
+    //Fields
+    Route::apiResource('fields',\App\Http\Controllers\Admins\Fields\FieldController::class);
+
+
     //Customers
     Route::prefix('customers')->as('customers.')->group(function () {
         //Settings
