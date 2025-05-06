@@ -24,6 +24,7 @@ Route::group(['middleware' => ['auth:users']], function () {
 
         //Statuses
         Route::prefix('{customer}/statuses')->as('statuses.')->group(function () {
+
             Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'statuses_store'])->name('store');
 
         });
@@ -46,17 +47,22 @@ Route::group(['middleware' => ['auth:users']], function () {
 
         });
 
+        //Projects
+        Route::prefix('{customer}/projects')->as('projects.')->group(function () {
+
+            Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects'])->name('index');
+
+        });
+
+
         //Statuses
         Route::get('statuses',[\App\Http\Controllers\Users\Customers\CustomerController::class,'statuses'])->name('statuses.all');
-
 
         Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'index'])->name('index');
 
         Route::get('{customer}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'show'])->name('show');
 
         Route::put('{customer}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'update'])->name('update');
-
-
 
 
 

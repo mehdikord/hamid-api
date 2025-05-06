@@ -26,5 +26,7 @@ interface UserCustomerInterface
 
     public function dashboard($customer);
 
+    public function projects($customer);
+
 
 }

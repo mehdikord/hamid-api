@@ -1,5 +1,6 @@
 <?php
 namespace App\Repositories\Users;
+use App\Http\Resources\Projects\Projects\ProjectShortResource;
 use App\Http\Resources\User_Customers\Customers\UserCustomerProfileResource;
 use App\Http\Resources\User_Customers\UserCustomerInvoiceResource;
 use App\Http\Resources\User_Customers\UserCustomerReportResource;
@@ -7,6 +8,9 @@ use App\Http\Resources\User_Customers\UserCustomerStatusResource;
 use App\Http\Resources\Users\UserCustomerIndexResource;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Models\Customer;
+use App\Models\Fields\Project_Customer_Field;
+use App\Models\Project;
+use App\Models\Project_Customer;
 use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
 use Illuminate\Support\Carbon;
@@ -139,6 +143,22 @@ class UserCustomerRepository implements UserCustomerInterface
             'address' => $request->address,
             'postal_code' => $request->postal_code,
         ]);
+        if ($request->filled('project_id') && $request->filled('fields')){
+            $customer_project = $customer->projects()->where('project_id', $request->project_id)->first();
+            if ($customer_project){
+                $customer_project->fields()->delete();
+                foreach ($request->fields as $field_key => $field_value){
+                    $customer_project->fields()->create([
+                        'user_id' => auth('users')->id(),
+                        'field_id' => $field_key,
+                        'val' => $field_value,
+                    ]);
+                }
+            }
+        }
+
+
+
         return helper_response_updated(new UserCustomerProfileResource($customer));
     }
 
@@ -191,10 +211,20 @@ class UserCustomerRepository implements UserCustomerInterface
     public function dashboard($customer)
     {
 
-
-
     }
 
+    public function projects($customer)
+    {
+        $projects = helper_core_get_user_customer_access($customer);
+        $customer_projects = Project_Customer::whereIn('id', $projects)->get();
+        $result=[];
+        foreach ($customer_projects as $customer_project){
+            if ($customer_project->project){
+                $result[]=$customer_project->project;
+            }
+        }
+        return helper_response_fetch(ProjectShortResource::collection($result));
+    }
 
 
 }

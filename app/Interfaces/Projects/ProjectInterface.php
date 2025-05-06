@@ -31,4 +31,8 @@ interface ProjectInterface
 
     public function get_latest_invoices($item);
 
+    public function get_fields($item);
+
+    public function store_fields($item,$request);
+
 }

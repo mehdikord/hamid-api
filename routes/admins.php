@@ -24,10 +24,14 @@ Route::middleware('auth:admins')->group(function () {
 
     //projects
     Route::prefix('projects')->as('projects.')->group(function () {
+
         Route::get('categories/all',[\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class, 'all'])->name('all');
         Route::apiResource('categories',\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class);
+
         Route::get('statuses/all',[\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'all'])->name('all');
         Route::apiResource('statuses',\App\Http\Controllers\Admins\Projects\ProjectStatusController::class);
+
+
 
     });
 
@@ -45,12 +49,16 @@ Route::middleware('auth:admins')->group(function () {
             Route::post('change/status',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_status'])->name('change.status');
         });
 
-
-
+        //Project Fields
+        Route::prefix('{project}/fields')->as('fields.')->group(function () {
+            Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_fields'])->name('get');
+            Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_fields'])->name('store');
+        });
 
         Route::prefix('{project}/reports')->as('reports.')->group(function () {
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_reports'])->name('get_latest_reports');
         });
+
         Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_invoices'])->name('get_latest_invoices');
 

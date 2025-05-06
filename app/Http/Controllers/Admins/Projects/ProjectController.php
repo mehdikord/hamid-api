@@ -108,6 +108,17 @@ class ProjectController extends Controller
         return $this->repository->get_latest_invoices($project);
     }
 
+    //Fields
+    public function get_fields(Project $project)
+    {
+        return $this->repository->get_fields($project);
+    }
+
+    public function store_fields(Project $project,Request $request)
+    {
+        return $this->repository->store_fields($project,$request);
+    }
+
 
 
 }

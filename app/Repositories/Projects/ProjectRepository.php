@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Projects;
 
+use App\Http\Resources\Fields\FieldIndexResource;
 use App\Http\Resources\Projects\Invoices\ProjectInvoiceIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectCustomerIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectIndexResource;
@@ -224,6 +225,23 @@ class ProjectRepository implements ProjectInterface
     {
         $data = $item->invoices()->orderByDesc('id')->take(request('count'))->get();
         return helper_response_fetch(ProjectInvoiceIndexResource::collection($data));
+    }
+
+    public function get_fields($item)
+    {
+        $data = $item->fields;
+        return helper_response_fetch(FieldIndexResource::collection($data));
+    }
+
+    public function store_fields($item, $request)
+    {
+        if ($request->filled('fields')){
+
+            $item->fields()->sync($request->fields);
+
+        }
+
+        return helper_response_fetch(FieldIndexResource::collection($item->fields));
 
     }
 

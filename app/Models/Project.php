@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Fields\Field;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,6 +51,11 @@ class Project extends Model
     public function invoices():HasMany
     {
         return $this->hasMany(Project_Customer_Invoice::class,'project_id');
+    }
+
+    public function fields(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Field::class,'project_fields');
     }
 
 }

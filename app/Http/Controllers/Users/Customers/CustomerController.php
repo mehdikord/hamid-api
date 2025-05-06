@@ -75,4 +75,9 @@ class CustomerController extends Controller
         return $this->repository->invoices_target_store($customer,$request);
     }
 
+    public function projects(Customer $customer)
+    {
+        return $this->repository->projects($customer);
+    }
+
 }

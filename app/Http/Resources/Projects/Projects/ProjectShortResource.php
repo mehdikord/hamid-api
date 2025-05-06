@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Projects\Projects;
 
+use App\Http\Resources\Fields\FieldIndexResource;
 use App\Http\Resources\Projects\Categories\ProjectCategoryShortResource;
 use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
 use Illuminate\Http\Request;
@@ -32,6 +33,7 @@ class ProjectShortResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'category' => new ProjectCategoryShortResource($this->category),
+            'fields' =>  FieldIndexResource::collection($this->fields)
         ];
     }
 }

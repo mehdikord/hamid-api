@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Fields\Project_Customer_Field;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -53,5 +54,10 @@ class Project_Customer extends Model
     public function statuses():HasMany
     {
         return $this->hasMany(User_Project_Customer_Status::class, 'project_customer_id');
+    }
+
+    public function fields()
+    {
+        return $this->hasMany(Project_Customer_Field::class, 'project_customer_id');
     }
 }

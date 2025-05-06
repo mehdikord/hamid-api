@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Project_Customer_Field extends Model
 {
     use HasFactory;
+    protected $table = 'project_customer_fields';
+    protected $guarded=[];
 }
