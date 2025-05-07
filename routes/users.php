@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth:users']], function () {
         Route::prefix('{customer}/projects')->as('projects.')->group(function () {
 
             Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects'])->name('index');
+            Route::get('{project}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_fields'])->name('fields');
 
         });
 

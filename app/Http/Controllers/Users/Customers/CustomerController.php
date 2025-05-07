@@ -11,6 +11,7 @@ use App\Http\Requests\User_Customers\UserCustomerStatusStoreRequest;
 use App\Interfaces\Customers\CustomerSettingsStatusInterface;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Models\Customer;
+use App\Models\Project;
 use App\Models\Project_Customer;
 
 class CustomerController extends Controller
@@ -78,6 +79,11 @@ class CustomerController extends Controller
     public function projects(Customer $customer)
     {
         return $this->repository->projects($customer);
+    }
+
+    public function projects_fields(Customer $customer,Project $project)
+    {
+
     }
 
 }
