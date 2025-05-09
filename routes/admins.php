@@ -90,6 +90,10 @@ Route::middleware('auth:admins')->group(function () {
     Route::apiResource('customers',\App\Http\Controllers\Admins\Customers\CustomerController::class);
 
 
+    //Tags
+
+
+
 
 
 

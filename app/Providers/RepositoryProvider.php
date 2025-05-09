@@ -17,7 +17,7 @@ use App\Repositories\Auth\AuthRepository;
 use App\Repositories\Customers\CustomerRepository;
 use App\Repositories\Customers\CustomerSettingsStatusRepository;
 use App\Repositories\Fields\FieldRepository;
-use App\Repositories\ImportMethods\ImportMethodRepository;
+use App\Repositories\Tags\ImportMethodRepository;
 use App\Repositories\Profile\ProfileRepository;
 use App\Repositories\Projects\ProjectCategoryRepository;
 use App\Repositories\Projects\ProjectRepository;

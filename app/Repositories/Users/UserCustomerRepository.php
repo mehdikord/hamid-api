@@ -112,6 +112,16 @@ class UserCustomerRepository implements UserCustomerInterface
 
     }
 
+    public function reports_index($customer)
+    {
+        $projects = helper_core_get_user_customer_access($customer);
+        $data = Project_Customer_Report::query();
+        $data->whereIn('project_customer_id', $projects);
+        $data->orderBy(request('sort_by'),request('sort_type'));
+        return helper_response_fetch(UserCustomerReportResource::collection($data->paginate(request('per_page')))->resource);
+
+    }
+
     public function all_invoice_latest($customer)
     {
         $projects = helper_core_get_user_customer_access($customer);
@@ -120,6 +130,14 @@ class UserCustomerRepository implements UserCustomerInterface
         $data->orderByDesc('created_at');
         return helper_response_fetch(UserCustomerInvoiceResource::collection($data->take(5)->get()));
 
+    }
+    public function invoices_index($customer)
+    {
+        $projects = helper_core_get_user_customer_access($customer);
+        $data = Project_Customer_Invoice::query();
+        $data->whereIn('project_customer_id', $projects);
+        $data->orderBy(request('sort_by'),request('sort_type'));
+        return helper_response_fetch(UserCustomerInvoiceResource::collection($data->paginate(request('per_page')))->resource);
     }
 
     public function show($customer)
@@ -224,6 +242,15 @@ class UserCustomerRepository implements UserCustomerInterface
             }
         }
         return helper_response_fetch(ProjectShortResource::collection($result));
+    }
+
+    public function projects_fields($customer, $project)
+    {
+        $project_customer = $customer->projects()->where('project_id', $project->id)->first();
+        if ($project_customer){
+            return helper_response_fetch($project_customer->fields);
+        }
+
     }
 
 

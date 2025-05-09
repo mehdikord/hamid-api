@@ -17,16 +17,22 @@ interface UserCustomerInterface
 
 
     public function all_reports_latest($customer);
+    public function reports_index($customer);
 
     public function all_invoice_latest($customer);
 
     //invoices
     public function invoices_store($customer,$request);
+
     public function invoices_target_store($customer,$request);
+
+    public function invoices_index($customer);
 
     public function dashboard($customer);
 
     public function projects($customer);
+
+    public function projects_fields($customer,$project);
 
 
 }

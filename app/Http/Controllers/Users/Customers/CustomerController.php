@@ -51,9 +51,18 @@ class CustomerController extends Controller
         return $this->repository->statuses_store($customer,$request);
     }
 
+    public function reports_index(Customer $customer)
+    {
+        return $this->repository->reports_index($customer);
+    }
     public function reports_store(Project_Customer $customer,UserCustomerReportStoreRequest $request)
     {
         return $this->repository->reports_store($customer,$request);
+    }
+
+    public function invoices_index(Customer $customer)
+    {
+        return $this->repository->invoices_index($customer);
     }
 
     public function invoices_store(Project_Customer $customer,UserCustomerInvoiceStoreRequest $request)
@@ -83,7 +92,7 @@ class CustomerController extends Controller
 
     public function projects_fields(Customer $customer,Project $project)
     {
-
+        return $this->repository->projects_fields($customer,$project);
     }
 
 }
