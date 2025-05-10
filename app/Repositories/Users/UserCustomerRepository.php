@@ -20,9 +20,7 @@ class UserCustomerRepository implements UserCustomerInterface
 {
     public function users_index($user)
     {
-
         $data = $user->customers();
-
         if (request()->filled('search')) {
             if (!empty(request()->search['status_id'])){
                 $data->whereHas('project_customer', function ($query) {
@@ -87,7 +85,6 @@ class UserCustomerRepository implements UserCustomerInterface
                 'project_customer_status_id' => $request->status_id,
             ]);
         }
-
 
         $item = $customer->reports()->create([
             'user_id' => auth('users')->id(),
@@ -242,6 +239,113 @@ class UserCustomerRepository implements UserCustomerInterface
             }
         }
         return helper_response_fetch(ProjectShortResource::collection($result));
+    }
+
+    public function projects_own($customer, $project)
+    {
+        $project_customer = $customer->projects()->whereIn('id',helper_core_get_user_customer_access($customer))->where('project_id', $project->id)->first();
+        if (!$project_customer){
+            return helper_response_error('شما دسترسی لازم به این پروژه را ندارید');
+        }
+        $user_project = $project_customer->user;
+        if (!$user_project){
+            return helper_response_error('شما دسترسی لازم به این پروژه را ندارید');
+        }
+        return helper_response_fetch(new UserCustomerIndexResource($user_project));
+    }
+
+    public function projects_report_store($customer,$project,$request)
+    {
+        //Find project customer
+        $project_customer = $customer->projects()->whereIn('id',helper_core_get_user_customer_access($customer))->where('project_id', $project->id)->first();
+        if (!$project_customer){
+            return helper_response_error('شما دسترسی لازم به این پروژه را ندارید');
+        }
+
+
+        $file_url = null;
+        $file_size = null;
+        $file_path = null;
+        $file_name = null;
+        if ($request->hasFile('file')){
+            $file_name = $request->file('file')->getClientOriginalName();
+            $file_size = $request->file('file')->getSize();
+            $file_path = Storage::put('public/users/reports/'.$project_customer->id.'/', $request->file('file'),'public');
+            $file_url = Storage::url($file_path);
+        }
+        $date = Carbon::now();
+        if ($request->filled('date')){
+            $date = Carbon::make($request->date);
+        }
+
+        //check change status
+        if ($request->filled('status_id') && $request->status_id != $project_customer->project_customer_status_id ){
+
+            $project_customer->statuses()->create([
+                'customer_status_id' => $request->status_id,
+                'customer_id' => $project_customer->customer_id,
+                'user_id' => auth('users')->id(),
+                'description' => $request->report,
+            ]);
+            $project_customer->update([
+                'project_customer_status_id' => $request->status_id,
+            ]);
+        }
+
+        $item = $project_customer->reports()->create([
+            'user_id' => auth('users')->id(),
+            'project_id' => $project_customer->project_id,
+            'file_path' => $file_path,
+            'file_url' => $file_url,
+            'file_size' => $file_size,
+            'file_name' => $file_name,
+            'report' => $request->report,
+            'created_at' => $date,
+        ]);
+        return helper_response_fetch(new UserCustomerReportResource($item));
+
+    }
+
+    public function projects_invoice_store($customer,$project,$request)
+    {
+        //Find project customer
+        $project_customer = $customer->projects()->whereIn('id',helper_core_get_user_customer_access($customer))->where('project_id', $project->id)->first();
+        if (!$project_customer){
+            return helper_response_error('شما دسترسی لازم به این پروژه را ندارید');
+        }
+
+        //check sum invoices amount
+        if ($project_customer->invoices()->sum('amount') + $request->price > $project_customer->user->target_price ){
+            return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
+        }
+
+        $file_url = null;
+        $file_size = null;
+        $file_path = null;
+        $file_name = null;
+        if ($request->hasFile('file')){
+            $file_name = $request->file('file')->getClientOriginalName();
+            $file_size = $request->file('file')->getSize();
+            $file_path = Storage::put('public/users/invoices/'.$project_customer->id.'/', $request->file('file'),'public');
+            $file_url = Storage::url($file_path);
+        }
+
+        $date = Carbon::now();
+        if ($request->filled('date')){
+            $date = Carbon::make($request->date);
+        }
+        $item = $project_customer->invoices()->create([
+            'user_id' => auth('users')->id(),
+            'project_id' => $project_customer->project_id,
+            'description' => $request->description,
+            'amount' => $request->price,
+            'created_at' => $date,
+            'file_path' => $file_path,
+            'file_url' => $file_url,
+            'file_size' => $file_size,
+            'file_name' => $file_name,
+        ]);
+        return helper_response_fetch(new UserCustomerInvoiceResource($item));
     }
 
     public function projects_fields($customer, $project)

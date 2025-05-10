@@ -32,6 +32,12 @@ interface UserCustomerInterface
 
     public function projects($customer);
 
+    public function projects_own($customer,$project);
+
+    public function projects_report_store($customer,$project,$request);
+
+    public function projects_invoice_store($customer,$project,$request);
+
     public function projects_fields($customer,$project);
 
 

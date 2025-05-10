@@ -51,7 +51,15 @@ Route::group(['middleware' => ['auth:users']], function () {
         //Projects
         Route::prefix('{customer}/projects')->as('projects.')->group(function () {
 
+            Route::prefix('{project}/reports')->as('reports.')->group(function () {
+               Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_report_store'])->name('store');
+            });
+            Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
+               Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_invoice_store'])->name('store');
+            });
+
             Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects'])->name('index');
+            Route::get('own/{project}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_own'])->name('index');
             Route::get('fields/{project}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_fields'])->name('fields');
 
         });

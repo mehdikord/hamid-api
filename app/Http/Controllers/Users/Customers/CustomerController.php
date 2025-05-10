@@ -90,6 +90,21 @@ class CustomerController extends Controller
         return $this->repository->projects($customer);
     }
 
+    public function projects_own(Customer $customer,Project $project)
+    {
+        return $this->repository->projects_own($customer,$project);
+    }
+
+    public function projects_report_store(Customer $customer,Project $project,UserCustomerReportStoreRequest $request)
+    {
+        return $this->repository->projects_report_store($customer,$project,$request);
+    }
+
+    public function projects_invoice_store(Customer $customer,Project $project,UserCustomerInvoiceStoreRequest $request)
+    {
+        return $this->repository->projects_invoice_store($customer,$project,$request);
+    }
+
     public function projects_fields(Customer $customer,Project $project)
     {
         return $this->repository->projects_fields($customer,$project);
