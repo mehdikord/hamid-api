@@ -91,6 +91,7 @@ Route::middleware('auth:admins')->group(function () {
 
 
     //Tags
+    Route::apiResource('tags',\App\Http\Controllers\Admins\Tags\TagController::class);
 
 
 

@@ -3,9 +3,12 @@ namespace App\Http\Controllers\Admins\Tags;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportMethods\ImportMethodCreateRequest;
 use App\Http\Requests\ImportMethods\ImportMethodUpdateRequest;
+use App\Http\Requests\Tags\TagCreateRequest;
+use App\Http\Requests\Tags\TagUpdateRequest;
 use App\Interfaces\ImportMethods\importMethodInterface;
 use App\Interfaces\Tags\TagInterface;
 use App\Models\Import_Method;
+use App\Models\Tag;
 
 class TagController extends Controller
 {
@@ -32,7 +35,7 @@ class TagController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ImportMethodCreateRequest $request)
+    public function store(TagCreateRequest $request)
     {
         return $this->repository->store($request);
     }
@@ -40,26 +43,26 @@ class TagController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Import_Method $import_method)
+    public function show(Tag $tag)
     {
-        return $this->repository->show($import_method);
+        return $this->repository->show($tag);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(ImportMethodUpdateRequest $request,Import_Method $import_method)
+    public function update(TagUpdateRequest $request,Tag $tag)
     {
-        return $this->repository->update($request,$import_method);
+        return $this->repository->update($request,$tag);
     }
 
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Import_Method $import_method)
+    public function destroy(Tag $tag)
     {
-        return $this->repository->destroy($import_method);
+        return $this->repository->destroy($tag);
     }
 
 }
