@@ -101,12 +101,17 @@ class ProjectRepository implements ProjectInterface
                         $jalali = Jalalian::fromFormat('Y/m/d', $value[3]);
                         $import_date = $jalali->toCarbon();
                     }
-                    $item->customers()->create([
+
+                    $new_customer = $item->customers()->create([
                         'customer_id' => $customer->id,
+                        'import_method_id' => $request->import_method_id,
                         'import_at' => $import_date,
                         'description' => $request->description,
                         'status' => Project_Customer::STATUS_PENDING,
                     ]);
+                    if ($request->filled('tags')){
+                        $new_customer->tags()->attach($request->tags);
+                    }
                     $counter++;
                 }
             }
@@ -126,12 +131,15 @@ class ProjectRepository implements ProjectInterface
                                 'phone' => $number,
                             ]);
                         }
-                        $item->customers()->create([
+                        $new_customer = $item->customers()->create([
                             'customer_id' => $customer->id,
                             'import_at' => Carbon::now(),
                             'description' => $request->description,
                             'status' => Project_Customer::STATUS_PENDING,
                         ]);
+                        if ($request->filled('tags')){
+                            $new_customer->tags()->attach($request->tags);
+                        }
                         $counter++;
                     }
                 }
@@ -146,6 +154,7 @@ class ProjectRepository implements ProjectInterface
     {
         $data = $item->customers();
         $data->orderBy(request('sort_by'),request('sort_type'));
+        $data->with('tags');
         return helper_response_fetch(ProjectCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
     }
 

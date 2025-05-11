@@ -68,6 +68,7 @@ Route::middleware('auth:admins')->group(function () {
     Route::apiResource('projects',\App\Http\Controllers\Admins\Projects\ProjectController::class);
 
     //import-methods
+    Route::get('import-methods/all',[\App\Http\Controllers\Admins\ImportMethods\ImportMethodController::class, 'all'])->name('import-methods.all');
     Route::apiResource('import-methods',\App\Http\Controllers\Admins\ImportMethods\ImportMethodController::class);
 
     Route::prefix('fields')->as('fields.')->group(function () {
@@ -91,6 +92,7 @@ Route::middleware('auth:admins')->group(function () {
 
 
     //Tags
+    Route::get('tags/all',[\App\Http\Controllers\Admins\Tags\TagController::class, 'all'])->name('tags.all');
     Route::apiResource('tags',\App\Http\Controllers\Admins\Tags\TagController::class);
 
 

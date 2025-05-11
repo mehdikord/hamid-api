@@ -60,4 +60,9 @@ class Project_Customer extends Model
     {
         return $this->hasMany(Project_Customer_Field::class, 'project_customer_id');
     }
+
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable','taggable');
+    }
 }
