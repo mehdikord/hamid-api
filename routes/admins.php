@@ -25,6 +25,9 @@ Route::middleware('auth:admins')->group(function () {
     //projects
     Route::prefix('projects')->as('projects.')->group(function () {
 
+        Route::get('levels/all',[\App\Http\Controllers\Admins\ProjectLevels\ProjectLevelController::class, 'all'])->name('levels.all');
+        Route::apiResource('levels',\App\Http\Controllers\Admins\ProjectLevels\ProjectLevelController::class);
+
         Route::get('categories/all',[\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class, 'all'])->name('all');
         Route::apiResource('categories',\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class);
 
@@ -36,8 +39,6 @@ Route::middleware('auth:admins')->group(function () {
     });
 
     Route::prefix('projects')->as('projects.')->group(function () {
-
-        Route::get('{project}/activation',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'activation'])->name('activation');
 
         //Customers
         Route::prefix('{project}/customers')->as('customers.')->group(function () {
@@ -56,6 +57,7 @@ Route::middleware('auth:admins')->group(function () {
         });
 
         Route::prefix('{project}/reports')->as('reports.')->group(function () {
+            Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports'])->name('index');
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_reports'])->name('get_latest_reports');
         });
 

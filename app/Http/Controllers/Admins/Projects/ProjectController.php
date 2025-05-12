@@ -98,6 +98,11 @@ class ProjectController extends Controller
 
     }
 
+    public function reports(Project $project)
+    {
+        return $this->repository->reports($project);
+    }
+
     public function get_latest_reports(Project $project)
     {
         return $this->repository->get_latest_reports($project);

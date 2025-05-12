@@ -8,6 +8,7 @@ use App\Interfaces\Customers\CustomerSettingsStatusInterface;
 use App\Interfaces\Fields\FieldInterface;
 use App\Interfaces\ImportMethods\importMethodInterface;
 use App\Interfaces\Profile\ProfileInterface;
+use App\Interfaces\ProjectLevels\ProjectLevelInterface;
 use App\Interfaces\Projects\ProjectCategoryInterface;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Interfaces\Projects\ProjectStatusInterface;
@@ -20,6 +21,7 @@ use App\Repositories\Customers\CustomerSettingsStatusRepository;
 use App\Repositories\Fields\FieldRepository;
 use App\Repositories\ImportMethods\ImportMethodRepository;
 use App\Repositories\Profile\ProfileRepository;
+use App\Repositories\ProjectLevels\ProjectLevelRepository;
 use App\Repositories\Projects\ProjectCategoryRepository;
 use App\Repositories\Projects\ProjectRepository;
 use App\Repositories\Projects\ProjectStatusRepository;
@@ -56,6 +58,8 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(FieldInterface::class,FieldRepository::class);
 
         $this->app->bind(TagInterface::class,TagRepository::class);
+
+        $this->app->bind(ProjectLevelInterface::class,ProjectLevelRepository::class);
 
     }
 

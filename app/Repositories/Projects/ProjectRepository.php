@@ -223,6 +223,13 @@ class ProjectRepository implements ProjectInterface
         return helper_response_fetch(new ProjectCustomerIndexResource($data));
     }
 
+    public function reports($item)
+    {
+        $data = $item->reports();
+        $data->orderBy(request('sort_by'),request('sort_type'));
+        return helper_response_fetch(ProjectReportIndexResource::collection($data->paginate(request('per_page')))->resource);
+    }
+
     public function get_latest_reports($item)
     {
         $data = $item->reports()->orderByDesc('id')->take(request('count'))->get();
