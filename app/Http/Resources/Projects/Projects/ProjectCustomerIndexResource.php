@@ -4,6 +4,7 @@ namespace App\Http\Resources\Projects\Projects;
 
 use App\Http\Resources\Customers\CustomerIndexResource;
 
+use App\Http\Resources\User_Customers\UserCustomerReportResource;
 use App\Http\Resources\Users\UserProjectCustomerResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -34,6 +35,7 @@ class ProjectCustomerIndexResource extends JsonResource
             'customer' => new CustomerIndexResource($this->customer),
             'user' => new UserProjectCustomerResource($this->user),
             'project_status' => $this->project_status,
+            'last_report' => new UserCustomerReportResource($this->reports()->latest()->first()),
             'tags' => $this->tags,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
