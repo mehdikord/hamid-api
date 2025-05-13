@@ -211,10 +211,17 @@ class ProjectRepository implements ProjectInterface
     public function assigned_customers_single($item, $request)
     {
         if ($request->filled('user_id') && $request->filled('project_customer_id')) {
+            $target = null;
+            $current_user = User_Project_Customer::where('project_customer_id',$request->project_customer_id)->first();
+            if ($current_user){
+                $target = $current_user->target_price;
+                $current_user->delete();
+            }
             User_Project_Customer::create([
                 'user_id' => $request->user_id,
                 'project_customer_id' => $request->project_customer_id,
                 'description' => $request->description,
+                'target_price' => $target,
                 'start_at' => Carbon::now(),
             ]);
         }
