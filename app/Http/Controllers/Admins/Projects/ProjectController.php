@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Projects\Categories\ProjectCategoryCreateRequest;
 use App\Http\Requests\Projects\Categories\ProjectCategoryUpdateRequest;
 use App\Http\Requests\Projects\Customers\ProjectCustomersAssignedRequest;
+use App\Http\Requests\Projects\levels\ProjectLevelPriorityRequest;
+use App\Http\Requests\Projects\levels\ProjectLevelRequest;
 use App\Http\Requests\Projects\Projects\ProjectCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectCustomersCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectUpdateRequest;
@@ -14,6 +16,7 @@ use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Project;
 use App\Models\Project_Category;
 use App\Models\Project_Customer;
+use App\Models\Projects_Levels;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -122,6 +125,28 @@ class ProjectController extends Controller
     public function store_fields(Project $project,Request $request)
     {
         return $this->repository->store_fields($project,$request);
+    }
+
+    //Levels
+
+    public function get_levels(Project $project)
+    {
+        return $this->repository->get_levels($project);
+    }
+
+    public function store_levels(Project $project,ProjectLevelRequest $request)
+    {
+        return $this->repository->store_levels($project,$request);
+    }
+
+    public function update_levels(Project $project,Projects_Levels $level,ProjectLevelPriorityRequest $request)
+    {
+        return $this->repository->update_levels($project,$level,$request);
+    }
+
+    public function delete_levels(Project $project,Projects_Levels $level)
+    {
+        return $this->repository->delete_levels($project,$level);
     }
 
 

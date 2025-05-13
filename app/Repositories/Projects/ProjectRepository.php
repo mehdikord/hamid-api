@@ -3,6 +3,7 @@ namespace App\Repositories\Projects;
 
 use App\Http\Resources\Fields\FieldIndexResource;
 use App\Http\Resources\Projects\Invoices\ProjectInvoiceIndexResource;
+use App\Http\Resources\Projects\levels\ProjectLevelIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectCustomerIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectSingleResource;
@@ -261,5 +262,34 @@ class ProjectRepository implements ProjectInterface
 
     }
 
+    public function get_levels($item)
+    {
+        $data = $item->levels;
+        return helper_response_fetch(ProjectLevelIndexResource::collection($data));
+    }
+
+    public function store_levels($item, $request)
+    {
+        if ($item->levels()->where('project_level_id',$request->project_level_id)->exists()) {
+            return helper_response_error('Level already exists');
+        }
+        $data = $item->levels()->create([
+            'project_level_id' => $request->project_level_id,
+            'priority' => $request->priority,
+        ]);
+        return helper_response_fetch(new ProjectLevelIndexResource($data));
+    }
+
+    public function update_levels($project, $item, $request)
+    {
+        $item->update(['priority' => $request->priority]);
+        return helper_response_updated(new ProjectLevelIndexResource($item));
+    }
+
+    public function delete_levels($project, $item)
+    {
+        $item->delete();
+        return helper_response_deleted();
+    }
 
 }

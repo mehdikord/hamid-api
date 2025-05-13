@@ -56,6 +56,13 @@ Route::middleware('auth:admins')->group(function () {
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_fields'])->name('store');
         });
 
+        Route::prefix('{project}/levels')->as('levels.')->group(function () {
+            Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_levels'])->name('get');
+            Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_levels'])->name('store');
+            Route::put('/{level}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'update_levels'])->name('update');
+            Route::delete('/{level}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'delete_levels'])->name('delete');
+        });
+
         Route::prefix('{project}/reports')->as('reports.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports'])->name('index');
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_reports'])->name('get_latest_reports');

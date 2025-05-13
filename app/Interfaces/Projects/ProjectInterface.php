@@ -36,4 +36,13 @@ interface ProjectInterface
 
     public function store_fields($item,$request);
 
+    public function get_levels($item);
+
+    public function store_levels($item,$request);
+
+    public function update_levels($project,$item,$request);
+
+    public function delete_levels($project,$item);
+
+
 }

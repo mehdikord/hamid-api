@@ -58,4 +58,8 @@ class Project extends Model
         return $this->belongsToMany(Field::class,'project_fields');
     }
 
+    public function levels(): HasMany
+    {
+        return $this->hasMany(Projects_Levels::class,'project_id');
+    }
 }
