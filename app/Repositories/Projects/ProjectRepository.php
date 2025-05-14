@@ -123,6 +123,8 @@ class ProjectRepository implements ProjectInterface
             $numbers = explode(',',$request->numbers);
             if (is_array($numbers) && count($numbers)){
                 foreach ($numbers as $number){
+                    $number = str_replace(' ','',$number);
+
                     $customer = Customer::where('phone',$number)->first();
                     if ($customer && $item->customers()->where('customer_id',$customer->id)->exists()) {
                         $exists_projects[] = $number;
