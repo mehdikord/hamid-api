@@ -37,6 +37,7 @@ class UserCustomerIndexResource extends JsonResource
             'end_at' => $this->end_at,
             'description' => $this->description,
             'status' => new ProjectStatusShortResource($this->project_customer->project_status),
+            'level' => $this->project_customer->project_level,
             'is_active' => $this->is_active,
             'last_report' => new UserCustomerReportResource($this->project_customer->reports()->latest()->first()),
             'reports_count' => $this->project_customer->reports()->count(),

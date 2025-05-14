@@ -20,7 +20,7 @@ class CustomerController extends Controller
     protected CustomerSettingsStatusInterface $setting_repository;
     public function __construct(UserCustomerInterface $customer,CustomerSettingsStatusInterface $customerSettingsStatus)
     {
-        $this->middleware('generate_fetch_query_params')->only('index');
+        $this->middleware('generate_fetch_query_params')->only('index','reports_index');
 
         $this->repository = $customer;
         $this->setting_repository = $customerSettingsStatus;

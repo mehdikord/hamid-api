@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Fields\Project_Customer_Field;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Project_Customer extends Model
 {
-    use HasFactory;
     protected $table = 'project_customers';
     protected $guarded=[];
 
@@ -29,6 +27,11 @@ class Project_Customer extends Model
     public function project_status() :BelongsTo
     {
         return $this->belongsTo(Project_Customer_Status::class, 'project_customer_status_id');
+    }
+
+    public function project_level(): BelongsTo
+    {
+        return $this->belongsTo(Project_Level::class, 'project_level_id');
     }
 
     public function project(): BelongsTo
