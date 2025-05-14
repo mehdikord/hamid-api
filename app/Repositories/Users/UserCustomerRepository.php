@@ -44,12 +44,14 @@ class UserCustomerRepository implements UserCustomerInterface
     {
         $item = $customer->statuses()->create([
             'customer_status_id' => $request->status_id,
+            'project_level_id' => $request->project_level_id,
             'customer_id' => $customer->customer_id,
             'user_id' => auth('users')->id(),
             'description' => $request->description,
         ]);
         $customer->update([
             'project_customer_status_id' => $request->status_id,
+            'project_level_id' => $request->project_level_id,
         ]);
         return helper_response_fetch(new UserCustomerIndexResource($customer->user));
     }
@@ -283,12 +285,15 @@ class UserCustomerRepository implements UserCustomerInterface
 
             $project_customer->statuses()->create([
                 'customer_status_id' => $request->status_id,
+                'project_level_id' => $request->project_level_id,
                 'customer_id' => $project_customer->customer_id,
                 'user_id' => auth('users')->id(),
                 'description' => $request->report,
             ]);
             $project_customer->update([
                 'project_customer_status_id' => $request->status_id,
+                'project_level_id' => $request->project_level_id,
+
             ]);
         }
 
@@ -361,7 +366,11 @@ class UserCustomerRepository implements UserCustomerInterface
     {
         $project_customer = $customer->projects()->where('project_id', $project->id)->first();
         if ($project_customer){
-            return helper_response_fetch($project_customer->levels);
+            $final=[];
+            foreach ($project_customer->project->levels as $level){
+                $final[]=['id' => $level->project_level_id, 'name' => $level->level->name];
+            }
+            return helper_response_fetch($final);
         }
 
     }

@@ -22,6 +22,13 @@ Route::middleware('auth:admins')->group(function () {
 
     Route::apiResource('users',\App\Http\Controllers\Admins\Users\UserController::class);
 
+    Route::prefix('dashboards')->as('dashboards.')->group(function () {
+       Route::prefix('reports')->as('reports.')->group(function () {
+           Route::get('users',[\App\Http\Controllers\Admins\Dashboard\ReportController::class, 'users'])->name('users');
+
+       });
+    });
+
     //projects
     Route::prefix('projects')->as('projects.')->group(function () {
 
