@@ -44,7 +44,8 @@ class ProjectSingleResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'category' => new ProjectCategoryShortResource($this->category),
-            'status' => new ProjectStatusShortResource($this->status)
+            'status' => new ProjectStatusShortResource($this->status),
+            'fields' => $this->fields
         ];
     }
 }

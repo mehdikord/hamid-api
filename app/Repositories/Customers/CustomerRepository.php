@@ -48,9 +48,25 @@ class CustomerRepository implements CustomerInterface
            'instagram_id' => $request->instagram_id,
            'tel' => $request->tel,
            'address' => $request->address,
+           'job' => $request->job,
            'postal_code' => $request->postal_code,
            'description' => $request->description,
        ]);
+
+       if ($request->filled('project_id') && $request->filled('fields')){
+           $customer_project = $item->projects()->where('project_id', $request->project_id)->first();
+           if ($customer_project){
+               $customer_project->fields()->delete();
+               foreach ($request->fields as $field_key => $field_value){
+                   $customer_project->fields()->create([
+                       'user_id' => auth('users')->id(),
+                       'field_id' => $field_key,
+                       'val' => $field_value,
+                   ]);
+               }
+           }
+       }
+
 
        return helper_response_updated(new CustomerSingleResource($item));
    }
@@ -59,6 +75,15 @@ class CustomerRepository implements CustomerInterface
    {
        $item->delete();
        return helper_response_deleted();
+   }
+
+   public function projects_fields($item, $project)
+   {
+
+       $project_customer = $item->projects()->where('project_id', $project->id)->first();
+       if ($project_customer){
+           return helper_response_fetch($project_customer->fields);
+       }
    }
 
 

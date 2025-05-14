@@ -109,5 +109,11 @@ class CustomerController extends Controller
     {
         return $this->repository->projects_fields($customer,$project);
     }
+    public function projects_levels(Customer $customer,Project $project)
+    {
+        return $this->repository->projects_levels($customer,$project);
+    }
+
+
 
 }

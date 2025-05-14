@@ -36,6 +36,7 @@ class ProjectCustomerIndexResource extends JsonResource
             'user' => new UserProjectCustomerResource($this->user),
             'project_status' => $this->project_status,
             'last_report' => new UserCustomerReportResource($this->reports()->latest()->first()),
+            'total_invoice' => $this->invoices()->sum('amount'),
             'tags' => $this->tags,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

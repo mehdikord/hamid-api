@@ -5,6 +5,7 @@ use App\Http\Requests\Customers\CustomerCreateRequest;
 use App\Http\Requests\Customers\CustomerUpdateRequest;
 use App\Interfaces\Customers\CustomerInterface;
 use App\Models\Customer;
+use App\Models\Project;
 
 class CustomerController extends Controller
 {
@@ -52,7 +53,6 @@ class CustomerController extends Controller
         return $this->repository->update($request,$customer);
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
@@ -61,4 +61,8 @@ class CustomerController extends Controller
         return $this->repository->destroy($customer);
     }
 
+    public function projects_fields(Customer $customer,Project $project)
+    {
+        return $this->repository->projects_fields($customer,$project);
+    }
 }

@@ -61,6 +61,7 @@ Route::group(['middleware' => ['auth:users']], function () {
             Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects'])->name('index');
             Route::get('own/{project}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_own'])->name('index');
             Route::get('fields/{project}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_fields'])->name('fields');
+            Route::get('levels/{project}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_levels'])->name('levels');
 
         });
 

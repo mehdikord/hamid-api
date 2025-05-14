@@ -40,5 +40,7 @@ interface UserCustomerInterface
 
     public function projects_fields($customer,$project);
 
+    public function projects_levels($customer,$project);
+
 
 }

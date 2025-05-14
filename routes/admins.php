@@ -72,6 +72,7 @@ Route::middleware('auth:admins')->group(function () {
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_invoices'])->name('get_latest_invoices');
 
         });
+
     });
 
     Route::apiResource('projects',\App\Http\Controllers\Admins\Projects\ProjectController::class);
@@ -93,6 +94,11 @@ Route::middleware('auth:admins')->group(function () {
         Route::prefix('settings')->as('settings.')->group(function () {
             Route::get('statuses/all',[\App\Http\Controllers\Admins\Customers\CustomerSettingsStatusController::class, 'all'])->name('all');
             Route::apiResource('statuses',\App\Http\Controllers\Admins\Customers\CustomerSettingsStatusController::class);
+
+        });
+
+        Route::prefix('{customer}/projects')->as('projects.')->group(function () {
+            Route::get('{project}/fields',[\App\Http\Controllers\Admins\Customers\CustomerController::class,'projects_fields'])->name('fields');
 
         });
 

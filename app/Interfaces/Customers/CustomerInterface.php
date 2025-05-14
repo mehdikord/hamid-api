@@ -16,5 +16,7 @@ interface CustomerInterface
 
     public function destroy($item);
 
+    public function projects_fields($item,$project);
+
 
 }
