@@ -19,4 +19,9 @@ class ProfileController extends Controller
     {
         return $this->repository->index();
     }
+
+    public function projects()
+    {
+        return $this->repository->projects();
+    }
 }

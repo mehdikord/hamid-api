@@ -28,6 +28,11 @@ class UserCustomerRepository implements UserCustomerInterface
                     $query->where('project_customer_status_id', request()->search['status_id']);
                 });
             }
+            if (!empty(request()->search['level_id'])){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->where('project_level_id', request()->search['level_id']);
+                });
+            }
             if (!empty(request()->search['phone'])){
                 $data->whereHas('project_customer', function ($project) {
                     $project->whereHas('customer', function ($customer) {

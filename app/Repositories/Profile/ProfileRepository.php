@@ -12,6 +12,10 @@ class ProfileRepository implements ProfileInterface
         $user = auth('users')->user();
         return helper_response_fetch(new UserProfileResource($user));
     }
+    public function projects()
+    {
+
+    }
 
 
 }

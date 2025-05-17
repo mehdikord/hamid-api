@@ -74,6 +74,7 @@ Route::middleware('auth:admins')->group(function () {
         });
 
         Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
+            Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices'])->name('index');
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_invoices'])->name('get_latest_invoices');
 
         });

@@ -9,6 +9,7 @@ use App\Http\Requests\User_Customers\Invoices\UserCustomerInvoiceTargetStoreRequ
 use App\Http\Requests\User_Customers\Reports\UserCustomerReportStoreRequest;
 use App\Http\Requests\User_Customers\UserCustomerStatusStoreRequest;
 use App\Interfaces\Customers\CustomerSettingsStatusInterface;
+use App\Interfaces\ProjectLevels\ProjectLevelInterface;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Models\Customer;
 use App\Models\Project;
@@ -18,12 +19,15 @@ class CustomerController extends Controller
 {
     protected UserCustomerInterface $repository;
     protected CustomerSettingsStatusInterface $setting_repository;
-    public function __construct(UserCustomerInterface $customer,CustomerSettingsStatusInterface $customerSettingsStatus)
+
+    protected ProjectLevelInterface $project_level_repository;
+    public function __construct(UserCustomerInterface $customer,CustomerSettingsStatusInterface $customerSettingsStatus,ProjectLevelInterface $level)
     {
         $this->middleware('generate_fetch_query_params')->only('index','reports_index');
 
         $this->repository = $customer;
         $this->setting_repository = $customerSettingsStatus;
+        $this->project_level_repository = $level;
     }
 
     public function index()
@@ -44,6 +48,10 @@ class CustomerController extends Controller
     public function statuses()
     {
         return $this->setting_repository->all();
+    }
+    public function levels()
+    {
+        return $this->project_level_repository->all();
     }
 
     public function statuses_store(Project_Customer $customer,UserCustomerStatusStoreRequest $request)
