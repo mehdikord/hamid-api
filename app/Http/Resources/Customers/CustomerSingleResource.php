@@ -30,6 +30,7 @@ class CustomerSingleResource extends JsonResource
             'email' => $this->email,
             'instagram_id' => $this->instagram_id,
             'tel' => $this->tel,
+            'job' => $this->job,
             'description' => $this->description,
             'national_code' => $this->national_code,
             'address' => $this->address,
