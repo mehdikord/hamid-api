@@ -13,6 +13,7 @@ use App\Models\Project;
 use App\Models\Project_Customer;
 use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
+use App\Models\User_Project;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
@@ -98,6 +99,10 @@ class UserCustomerRepository implements UserCustomerInterface
             'report' => $request->report,
             'created_at' => $date,
         ]);
+        $user_project = User_Project::where('project_id', $customer->project_id,'user_id',auth()->id())->first();
+        if ($user_project){
+            $item->update(['total_reports' => $user_project->total_reports + 1]);
+        }
         return helper_response_fetch(new UserCustomerReportResource($item));
     }
 
@@ -186,7 +191,6 @@ class UserCustomerRepository implements UserCustomerInterface
         if ($customer->invoices()->sum('amount') + $request->price > $customer->user->target_price ){
             return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
         }
-
         $file_url = null;
         $file_size = null;
         $file_path = null;
@@ -213,6 +217,10 @@ class UserCustomerRepository implements UserCustomerInterface
             'file_size' => $file_size,
             'file_name' => $file_name,
         ]);
+        $user_project = User_Project::where('project_id', $customer->project_id,'user_id',auth()->id())->first();
+        if ($user_project){
+            $item->update(['total_price' => $user_project->total_price + $item->amount]);
+        }
         return helper_response_fetch(new UserCustomerInvoiceResource($item));
     }
 

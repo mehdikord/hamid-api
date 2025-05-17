@@ -149,7 +149,6 @@ class ProjectRepository implements ProjectInterface
             }
         }
         $item->update(['total_customers' => $counter + $item->total_customers]);
-
         return helper_response_created($exists_projects);
     }
 
@@ -166,6 +165,15 @@ class ProjectRepository implements ProjectInterface
         $project_customer = $item->customers()->find($request->project_customer_id);
         if ($project_customer){
             $project_customer->update(['project_customer_status_id' => $request->status_id]);
+            return helper_response_updated(new ProjectCustomerIndexResource($project_customer));
+        }
+        return helper_response_error('Project Customer not found');
+    }
+    public function customers_change_level($request, $item)
+    {
+        $project_customer = $item->customers()->find($request->project_customer_id);
+        if ($project_customer){
+            $project_customer->update(['project_level_id' => $request->level_id]);
             return helper_response_updated(new ProjectCustomerIndexResource($project_customer));
         }
         return helper_response_error('Project Customer not found');
@@ -230,6 +238,7 @@ class ProjectRepository implements ProjectInterface
         //get project customer
         $data = $item->customers()->find($request->project_customer_id);
         $data->update(['status' => Project_Customer::STATUS_ASSIGNED]);
+        $item->users()->updateOrCreate(['user_id' => $request->user_id],[]);
         return helper_response_fetch(new ProjectCustomerIndexResource($data));
     }
 

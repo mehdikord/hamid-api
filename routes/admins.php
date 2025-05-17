@@ -24,8 +24,10 @@ Route::middleware('auth:admins')->group(function () {
 
     Route::prefix('dashboards')->as('dashboards.')->group(function () {
        Route::prefix('reports')->as('reports.')->group(function () {
-           Route::get('users',[\App\Http\Controllers\Admins\Dashboard\ReportController::class, 'users'])->name('users');
-
+           Route::get('users/weekly',[\App\Http\Controllers\Admins\Dashboard\ReportController::class, 'users_weekly'])->name('users_weekly')->withoutMiddleware('auth:admins');
+           Route::prefix('projects')->as('projects.')->group(function () {
+              Route::get('summery',[\App\Http\Controllers\Admins\Dashboard\ReportController::class, 'projects_summery'])->name('summery')->withoutMiddleware('auth:admins');
+           });
        });
     });
 
@@ -42,11 +44,6 @@ Route::middleware('auth:admins')->group(function () {
         Route::apiResource('statuses',\App\Http\Controllers\Admins\Projects\ProjectStatusController::class);
 
 
-
-    });
-
-    Route::prefix('projects')->as('projects.')->group(function () {
-
         //Customers
         Route::prefix('{project}/customers')->as('customers.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customers'])->name('get');
@@ -55,6 +52,7 @@ Route::middleware('auth:admins')->group(function () {
             Route::post('assigned',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'assigned_customers'])->name('assign');
             Route::post('assigned/single',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'assigned_customers_single'])->name('assign.single');
             Route::post('change/status',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_status'])->name('change.status');
+            Route::post('change/level',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_level'])->name('change.level');
         });
 
         //Project Fields

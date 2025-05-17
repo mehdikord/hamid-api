@@ -84,6 +84,10 @@ class ProjectController extends Controller
     {
         return $this->repository->customers_change_status($request,$project);
     }
+    public function customers_change_level(Project $project,Request $request,)
+    {
+        return $this->repository->customers_change_level($request,$project);
+    }
 
     public function delete_customers(Project $project,Project_Customer $customer)
     {
@@ -98,7 +102,6 @@ class ProjectController extends Controller
     public function assigned_customers_single(Project $project,Request $request)
     {
         return $this->repository->assigned_customers_single($project,$request);
-
     }
 
     public function reports(Project $project)

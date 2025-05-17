@@ -21,6 +21,7 @@ interface ProjectInterface
     public function get_customers($item);
 
     public function customers_change_status($request,$item);
+    public function customers_change_level($request,$item);
 
     public function delete_customers($project,$item);
 
