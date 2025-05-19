@@ -104,7 +104,7 @@ class UserCustomerRepository implements UserCustomerInterface
             'report' => $request->report,
             'created_at' => $date,
         ]);
-        $user_project = User_Project::where('project_id', $customer->project_id,'user_id',auth()->id())->first();
+        $user_project = User_Project::where('project_id', $customer->project_id)->where('user_id',auth()->id())->first();
         if ($user_project){
             $item->update(['total_reports' => $user_project->total_reports + 1]);
         }
@@ -222,7 +222,7 @@ class UserCustomerRepository implements UserCustomerInterface
             'file_size' => $file_size,
             'file_name' => $file_name,
         ]);
-        $user_project = User_Project::where('project_id', $customer->project_id,'user_id',auth()->id())->first();
+        $user_project = User_Project::where('project_id', $customer->project_id)->where('user_id',auth()->id())->first();
         if ($user_project){
             $item->update(['total_price' => $user_project->total_price + $item->amount]);
         }
