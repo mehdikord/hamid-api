@@ -106,7 +106,7 @@ class UserCustomerRepository implements UserCustomerInterface
         ]);
         $user_project = User_Project::where('project_id', $customer->project_id)->where('user_id',auth()->id())->first();
         if ($user_project){
-            $item->update(['total_reports' => $user_project->total_reports + 1]);
+            $user_project->update(['total_reports' => $user_project->total_reports + 1]);
         }
         return helper_response_fetch(new UserCustomerReportResource($item));
     }
@@ -224,7 +224,7 @@ class UserCustomerRepository implements UserCustomerInterface
         ]);
         $user_project = User_Project::where('project_id', $customer->project_id)->where('user_id',auth()->id())->first();
         if ($user_project){
-            $item->update(['total_price' => $user_project->total_price + $item->amount]);
+            $user_project->update(['total_price' => $user_project->total_price + $item->amount]);
         }
         return helper_response_fetch(new UserCustomerInvoiceResource($item));
     }
