@@ -155,6 +155,32 @@ class ProjectRepository implements ProjectInterface
     public function get_customers($item)
     {
         $data = $item->customers();
+        if (request()->filled('search') && request()->search['status_id'] != 0 ){
+            $data->where('project_customer_status_id', request()->search['status_id']);
+        }
+        if (request()->filled('search') && request()->search['level_id'] != 0 ){
+            $data->where('project_level_id', request()->search['level_id']);
+        }
+        if (request()->filled('search') && request()->search['user_id'] != 0 ){
+            $data->whereHas('user', function ($query) {$query->where('user_id', request()->search['user_id']);});
+        }
+        if (request()->filled('search') && request()->search['has_report'] != 'all' ){
+            if (request()->search['has_report'] == 1){
+                $data->whereHas('reports');
+            }
+            if (request()->search['has_report'] == 0){
+                $data->whereDosentHas('reports');
+            }
+        }
+        if (request()->filled('search') && request()->search['has_invoice'] != 'all' ){
+            if (request()->search['has_invoice'] == 1){
+                $data->whereHas('invoices');
+            }
+            if (request()->search['has_invoice'] == 0){
+                $data->whereDosentHas('invoices');
+            }
+        }
+
         $data->orderBy(request('sort_by'),request('sort_type'));
         $data->with('tags');
         return helper_response_fetch(ProjectCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
