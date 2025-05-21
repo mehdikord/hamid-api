@@ -5,6 +5,7 @@ namespace App\Interfaces\Projects;
 interface ProjectInterface
 {
     public function index();
+    public function all();
 
     public function store($request);
 

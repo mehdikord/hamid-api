@@ -6,6 +6,7 @@ use App\Http\Resources\Projects\Invoices\ProjectInvoiceIndexResource;
 use App\Http\Resources\Projects\levels\ProjectLevelIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectCustomerIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectIndexResource;
+use App\Http\Resources\Projects\Projects\ProjectShortResource;
 use App\Http\Resources\Projects\Projects\ProjectSingleResource;
 use App\Http\Resources\Projects\Reports\ProjectReportIndexResource;
 use App\Interfaces\Projects\ProjectInterface;
@@ -29,7 +30,14 @@ class ProjectRepository implements ProjectInterface
        return helper_response_fetch(ProjectIndexResource::collection($data->paginate(request('per_page')))->resource);
    }
 
-   public function store($request)
+   public function all()
+   {
+       $data = Project::query();
+       $data->orderBy(request('sort_by'),request('sort_type'));
+       return helper_response_fetch(ProjectShortResource::collection($data->get()));
+   }
+
+    public function store($request)
    {
        $data = Project::create([
            'project_category_id' => $request->project_category_id,

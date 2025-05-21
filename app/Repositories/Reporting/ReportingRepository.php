@@ -5,15 +5,17 @@ use App\Models\Project;
 use App\Models\Project_Customer;
 use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
+use App\Models\Project_Customer_Status;
 use App\Models\User;
 use App\Models\User_Project_Customer;
+use App\Models\User_Project_Customer_Status;
 use Carbon\Carbon;
 
 
 class ReportingRepository implements ReportingInterface
 {
 
-    public function admin_users_weekly($request)
+    public function admin_users_weekly($request,$project)
     {
         $days = [];
         for($i = 0; $i <= 6; $i++) {
@@ -25,24 +27,43 @@ class ReportingRepository implements ReportingInterface
             $date = $days[0];
         }
         if ($date){
-            foreach (User::all() as $user) {
-                //get user projects
-                foreach ($user->projects as $project) {
-                    $customers = Project_Customer::where('project_id', $project->project_id)->whereHas('user', function ($query)use ($user) {
-                        $query->where('user_id', $user->id);
-                    })->pluck('id')->toArray();
-                    $report_count = Project_Customer_Report::whereIn('project_customer_id', $customers)->whereDate('created_at',$date)->count();
-                    $invoice_price = Project_Customer_Invoice::whereIn('project_customer_id', $customers)->whereDate('created_at',$date)->sum('amount');
-                    $invoice_count = Project_Customer_Invoice::whereIn('project_customer_id', $customers)->whereDate('created_at',$date)->count();
-                    $result[$user->id]['user'] = $user->name;
-                    $result[$user->id]['project'][$project->project_id]['project'] = $project->project->name;
-                    $result[$user->id]['project'][$project->project_id]['report_count'] = $report_count;
-                    $result[$user->id]['project'][$project->project_id]['invoice_price'] = $invoice_price;
-                    $result[$user->id]['project'][$project->project_id]['invoice_count'] = $invoice_count;
-                    $result[$user->id]['project'][$project->project_id]['customers'] = count($customers);
+
+            foreach ($project->users as $user){
+                $customers_ids = $user->user->customers()->whereHas('project_customer',function ($query)use($project){
+                    $query->where('project_id',$project->id);
+                })->pluck('project_customer_id')->toArray();
+                $customer_count = $user->user->customers()->whereHas('project_customer',function ($query)use($project){
+                    $query->where('project_id',$project->id);
+                })->whereDate('created_at',$date)->count();
+                $levels=[];
+                $statuses=[];
+                foreach ($project->levels as $level){
+                    $levels[$level->level->id]['name'] = $level->level->name;
+                    $levels[$level->level->id]['count'] = 0;
                 }
+                foreach (Project_Customer_Status::all() as $status){
+                    $statuses[$status->id]['name'] = $status->name;
+                    $statuses[$status->id]['count'] = 0;
+                }
+                $logs = User_Project_Customer_Status::whereIn('project_customer_id',$customers_ids)->whereDate('created_at',$date)->get();
+                foreach ($logs as $log){
+                    if ($log->project_level_id){
+                        $levels[$log->project_level_id]['count']++;
+                    }
+                    if ($log->customer_status_id){
+                        $statuses[$log->customer_status_id]['count']++;
+                    }
+                }
+                $result[]=[
+                    'user' => $user->user,
+                    'customer_count' => $customer_count,
+                    'levels' => $levels,
+                    'statuses' => $statuses,
+                ];
 
             }
+
+
 
         }
 

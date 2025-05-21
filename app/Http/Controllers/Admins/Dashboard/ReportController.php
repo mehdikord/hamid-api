@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admins\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\Reporting\ReportingInterface;
+use App\Models\Project;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -16,9 +17,9 @@ class ReportController extends Controller
         $this->repository = $reporting;
     }
 
-    public function users_weekly(Request $request)
+    public function users_weekly(Request $request,Project $project)
     {
-        return $this->repository->admin_users_weekly($request);
+        return $this->repository->admin_users_weekly($request,$project);
     }
 
     public function projects_summery()

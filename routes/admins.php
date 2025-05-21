@@ -24,7 +24,7 @@ Route::middleware('auth:admins')->group(function () {
 
     Route::prefix('dashboards')->as('dashboards.')->group(function () {
        Route::prefix('reports')->as('reports.')->group(function () {
-           Route::get('users/weekly',[\App\Http\Controllers\Admins\Dashboard\ReportController::class, 'users_weekly'])->name('users_weekly')->withoutMiddleware('auth:admins');
+           Route::get('users/weekly/{project}',[\App\Http\Controllers\Admins\Dashboard\ReportController::class, 'users_weekly'])->name('users_weekly')->withoutMiddleware('auth:admins');
            Route::prefix('projects')->as('projects.')->group(function () {
               Route::get('summery',[\App\Http\Controllers\Admins\Dashboard\ReportController::class, 'projects_summery'])->name('summery')->withoutMiddleware('auth:admins');
            });
@@ -33,6 +33,8 @@ Route::middleware('auth:admins')->group(function () {
 
     //projects
     Route::prefix('projects')->as('projects.')->group(function () {
+
+        Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'all'])->name('all');
 
         Route::get('levels/all',[\App\Http\Controllers\Admins\ProjectLevels\ProjectLevelController::class, 'all'])->name('levels.all');
         Route::apiResource('levels',\App\Http\Controllers\Admins\ProjectLevels\ProjectLevelController::class);
@@ -78,6 +80,8 @@ Route::middleware('auth:admins')->group(function () {
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_invoices'])->name('get_latest_invoices');
 
         });
+
+
 
     });
 
