@@ -172,6 +172,10 @@ class ProjectRepository implements ProjectInterface
         if (request()->filled('search') && request()->search['user_id'] != 0 ){
             $data->whereHas('user', function ($query) {$query->where('user_id', request()->search['user_id']);});
         }
+        if (request()->filled('search') && request()->search['phone'] ){
+            $data->whereHas('customer', function ($query) {$query->where('phone','LIKE','%'.request()->search['phone'].'%');});
+        }
+
         if (request()->filled('search') && request()->search['has_report'] != 'all' ){
             if (request()->search['has_report'] == 1){
                 $data->whereHas('reports');
