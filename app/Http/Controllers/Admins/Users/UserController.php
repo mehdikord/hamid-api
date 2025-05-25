@@ -8,6 +8,7 @@ use App\Http\Requests\Users\UsersUpdatePasswordRequest;
 use App\Http\Requests\Users\UsersUpdateRequest;
 use App\Interfaces\Users\UserInterface;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -51,14 +52,14 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UsersUpdateRequest $request,User $user)
+    public function update(UsersUpdateRequest $request, User $user)
     {
-        return $this->repository->update($request,$user);
+        return $this->repository->update($request, $user);
     }
 
-    public function change_password(UsersUpdatePasswordRequest $request,User $user)
+    public function change_password(UsersUpdatePasswordRequest $request, User $user)
     {
-        return $this->repository->change_password($request,$user);
+        return $this->repository->change_password($request, $user);
     }
 
     /**
@@ -74,4 +75,11 @@ class UserController extends Controller
         return $this->repository->change_activation($user);
 
     }
+
+    //Positions
+    public function positions_store(Request $request, User $user)
+    {
+        return $this->repository->positions_store($request,$user);
+    }
+
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Interfaces\Users;
+namespace App\Interfaces\Positions;
 
-interface UserInterface
+interface PositionInterface
 {
     public function index();
 
@@ -13,12 +13,8 @@ interface UserInterface
     public function show($item);
 
     public function update($request,$item);
-    public function change_password($request,$item);
 
     public function destroy($item);
 
-    public function change_activation($item);
-
-    public function positions_store($request,$user);
 
 }

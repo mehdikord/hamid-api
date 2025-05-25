@@ -164,13 +164,27 @@ class ProjectRepository implements ProjectInterface
     {
         $data = $item->customers();
         if (request()->filled('search') && request()->search['status_id'] != 0 ){
-            $data->where('project_customer_status_id', request()->search['status_id']);
+            if (request()->search['status_id'] == 'none'){
+                $data->whereNull('project_customer_status_id');
+            }else{
+                $data->where('project_customer_status_id', request()->search['status_id']);
+
+            }
         }
         if (request()->filled('search') && request()->search['level_id'] != 0 ){
-            $data->where('project_level_id', request()->search['level_id']);
+            if (request()->search['level_id'] == 'none'){
+                $data->whereNull('project_level_id');
+            }else{
+                $data->where('project_level_id', request()->search['level_id']);
+            }
         }
         if (request()->filled('search') && request()->search['user_id'] != 0 ){
-            $data->whereHas('user', function ($query) {$query->where('user_id', request()->search['user_id']);});
+
+            if (request()->search['user_id'] == 'none'){
+                $data->whereDoesntHave('user');
+            }else{
+                $data->whereHas('user', function ($query) {$query->where('user_id', request()->search['user_id']);});
+            }
         }
         if (request()->filled('search') && isset(request()->search['phone']) && request()->search['phone'] ){
             $data->whereHas('customer', function ($query) {$query->where('phone','LIKE','%'.request()->search['phone'].'%');});

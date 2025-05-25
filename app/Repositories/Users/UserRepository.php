@@ -75,5 +75,10 @@ class UserRepository implements UserInterface
        return helper_response_updated([]);
    }
 
+   public function positions_store($request, $user)
+   {
+       // TODO: Implement positions_store() method.
+   }
+
 
 }

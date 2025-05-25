@@ -15,9 +15,18 @@ Route::middleware('auth:admins')->group(function () {
 
 
     Route::prefix('users')->as('users.')->group(function () {
+
+
+
         Route::get('all',[\App\Http\Controllers\Admins\Users\UserController::class, 'all'])->name('all');
         Route::get('{user}/activation',[\App\Http\Controllers\Admins\Users\UserController::class, 'activation'])->name('activation');
         Route::post('{user}/change/password',[\App\Http\Controllers\Admins\Users\UserController::class, 'change_password'])->name('change.password');
+
+        //Roles
+//        Route::prefix('{user}/positions')->as('positions.')->group(function () {
+//           Route::post('',[\App\Http\Controllers\Admins\Users\UserController::class, 'positions_store'])->name('store');
+//
+//        });
     });
 
     Route::apiResource('users',\App\Http\Controllers\Admins\Users\UserController::class);
@@ -120,8 +129,9 @@ Route::middleware('auth:admins')->group(function () {
     Route::get('tags/all',[\App\Http\Controllers\Admins\Tags\TagController::class, 'all'])->name('tags.all');
     Route::apiResource('tags',\App\Http\Controllers\Admins\Tags\TagController::class);
 
-
-
+    //Positions
+    Route::get('positions/all',[\App\Http\Controllers\Admins\Positions\PositionController::class, 'all'])->name('positions.all');
+    Route::apiResource('positions',\App\Http\Controllers\Admins\Positions\PositionController::class);
 
 
 
