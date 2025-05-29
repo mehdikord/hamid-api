@@ -17,6 +17,11 @@ class User_Project_Customer extends Model
         return $this->belongsTo(User::class,'user_id');
     }
 
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(Position::class,'position_id');
+
+    }
     public function project_customer(): BelongsTo
     {
         return $this->belongsTo(Project_Customer::class,'project_customer_id');

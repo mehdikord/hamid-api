@@ -35,6 +35,7 @@ class ProjectCustomerIndexResource extends JsonResource
             'description' => $this->description,
             'customer' => new CustomerIndexResource($this->customer),
             'user' => new UserProjectCustomerResource($this->user),
+            'users' => UserProjectCustomerResource::collection($this->users),
             'project_status' => $this->project_status,
             'project_level' => $this->project_level,
             'last_report' => new UserCustomerReportResource($this->reports()->latest()->first()),

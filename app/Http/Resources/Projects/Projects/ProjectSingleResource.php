@@ -47,6 +47,7 @@ class ProjectSingleResource extends JsonResource
             'category' => new ProjectCategoryShortResource($this->category),
             'status' => new ProjectStatusShortResource($this->status),
             'fields' => $this->fields,
+            'positions' => ProjectPositionResource::collection($this->positions),
             'levels' => ProjectLevelIndexResource::collection($this->levels)
         ];
     }

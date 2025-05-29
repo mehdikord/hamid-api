@@ -2,10 +2,12 @@
 namespace App\Repositories\Projects;
 
 use App\Http\Resources\Fields\FieldIndexResource;
+use App\Http\Resources\Positions\PositionsShortResource;
 use App\Http\Resources\Projects\Invoices\ProjectInvoiceIndexResource;
 use App\Http\Resources\Projects\levels\ProjectLevelIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectCustomerIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectIndexResource;
+use App\Http\Resources\Projects\Projects\ProjectPositionResource;
 use App\Http\Resources\Projects\Projects\ProjectShortResource;
 use App\Http\Resources\Projects\Projects\ProjectSingleResource;
 use App\Http\Resources\Projects\Reports\ProjectReportIndexResource;
@@ -81,7 +83,13 @@ class ProjectRepository implements ProjectInterface
        return helper_response_deleted();
    }
 
-   public function change_activation($item)
+   public function all_customers($item)
+   {
+
+
+   }
+
+    public function change_activation($item)
    {
        $item->update(['is_active' => !$item->is_active]);
        return helper_response_updated([]);
@@ -280,7 +288,7 @@ class ProjectRepository implements ProjectInterface
     {
         if ($request->filled('user_id') && $request->filled('project_customer_id')) {
             $target = null;
-            $current_user = User_Project_Customer::where('project_customer_id',$request->project_customer_id)->first();
+            $current_user = User_Project_Customer::where('position_id',$request->position_id)->where('project_customer_id',$request->project_customer_id)->first();
             if ($current_user){
                 $target = $current_user->target_price;
                 $current_user->delete();
@@ -288,6 +296,7 @@ class ProjectRepository implements ProjectInterface
             User_Project_Customer::create([
                 'user_id' => $request->user_id,
                 'project_customer_id' => $request->project_customer_id,
+                'position_id' => $request->position_id,
                 'description' => $request->description,
                 'target_price' => $target,
                 'start_at' => Carbon::now(),
@@ -296,20 +305,44 @@ class ProjectRepository implements ProjectInterface
         //get project customer
         $data = $item->customers()->find($request->project_customer_id);
         $data->update(['status' => Project_Customer::STATUS_ASSIGNED]);
-        $item->users()->updateOrCreate(['user_id' => $request->user_id],[]);
+        $item->users()->updateOrCreate(['user_id' => $request->user_id,'position_id' => $request->position_id],[]);
         return helper_response_fetch(new ProjectCustomerIndexResource($data));
     }
 
     public function reports($item)
     {
         $data = $item->reports();
+        if (request()->filled('search') && request()->search['user_id']){
+            $data->where('user_id',request()->search['user_id']);
+        }
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(ProjectReportIndexResource::collection($data->paginate(request('per_page')))->resource);
+    }
+
+    public function reports_update($project, $report, $request)
+    {
+        $report->update(['report' => $request->report]);
+        return helper_response_updated(new ProjectReportIndexResource($report));
+    }
+
+    public function reports_destroy($project, $report)
+    {
+        $report->delete();
+        return helper_response_deleted();
+    }
+
+    public function invoices_destroy($project, $invoice)
+    {
+        $invoice->delete();
+        return helper_response_deleted();
     }
 
     public function invoices($item)
     {
         $data = $item->invoices();
+        if (request()->filled('search') && request()->search['user_id']){
+            $data->where('user_id',request()->search['user_id']);
+        }
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(ProjectInvoiceIndexResource::collection($data->paginate(request('per_page')))->resource);
     }
@@ -343,6 +376,26 @@ class ProjectRepository implements ProjectInterface
 
         return helper_response_fetch(FieldIndexResource::collection($item->fields));
 
+    }
+
+    public function get_positions($item)
+    {
+        $data = $item->positions;
+        return helper_response_fetch(ProjectPositionResource::collection($data));
+    }
+
+    public function store_positions($item, $request)
+    {
+        if ($request->filled('positions')){
+            $item->positions()->delete();
+            foreach ($request->positions as $position){
+                $item->positions()->create([
+                    'position_id' => $position,
+                ]);
+            }
+
+        }
+        return helper_response_fetch(ProjectPositionResource::collection($item->positions));
     }
 
     public function get_levels($item)

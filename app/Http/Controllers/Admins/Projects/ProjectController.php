@@ -16,6 +16,8 @@ use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Project;
 use App\Models\Project_Category;
 use App\Models\Project_Customer;
+use App\Models\Project_Customer_Invoice;
+use App\Models\Project_Customer_Report;
 use App\Models\Projects_Levels;
 use Illuminate\Http\Request;
 
@@ -76,6 +78,11 @@ class ProjectController extends Controller
         return $this->repository->destroy($project);
     }
 
+    public function all_customers(Project $project)
+    {
+        return $this->repository->all_customers($project);
+    }
+
     public function add_customers(ProjectCustomersCreateRequest $request,Project $project)
     {
         return $this->repository->add_customers($request,$project);
@@ -115,6 +122,14 @@ class ProjectController extends Controller
         return $this->repository->reports($project);
     }
 
+    public function reports_update(Project $project,Project_Customer_Report $report,Request $request)
+    {
+        return $this->repository->reports_update($project,$report,$request);
+    }
+    public function reports_destroy(Project $project,Project_Customer_Report $report)
+    {
+        return $this->repository->reports_destroy($project,$report);
+    }
     public function invoices(Project $project)
     {
         return $this->repository->invoices($project);
@@ -124,6 +139,11 @@ class ProjectController extends Controller
     public function get_latest_reports(Project $project)
     {
         return $this->repository->get_latest_reports($project);
+    }
+
+    public function invoices_destroy(Project $project,Project_Customer_Invoice $invoice)
+    {
+        return $this->repository->invoices_destroy($project,$invoice);
     }
 
     public function get_latest_invoices(Project $project)
@@ -140,6 +160,17 @@ class ProjectController extends Controller
     public function store_fields(Project $project,Request $request)
     {
         return $this->repository->store_fields($project,$request);
+    }
+
+    //Fields
+    public function get_positions(Project $project)
+    {
+        return $this->repository->get_positions($project);
+    }
+
+    public function store_positions(Project $project,Request $request)
+    {
+        return $this->repository->store_positions($project,$request);
     }
 
     //Levels

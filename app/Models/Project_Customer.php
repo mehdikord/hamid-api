@@ -44,6 +44,11 @@ class Project_Customer extends Model
         return $this->hasOne(User_Project_Customer::class, 'project_customer_id','id');
     }
 
+    public function users(): HasMany
+    {
+        return $this->hasMany(User_Project_Customer::class, 'project_customer_id','id');
+    }
+
     public function reports():HasMany
     {
         return $this->hasMany(Project_Customer_Report::class, 'project_customer_id');

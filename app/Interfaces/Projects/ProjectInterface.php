@@ -15,6 +15,8 @@ interface ProjectInterface
 
     public function destroy($item);
 
+    public function all_customers($item);
+
     public function change_activation($item);
 
     public function add_customers($request,$item);
@@ -31,6 +33,11 @@ interface ProjectInterface
 
     public function reports($item);
 
+    public function reports_update($project,$report,$request);
+
+    public function reports_destroy($project,$report);
+    public function invoices_destroy($project,$invoice);
+
     public function invoices($item);
     public function get_latest_reports($item);
 
@@ -40,6 +47,9 @@ interface ProjectInterface
 
     public function store_fields($item,$request);
 
+    public function get_positions($item);
+
+    public function store_positions($item,$request);
     public function get_levels($item);
 
     public function store_levels($item,$request);

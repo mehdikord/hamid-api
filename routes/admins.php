@@ -57,6 +57,7 @@ Route::middleware('auth:admins')->group(function () {
 
         //Customers
         Route::prefix('{project}/customers')->as('customers.')->group(function () {
+            Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'all_customers'])->name('all');
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customers'])->name('get');
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'add_customers'])->name('add');
             Route::delete('{customer}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'delete_customers'])->name('delete');
@@ -72,6 +73,13 @@ Route::middleware('auth:admins')->group(function () {
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_fields'])->name('store');
         });
 
+        //Project Positions
+        Route::prefix('{project}/positions')->as('positions.')->group(function () {
+            Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_positions'])->name('get');
+            Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_positions'])->name('store');
+        });
+
+
         Route::prefix('{project}/levels')->as('levels.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_levels'])->name('get');
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_levels'])->name('store');
@@ -81,11 +89,16 @@ Route::middleware('auth:admins')->group(function () {
 
         Route::prefix('{project}/reports')->as('reports.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports'])->name('index');
+            Route::post('{report}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_update'])->name('update');
+            Route::delete('{report}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_destroy'])->name('destroy');
+
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_reports'])->name('get_latest_reports');
         });
 
         Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices'])->name('index');
+            Route::delete('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_destroy'])->name('destroy');
+
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_invoices'])->name('get_latest_invoices');
 
         });

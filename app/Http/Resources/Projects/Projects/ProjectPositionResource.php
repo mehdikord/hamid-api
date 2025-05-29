@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Users;
+namespace App\Http\Resources\Projects\Projects;
 
-use App\Http\Resources\Positions\PositionsShortResource;
+use App\Http\Resources\Fields\FieldIndexResource;
+use App\Http\Resources\Projects\Categories\ProjectCategoryShortResource;
+use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -13,7 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $profile
  * @property mixed $config
  */
-class UserProjectCustomerResource extends JsonResource
+class ProjectPositionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -25,12 +27,7 @@ class UserProjectCustomerResource extends JsonResource
         return [
             'id' => $this->id,
             'position_id' => $this->position_id,
-            'start_at' => $this->start_at,
-            'end_at' => $this->end_at,
-            'is_active' => $this->is_active,
-            'target_price' => $this->target_price,
-            'user' => new UserShortResource($this->user),
-            'position' => new PositionsShortResource($this->position)
+            'position' => $this->position
         ];
     }
 }
