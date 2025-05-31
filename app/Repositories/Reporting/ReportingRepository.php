@@ -101,4 +101,23 @@ class ReportingRepository implements ReportingInterface
 
     }
 
+    public function projects_invoices_users($project)
+    {
+        //get projects users
+        $users = [];
+        foreach ($project->users as $user){
+            $project_customers_ids = $project->customers()->whereHas('users',function ($query)use($user){
+                $query->where('user_id',$user->user_id);
+            })->pluck('project_customer_id')->toArray();
+
+
+
+
+        }
+
+
+
+
+    }
+
 }

@@ -36,6 +36,9 @@ interface ProjectInterface
     public function reports_update($project,$report,$request);
 
     public function reports_destroy($project,$report);
+
+    public function invoices_update($project,$invoice,$request);
+
     public function invoices_destroy($project,$invoice);
 
     public function invoices($item);

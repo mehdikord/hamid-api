@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Projects\Categories\ProjectCategoryCreateRequest;
 use App\Http\Requests\Projects\Categories\ProjectCategoryUpdateRequest;
 use App\Http\Requests\Projects\Customers\ProjectCustomersAssignedRequest;
+use App\Http\Requests\Projects\Invoices\ProjectInvoiceUpdateRequest;
 use App\Http\Requests\Projects\levels\ProjectLevelPriorityRequest;
 use App\Http\Requests\Projects\levels\ProjectLevelRequest;
 use App\Http\Requests\Projects\Projects\ProjectCreateRequest;
@@ -139,6 +140,11 @@ class ProjectController extends Controller
     public function get_latest_reports(Project $project)
     {
         return $this->repository->get_latest_reports($project);
+    }
+
+    public function invoices_update(Project $project,Project_Customer_Invoice $invoice,ProjectInvoiceUpdateRequest $request)
+    {
+        return $this->repository->invoices_update($project,$invoice,$request);
     }
 
     public function invoices_destroy(Project $project,Project_Customer_Invoice $invoice)

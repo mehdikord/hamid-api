@@ -97,6 +97,7 @@ Route::middleware('auth:admins')->group(function () {
 
         Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices'])->name('index');
+            Route::post('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_update'])->name('update');
             Route::delete('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_destroy'])->name('destroy');
 
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_invoices'])->name('get_latest_invoices');
@@ -116,9 +117,9 @@ Route::middleware('auth:admins')->group(function () {
     Route::prefix('fields')->as('fields.')->group(function () {
         Route::get('all',[\App\Http\Controllers\Admins\Fields\FieldController::class, 'all'])->name('all');
     });
+
     //Fields
     Route::apiResource('fields',\App\Http\Controllers\Admins\Fields\FieldController::class);
-
 
     //Customers
     Route::prefix('customers')->as('customers.')->group(function () {
@@ -146,6 +147,16 @@ Route::middleware('auth:admins')->group(function () {
     Route::get('positions/all',[\App\Http\Controllers\Admins\Positions\PositionController::class, 'all'])->name('positions.all');
     Route::apiResource('positions',\App\Http\Controllers\Admins\Positions\PositionController::class);
 
+    //Reports
+    Route::prefix('reports')->as('reports.')->group(function () {
+       Route::prefix('projects')->as('projects.')->group(function () {
+         Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
+            Route::get('users',[\App\Http\Controllers\Admin\Reports\InvoicesController::class,'users'])->name('users');
+         });
+
+       });
+
+    });
 
 
 

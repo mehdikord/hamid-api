@@ -331,6 +331,22 @@ class ProjectRepository implements ProjectInterface
         return helper_response_deleted();
     }
 
+    public function invoices_update($project, $invoice, $request)
+    {
+        //check sum invoices amount
+        if (($request->amount > $invoice->amount) && $invoice->project_customer->invoices()->sum('amount') + $request->amount > $invoice->project_customer->user->target_price ){
+            return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
+        }
+        $invoice->update([
+            'amount' => $request->amount,
+            'user_id' => $request->user_id,
+            'description' => $request->description,
+        ]);
+        $invoice->load('user');
+        return helper_response_updated(new ProjectInvoiceIndexResource($invoice));
+
+    }
+
     public function invoices_destroy($project, $invoice)
     {
         $invoice->delete();
