@@ -35,7 +35,7 @@ class ProjectCustomersSelledFixerCommand extends Command
                 $customer->update(['selled' => true]);
             }else{
                 $customer->update(['selled' => false]);
-   
+
             }
 
         }
