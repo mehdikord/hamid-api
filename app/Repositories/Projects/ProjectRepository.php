@@ -15,6 +15,7 @@ use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Customer;
 use App\Models\Project;
 use App\Models\Project_Customer;
+use App\Models\User_Project;
 use App\Models\User_Project_Customer;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -349,7 +350,12 @@ class ProjectRepository implements ProjectInterface
 
     public function invoices_destroy($project, $invoice)
     {
+        $user_project = User_Project::where('project_id', $project->id)->where('user_id',$invoice->user_id)->first();
+        if ($user_project){
+            $user_project->update(['total_price' => $user_project->total_price - $invoice->amount]);
+        }
         $invoice->delete();
+     
         return helper_response_deleted();
     }
 

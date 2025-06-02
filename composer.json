@@ -32,7 +32,8 @@
         "files": [
             "app/Helpers/Core/core.php",
             "app/Helpers/Core/responses.php",
-            "app/Helpers/Core/auth.php"
+            "app/Helpers/Core/auth.php",
+            "app/Helpers/reporting.php"
         ]
     },
     "autoload-dev": {

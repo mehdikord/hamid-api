@@ -1,7 +1,12 @@
 <?php
+/** @var \Illuminate\Support\Facades\Route $route */
+
 //All Users Routing
 
 //Authenticate
+
+use Illuminate\Support\Facades\Route;
+
 Route::prefix('auth')->as('auth.')->group(function () {
     Route::prefix('otp')->as('otp.')->group(function () {
        Route::post('send', [\App\Http\Controllers\Users\Auth\AuthController::class,'otp_send'])->name('send');
@@ -18,8 +23,7 @@ Route::group(['middleware' => ['auth:users']], function () {
 
         Route::get('',[\App\Http\Controllers\Users\Profile\ProfileController::class,'index'])->name('index');
         Route::get('projects',[\App\Http\Controllers\Users\Profile\ProfileController::class,'projects'])->name('projects');
-
-
+        
     });
 
     //Customers
