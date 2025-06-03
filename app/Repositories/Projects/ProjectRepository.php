@@ -6,6 +6,7 @@ use App\Http\Resources\Positions\PositionsShortResource;
 use App\Http\Resources\Projects\Invoices\ProjectInvoiceIndexResource;
 use App\Http\Resources\Projects\levels\ProjectLevelIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectCustomerIndexResource;
+use App\Http\Resources\Projects\Projects\ProjectCustomerShortResource;
 use App\Http\Resources\Projects\Projects\ProjectIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectPositionResource;
 use App\Http\Resources\Projects\Projects\ProjectShortResource;
@@ -38,6 +39,26 @@ class ProjectRepository implements ProjectInterface
        $data = Project::query();
        $data->orderBy(request('sort_by'),request('sort_type'));
        return helper_response_fetch(ProjectShortResource::collection($data->get()));
+   }
+
+   public function pending_customers($project)
+   {
+       $data = $project->customers();
+       $data->where('status', 'pending');
+       if (request()->filled('search') && request()->search !== 'all'){
+           if (request()->search === 'has_name'){
+               $data->whereHas('customer',function ($query){
+                   $query->whereNotNull('name');
+               });
+           }else{
+               $data->whereHas('customer',function ($query){
+                   $query->whereNull('name');
+               });
+           }
+       }
+
+       return helper_response_fetch(ProjectCustomerShortResource::collection($data->get()));
+
    }
 
     public function store($request)
@@ -192,7 +213,7 @@ class ProjectRepository implements ProjectInterface
             if (request()->search['user_id'] == 'none'){
                 $data->whereDoesntHave('user');
             }else{
-                $data->whereHas('user', function ($query) {$query->where('user_id', request()->search['user_id']);});
+                $data->whereHas('user', function ($query) {$query->where('position_id',2)->where('user_id', request()->search['user_id']);});
             }
         }
         if (request()->filled('search') && isset(request()->search['phone']) && request()->search['phone'] ){
@@ -355,7 +376,7 @@ class ProjectRepository implements ProjectInterface
             $user_project->update(['total_price' => $user_project->total_price - $invoice->amount]);
         }
         $invoice->delete();
-     
+
         return helper_response_deleted();
     }
 
