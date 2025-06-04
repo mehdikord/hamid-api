@@ -282,24 +282,21 @@ class ProjectRepository implements ProjectInterface
 
     public function assigned_customers($item,$request)
     {
+        $customers =[];
+        $users =[];
         if ($request->filled('divides') && is_array($request->divides)) {
             foreach ($request->divides as $divide) {
-               $customers = $item->customers()->where('status',Project_Customer::STATUS_PENDING)->take($divide['amount'])->get();
-               $ids=[];
-               foreach ($customers as $customer) {
-                   User_Project_Customer::create([
-                       'user_id' => $divide['user_id'],
-                       'project_customer_id' => $customer->id,
-                       'description' => $request->description,
-                       'start_at' => Carbon::now(),
-                   ]);
-                   $ids[] = $customer->id;
-               }
-               Project_Customer::whereIn('id',$ids)->update(['status' => Project_Customer::STATUS_ASSIGNED]);
-               if (count($ids)){
-                   $item->users()->updateOrCreate(['user_id' => $divide['user_id']],[]);
-               }
-
+                User_Project_Customer::updateOrcreate(['user_id' => $divide['user_id'],'project_customer_id' => $divide['customer_id']],['position_id' => $divide['position_id']]);
+                $customers[]=$divide['customer_id'];
+                if (!in_array($divide['user_id'], $users)) {
+                    $users[] = $divide['user_id'];
+                }
+            }
+            $item->customers()->whereIn('id',$customers)->update(['status' => Project_Customer::STATUS_ASSIGNED]);
+            foreach ($users as $user_id) {
+                if (!$item->users()->where('user_id',$user_id)->exists()) {
+                    $item->users()->create(['user_id' => $user_id]);
+                }
             }
             return helper_response_created([]);
         }

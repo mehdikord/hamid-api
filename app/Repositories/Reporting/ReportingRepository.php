@@ -111,12 +111,11 @@ class ReportingRepository implements ReportingInterface
             $project_customers_ids = $project->customers()->whereHas('users',function ($query)use($user){
                 $query->where('user_id',$user->user_id);
             })->pluck('id')->toArray();
-//            return $project_customers_ids;
 
             $target_sum = User_Project_Customer::whereIn('project_customer_id',$project_customers_ids)->where('user_id',$user->user_id)->sum('target_price');
             $invoice_sum = helper_reporting_customers_invoices_sum($project_customers_ids,$user->user_id);
             $done_count = Project_Customer::whereIn('id',$project_customers_ids)->where('selled',true)->count();
-            $false_count = Project_Customer::whereIn('id',$project_customers_ids)->where('selled',false)->count();
+            $false_count = Project_Customer::whereIn('id',$project_customers_ids)->where('selled',false)->whereHas('invoices')->count();
             $done_price = helper_reporting_customers_selled_price($project_customers_ids);
             $false_price = helper_reporting_customers_not_selled_price($project_customers_ids);
             $all_count = $done_count + $false_count;

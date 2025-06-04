@@ -27,15 +27,14 @@ class ProjectCustomersSelledFixerCommand extends Command
      */
     public function handle()
     {
-        foreach (Project_Customer::all() as $customer) {
+        foreach (Project_Customer::WhereHas('users',function ($query){$query->whereNotNull('target_price');})->get() as $customer) {
             //get target
             $target = $customer->users()->sum('target_price');
             $invoices_prices = $customer->invoices()->sum('amount');
-            if ($target > 0 && $invoices_prices >= $target) {
+            if ($invoices_prices >= $target) {
                 $customer->update(['selled' => true]);
             }else{
                 $customer->update(['selled' => false]);
-
             }
 
         }
