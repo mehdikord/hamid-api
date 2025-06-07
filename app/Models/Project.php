@@ -67,4 +67,9 @@ class Project extends Model
     {
         return $this->hasMany(Project_Position::class,'project_id');
     }
+
+    public function forms(): HasMany
+    {
+        return $this->hasMany(Project_Form::class,'project_id');
+    }
 }

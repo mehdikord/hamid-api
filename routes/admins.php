@@ -74,6 +74,14 @@ Route::middleware('auth:admins')->group(function () {
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_fields'])->name('store');
         });
 
+        Route::prefix('{project}/forms')->group(function () {
+            Route::get('activation/{form}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'activation_forms'])->name('activation');
+            Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_forms'])->name('get');
+            Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_forms'])->name('store');
+            Route::post('{form}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'update_forms'])->name('update');
+            Route::delete('{form}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'destroy_forms'])->name('destroy');
+        });
+
         //Project Positions
         Route::prefix('{project}/positions')->as('positions.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_positions'])->name('get');

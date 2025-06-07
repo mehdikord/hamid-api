@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Projects\Statuses;
+namespace App\Http\Requests\Projects\Forms;
 
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ProjectStatusUpdateRequest extends FormRequest
+class ProjectFormsLandingCreateRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -18,7 +18,8 @@ class ProjectStatusUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:project_statuses,name,'.$this->status->id,
+            'name' => 'required|string',
+            'phone'  => 'required|numeric|regex:/^09[0-3]\d{8}$/',
         ];
     }
 

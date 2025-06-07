@@ -3,6 +3,7 @@ namespace App\Repositories\Projects;
 
 use App\Http\Resources\Fields\FieldIndexResource;
 use App\Http\Resources\Positions\PositionsShortResource;
+use App\Http\Resources\Projects\Forms\ProjectFromIndexResource;
 use App\Http\Resources\Projects\Invoices\ProjectInvoiceIndexResource;
 use App\Http\Resources\Projects\levels\ProjectLevelIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectCustomerIndexResource;
@@ -19,6 +20,7 @@ use App\Models\Project_Customer;
 use App\Models\User_Project;
 use App\Models\User_Project_Customer;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Morilog\Jalali\Jalalian;
 
@@ -56,8 +58,12 @@ class ProjectRepository implements ProjectInterface
                });
            }
        }
-
-       return helper_response_fetch(ProjectCustomerShortResource::collection($data->get()));
+       if (request()->filled('total') && is_numeric(request()->total) && request()->total > 0){
+           $result = $data->take(request()->total)->get();
+       }else{
+           $result = $data->get();
+       }
+       return helper_response_fetch(ProjectCustomerShortResource::collection($result));
 
    }
 
@@ -466,6 +472,70 @@ class ProjectRepository implements ProjectInterface
     {
         $item->delete();
         return helper_response_deleted();
+    }
+
+    //Forms
+
+    public function get_forms($project)
+    {
+        $data = $project->forms;
+        return helper_response_fetch(ProjectFromIndexResource::collection($data));
+    }
+
+    public function store_forms($project, $request)
+    {
+        $token = md5($project->created_at);
+        $link = "https://hamidmasoudi.ir/landing/forms/".$token;
+        DB::beginTransaction();
+        $form = $project->forms()->create([
+            'name' => $request->name,
+            'token' => $token,
+            'link' => $link,
+             'is_active' => 1,
+            'description' => $request->description,
+        ]);
+        if ($request->filled('fields')){
+            foreach ($request->fields as $field){
+                $form->fields()->create([
+                   'field_id' => $field['field']['id'],
+                   'title' => $field['title'],
+                ]);
+            }
+        }
+        DB::commit();
+        return helper_response_created(new ProjectFromIndexResource($form));
+    }
+
+    public function update_forms($project, $item, $request)
+    {
+        DB::beginTransaction();
+        $item->update([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+        if ($request->filled('fields')){
+            $item->fields()->delete();
+            foreach ($request->fields as $field){
+                $item->fields()->create([
+                    'field_id' => $field['field']['id'],
+                    'title' => $field['title'],
+                ]);
+            }
+        }
+        DB::commit();
+        return helper_response_created(new ProjectFromIndexResource($item));
+    }
+
+    public function destroy_forms($project,$item)
+    {
+        $item->delete();
+        return helper_response_deleted();
+    }
+
+    public function activation_forms($project,$item)
+    {
+        $item->update(['is_active' => !$item->is_active]);
+        return helper_response_updated([]);
     }
 
 }

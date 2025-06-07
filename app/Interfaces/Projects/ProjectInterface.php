@@ -62,5 +62,17 @@ interface ProjectInterface
 
     public function delete_levels($project,$item);
 
+    //Forms
+    public function get_forms($project);
+
+    public function store_forms($project,$request);
+
+    public function update_forms($project,$item,$request);
+
+    public function destroy_forms($project,$item);
+
+    public function activation_forms($project,$item);
+
+
 
 }

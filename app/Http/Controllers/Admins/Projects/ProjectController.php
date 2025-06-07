@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Projects\Categories\ProjectCategoryCreateRequest;
 use App\Http\Requests\Projects\Categories\ProjectCategoryUpdateRequest;
 use App\Http\Requests\Projects\Customers\ProjectCustomersAssignedRequest;
+use App\Http\Requests\Projects\Forms\ProjectFormsCreateRequest;
+use App\Http\Requests\Projects\Forms\ProjectFormsUpdateRequest;
 use App\Http\Requests\Projects\Invoices\ProjectInvoiceUpdateRequest;
 use App\Http\Requests\Projects\levels\ProjectLevelPriorityRequest;
 use App\Http\Requests\Projects\levels\ProjectLevelRequest;
@@ -19,6 +21,7 @@ use App\Models\Project_Category;
 use App\Models\Project_Customer;
 use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
+use App\Models\Project_Form;
 use App\Models\Projects_Levels;
 use Illuminate\Http\Request;
 
@@ -204,6 +207,33 @@ class ProjectController extends Controller
     public function delete_levels(Project $project,Projects_Levels $level)
     {
         return $this->repository->delete_levels($project,$level);
+    }
+
+    //Forms
+
+    public function get_forms(Project $project)
+    {
+        return $this->repository->get_forms($project);
+
+    }
+    public function store_forms(Project $project,ProjectFormsCreateRequest $request)
+    {
+        return $this->repository->store_forms($project,$request);
+    }
+
+    public function update_forms(Project $project,Project_Form $form,ProjectFormsUpdateRequest $request)
+    {
+        return $this->repository->update_forms($project,$form,$request);
+    }
+
+    public function destroy_forms(Project $project,Project_Form $form)
+    {
+        return  $this->repository->destroy_forms($project,$form);
+    }
+
+    public function activation_forms(Project $project,Project_Form $form)
+    {
+        return  $this->repository->activation_forms($project,$form);
     }
 
 
