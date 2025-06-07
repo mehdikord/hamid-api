@@ -27,7 +27,9 @@ class CustomerPhoneFixer extends Command
     public function handle()
     {
         foreach (Customer::all() as $item) {
-            $item->update(['phone'=>str_replace(' ','',$item->phone)]);
+            if (mb_substr($item->phone, 0, 1, 'UTF-8') != '0'){
+                $item->update(['phone'=> '0'.$item->phone ]);
+            }
         }
         $this->info('Done');
     }
