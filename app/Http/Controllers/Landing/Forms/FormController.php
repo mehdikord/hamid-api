@@ -7,6 +7,7 @@ use App\Http\Requests\Projects\Forms\ProjectFormsLandingCreateRequest;
 use App\Http\Resources\Projects\Forms\ProjectFromLandingResource;
 use App\Models\Customer;
 use App\Models\Project_Form;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class FormController extends Controller
@@ -22,15 +23,60 @@ class FormController extends Controller
     {
         $form = Project_Form::where('token', $token)->where('is_active',true)->first();
         if ($form){
+            $project = $form->project;
             //Find Customer
-            $customer = Customer::where('phone',$request->phone)->first();
+            $customer = Customer::where('phone','LIKE','%'. $request->phone .'%')->first();
             if ($customer){
+                $customer->update(['name' =>  $request->name]);
                 //check customer in project
-                $project = $form->project;
-
-
+                $project_customer = $project->customers()->where('customer_id',$customer->id)->first();
+                if ($project_customer){
+                    if ($request->filled('fields')){
+                        $project_customer->fields()->delete();
+                        foreach ($request->fields as $field){
+                            $project_customer->fields()->create([
+                                'field_id' => $field['field_id'],
+                                'val' => $field['val']
+                            ]);
+                        }
+                    }
+                }else{
+                    $project_customer = $project->customers()->create([
+                       'customer_id' => $customer->id,
+                        'import_at' => Carbon::now(),
+                        'from_form' => true,
+                    ]);
+                    if ($request->filled('fields')){
+                        $project_customer->fields()->delete();
+                        foreach ($request->fields as $field){
+                            $project_customer->fields()->create([
+                                'field_id' => $field['field_id'],
+                                'val' => $field['val']
+                            ]);
+                        }
+                    }
+                }
+            }else{
+                $customer = Customer::create([
+                    'phone' => $request->phone,
+                    'name' => $request->name,
+                ]);
+                $project_customer = $project->customers()->create([
+                    'customer_id' => $customer->id,
+                    'import_at' => Carbon::now(),
+                    'from_form' => true,
+                ]);
+                if ($request->filled('fields')){
+                    $project_customer->fields()->delete();
+                    foreach ($request->fields as $field){
+                        $project_customer->fields()->create([
+                            'field_id' => $field['field_id'],
+                            'val' => $field['val']
+                        ]);
+                    }
+                }
             }
-            return helper_response_error('شماره شما ثبت نشده است !');
+            return helper_response_main('اطلاعات شما با موفقیت ثبت گردید ، باتشکر از شما','','',200);
         }
         return helper_response_error('فرم مورد نظر نامعتبر است !');
 
