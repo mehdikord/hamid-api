@@ -89,6 +89,7 @@ Route::middleware('auth:admins')->group(function () {
         });
 
 
+
         Route::prefix('{project}/levels')->as('levels.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_levels'])->name('get');
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_levels'])->name('store');
@@ -106,6 +107,7 @@ Route::middleware('auth:admins')->group(function () {
 
         Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices'])->name('index');
+            Route::get('settle/{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_settle'])->name('change_settle');
             Route::post('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_update'])->name('update');
             Route::delete('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_destroy'])->name('destroy');
 

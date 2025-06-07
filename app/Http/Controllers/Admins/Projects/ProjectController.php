@@ -155,6 +155,12 @@ class ProjectController extends Controller
         return $this->repository->invoices_update($project,$invoice,$request);
     }
 
+    public function invoices_settle(Project $project,Project_Customer_Invoice $invoice)
+    {
+        return $this->repository->invoices_settle($project,$invoice);
+
+    }
+
     public function invoices_destroy(Project $project,Project_Customer_Invoice $invoice)
     {
         return $this->repository->invoices_destroy($project,$invoice);

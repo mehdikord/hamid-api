@@ -21,11 +21,16 @@ class FormController extends Controller
 
     public function store_form($token,ProjectFormsLandingCreateRequest  $request)
     {
+        //check phone
+        $phone = $request->phone;
+        if (mb_substr($phone, 0, 1, 'UTF-8') != '0'){
+            $phone = '0'.$phone;
+        }
         $form = Project_Form::where('token', $token)->where('is_active',true)->first();
         if ($form){
             $project = $form->project;
             //Find Customer
-            $customer = Customer::where('phone','LIKE','%'. $request->phone .'%')->first();
+            $customer = Customer::where('phone','LIKE','%'. $phone .'%')->first();
             if ($customer){
                 $customer->update(['name' =>  $request->name]);
                 //check customer in project
@@ -58,7 +63,7 @@ class FormController extends Controller
                 }
             }else{
                 $customer = Customer::create([
-                    'phone' => $request->phone,
+                    'phone' => $phone,
                     'name' => $request->name,
                 ]);
                 $project_customer = $project->customers()->create([

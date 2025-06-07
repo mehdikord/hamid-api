@@ -19,7 +19,7 @@ class ProjectFormsLandingCreateRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'phone'  => 'required|numeric|regex:/^09[0-3]\d{8}$/',
+            'phone'  => 'required|numeric',
         ];
     }
 

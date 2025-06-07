@@ -372,6 +372,12 @@ class ProjectRepository implements ProjectInterface
 
     }
 
+    public function invoices_settle($project, $invoice)
+    {
+        $invoice->update(['settle' => !$invoice->settle]);
+        return helper_response_updated(new ProjectInvoiceIndexResource($invoice));
+    }
+
     public function invoices_destroy($project, $invoice)
     {
         $user_project = User_Project::where('project_id', $project->id)->where('user_id',$invoice->user_id)->first();
@@ -389,6 +395,15 @@ class ProjectRepository implements ProjectInterface
         if (request()->filled('search') && request()->search['user_id']){
             $data->where('user_id',request()->search['user_id']);
         }
+        if (request()->filled('search') && request()->search['settle'] && request()->search['settle'] !== 'all'){
+            if (request()->search['settle'] == 'yes'){
+                $data->where('settle',true);
+            }else{
+                $data->where('settle',false);
+            }
+        }
+
+
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(ProjectInvoiceIndexResource::collection($data->paginate(request('per_page')))->resource);
     }

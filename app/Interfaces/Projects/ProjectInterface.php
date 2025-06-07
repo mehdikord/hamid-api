@@ -40,6 +40,8 @@ interface ProjectInterface
 
     public function invoices_update($project,$invoice,$request);
 
+    public function invoices_settle($project,$invoice);
+
     public function invoices_destroy($project,$invoice);
 
     public function invoices($item);

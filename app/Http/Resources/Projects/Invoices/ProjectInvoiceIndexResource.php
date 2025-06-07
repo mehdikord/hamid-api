@@ -37,6 +37,7 @@ class ProjectInvoiceIndexResource extends JsonResource
             'file_url' => $this->file_url,
             'user' => new UserShortResource($this->user),
             'customer' => $customer,
+            'settle' => $this->settle,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
 
