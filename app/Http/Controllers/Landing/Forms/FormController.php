@@ -16,6 +16,7 @@ class FormController extends Controller
     public function get_form($token)
     {
         $form = Project_Form::where('token', $token)->where('is_active',true)->firstorfail();
+        $form->update(['view' => $form->view+1]);
         return helper_response_fetch(new ProjectFromLandingResource($form));
     }
 
@@ -81,6 +82,8 @@ class FormController extends Controller
                     }
                 }
             }
+            $form->update(['register' => $form->view+1]);
+
             return helper_response_main('اطلاعات شما با موفقیت ثبت گردید ، باتشکر از شما','','',200);
         }
         return helper_response_error('فرم مورد نظر نامعتبر است !');

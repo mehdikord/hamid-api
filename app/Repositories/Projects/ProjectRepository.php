@@ -21,6 +21,7 @@ use App\Models\User_Project;
 use App\Models\User_Project_Customer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Morilog\Jalali\Jalalian;
 
@@ -499,8 +500,8 @@ class ProjectRepository implements ProjectInterface
 
     public function store_forms($project, $request)
     {
-        $token = md5($project->created_at);
-        $link = "https://hamidmasoudi.ir/landing/forms/".$token;
+        $token = Str::random(2).$project->id.Str::random(2);
+        $link = "i.tonl.ir/".$token;
         DB::beginTransaction();
         $form = $project->forms()->create([
             'name' => $request->name,
