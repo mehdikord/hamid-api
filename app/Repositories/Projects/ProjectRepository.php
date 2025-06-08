@@ -133,6 +133,11 @@ class ProjectRepository implements ProjectInterface
             $excel = Excel::toArray([], request()->file('excel'));
             $import_date = null;
             foreach ($excel[0] as $key => $value) {
+                if ($value['1']){
+                    if (mb_substr($value['1'], 0, 1, 'UTF-8') != '0'){
+                        $value['1'] = '0'.$value['1'];
+                    }
+                }
                 $customer = Customer::where('phone',$value[1])->first();
                 if ($customer && $item->customers()->where('customer_id',$customer->id)->exists()) {
                     $exists_projects[] = $value[1];
@@ -169,7 +174,9 @@ class ProjectRepository implements ProjectInterface
             if (is_array($numbers) && count($numbers)){
                 foreach ($numbers as $number){
                     $number = str_replace(' ','',$number);
-
+                    if (mb_substr($number, 0, 1, 'UTF-8') != '0'){
+                        $number = '0'.$number;
+                    }
                     $customer = Customer::where('phone',$number)->first();
                     if ($customer && $item->customers()->where('customer_id',$customer->id)->exists()) {
                         $exists_projects[] = $number;
