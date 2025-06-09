@@ -17,6 +17,8 @@ use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Customer;
 use App\Models\Project;
 use App\Models\Project_Customer;
+use App\Models\Project_Customer_Status;
+use App\Models\Project_Level;
 use App\Models\User_Project;
 use App\Models\User_Project_Customer;
 use Carbon\Carbon;
@@ -47,7 +49,7 @@ class ProjectRepository implements ProjectInterface
    public function pending_customers($project)
    {
        $data = $project->customers();
-       $data->where('status', 'pending');
+       $data->where('status', Project_Customer::STATUS_PENDING);
        if (request()->filled('search') && request()->search !== 'all'){
            if (request()->search === 'has_name'){
                $data->whereHas('customer',function ($query){
@@ -65,8 +67,24 @@ class ProjectRepository implements ProjectInterface
            $result = $data->get();
        }
        return helper_response_fetch(ProjectCustomerShortResource::collection($result));
-
    }
+
+    public function pending_customers_success($project)
+    {
+        //get level
+        $level = Project_Level::where('name','LIKE','%'.'مشاوره'.'%')->first();
+        $status = Project_Customer_Status::where('name','LIKE','%'.'موفق'.'%')->first();
+
+        if ($level && $status){
+            $data = $project->customers()->where("project_level_id",$level->id)->where('project_customer_status_id',$status->id);
+            $data->with('users',function ($user){
+                $user->where('position_id',1);
+            });
+            return helper_response_fetch(ProjectCustomerShortResource::collection($data->get()));
+        }
+        return helper_response_fetch([]);
+
+    }
 
     public function store($request)
    {
@@ -296,7 +314,7 @@ class ProjectRepository implements ProjectInterface
 
     public function assigned_customers($item,$request)
     {
-        $customers =[];
+        $customers=[];
         $users =[];
         if ($request->filled('divides') && is_array($request->divides)) {
             foreach ($request->divides as $divide) {

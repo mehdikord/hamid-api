@@ -54,6 +54,11 @@ class ProjectController extends Controller
         return $this->repository->pending_customers($project);
     }
 
+    public function pending_customers_success(Project $project)
+    {
+        return $this->repository->pending_customers_success($project);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

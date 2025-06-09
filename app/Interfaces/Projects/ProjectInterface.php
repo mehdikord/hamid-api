@@ -8,6 +8,8 @@ interface ProjectInterface
     public function all();
     public function pending_customers($project);
 
+    public function pending_customers_success($project);
+
     public function store($request);
 
     public function show($item);
