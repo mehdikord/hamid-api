@@ -240,14 +240,31 @@ class ProjectRepository implements ProjectInterface
                 $data->where('project_level_id', request()->search['level_id']);
             }
         }
-        if (request()->filled('search') && request()->search['user_id'] != 0 ){
 
-            if (request()->search['user_id'] == 'none'){
-                $data->whereDoesntHave('user');
+
+        if (request()->filled('search') && request()->search['seller_id'] != 0 ){
+
+            if (request()->search['seller_id'] == 'none'){
+                $data->whereDoesntHave('users',function ($query){
+                    $query->where('position_id','2');
+                });
             }else{
-                $data->whereHas('user', function ($query) {$query->where('position_id',2)->where('user_id', request()->search['user_id']);});
+                $data->whereHas('users', function ($query) {$query->where('position_id',2)->where('user_id', request()->search['seller_id']);});
             }
         }
+        if (request()->filled('search') && request()->search['consultant_id'] != 0 ){
+
+            if (request()->search['consultant_id'] == 'none'){
+                $data->whereDoesntHave('users',function ($query){
+                    $query->where('position_id','1');
+                });
+            }else{
+                $data->whereHas('users', function ($query) {$query->where('position_id',1)->where('user_id', request()->search['consultant_id']);});
+            }
+        }
+
+
+
         if (request()->filled('search') && isset(request()->search['phone']) && request()->search['phone'] ){
             $data->whereHas('customer', function ($query) {$query->where('phone','LIKE','%'.request()->search['phone'].'%');});
         }
