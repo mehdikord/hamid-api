@@ -17,12 +17,14 @@ use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Customer;
 use App\Models\Project;
 use App\Models\Project_Customer;
+use App\Models\Project_Customer_Report;
 use App\Models\Project_Customer_Status;
 use App\Models\Project_Level;
 use App\Models\User_Project;
 use App\Models\User_Project_Customer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Morilog\Jalali\Jalalian;
@@ -132,8 +134,16 @@ class ProjectRepository implements ProjectInterface
 
    public function all_customers($item)
    {
-
-
+       $data = $item->customers();
+       $result=[];
+       //
+       if (request()->filled('search')){
+           $data->whereHas('customer',function ($query){
+              $query->where('name','LIKE','%'.request('search').'%')->orWhere('phone','LIKE','%'.request('search').'%');
+           });
+           $result = $data->get();
+       }
+       return helper_response_fetch(ProjectCustomerShortResource::collection($result));
    }
 
     public function change_activation($item)
@@ -385,6 +395,42 @@ class ProjectRepository implements ProjectInterface
         }
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(ProjectReportIndexResource::collection($data->paginate(request('per_page')))->resource);
+    }
+
+    public function reports_store($item, $request)
+    {
+        //find customer_project
+        $customer_project = Project_Customer::find($request->project_customer_id);
+        if ($customer_project){
+            $file_url = null;
+            $file_size = null;
+            $file_path = null;
+            $file_name = null;
+            if ($request->hasFile('file')){
+                $file_name = $request->file('file')->getClientOriginalName();
+                $file_size = $request->file('file')->getSize();
+                $file_path = Storage::put('public/users/reports/'.$customer_project->customer_id.'/', $request->file('file'),'public');
+                $file_url = Storage::url($file_path);
+            }
+            $date = \Illuminate\Support\Carbon::now();
+            if ($request->filled('date')){
+                $date = Carbon::make($request->date);
+            }
+            $data = Project_Customer_Report::create([
+                'project_id' => $item->id,
+                'project_customer_id' =>  $request->project_customer_id,
+                'user_id' => $request->user_id,
+                'admin_id' => auth('admins')->id(),
+                'report' => $request->report,
+                'file_path' => $file_path,
+                'file_url' => $file_url,
+                'file_size' => $file_size,
+                'file_name' => $file_name,
+                'created_at' => $date,
+            ]);
+            return helper_response_created(new ProjectReportIndexResource($data));
+        }
+
     }
 
     public function reports_update($project, $report, $request)

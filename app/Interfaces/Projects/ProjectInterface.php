@@ -35,6 +35,7 @@ interface ProjectInterface
     public function assigned_customers_single($item,$request);
 
     public function reports($item);
+    public function reports_store($item,$request);
 
     public function reports_update($project,$report,$request);
 

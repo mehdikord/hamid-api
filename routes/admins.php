@@ -100,6 +100,7 @@ Route::middleware('auth:admins')->group(function () {
 
         Route::prefix('{project}/reports')->as('reports.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports'])->name('index');
+            Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_store'])->name('store');
             Route::post('{report}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_update'])->name('update');
             Route::delete('{report}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_destroy'])->name('destroy');
 

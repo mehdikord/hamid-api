@@ -14,6 +14,7 @@ use App\Http\Requests\Projects\levels\ProjectLevelRequest;
 use App\Http\Requests\Projects\Projects\ProjectCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectCustomersCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectUpdateRequest;
+use App\Http\Requests\Projects\Projects\Reports\ProjectReportCreateRequest;
 use App\Interfaces\Projects\ProjectCategoryInterface;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Project;
@@ -134,6 +135,12 @@ class ProjectController extends Controller
     public function reports(Project $project)
     {
         return $this->repository->reports($project);
+    }
+
+    public function reports_store(Project $project,ProjectReportCreateRequest $request)
+    {
+        return $this->repository->reports_store($project,$request);
+
     }
 
     public function reports_update(Project $project,Project_Customer_Report $report,Request $request)
