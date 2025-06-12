@@ -18,7 +18,7 @@ class UserCustomerReportStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'report' => 'required|string',
+            'report' => 'nullable|string',
             'file' => 'nullable|file|mimes:xlsx,xls,csv,png,jpg,pdf,doc,docx,jpeg,mp4,webm,ogg,mp3,wav,txt',
             'date' => 'required|date',
         ];

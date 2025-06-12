@@ -199,6 +199,18 @@ class UserCustomerRepository implements UserCustomerInterface
                 'project_customer_status_id' => $request->status_id,
             ]);
         }
+        if ($request->filled('project_level_id') && $request->project_level_id != $customer->project_level_id ){
+
+             $customer->statuses()->create([
+                'project_level_id' => $request->project_level_id,
+                'customer_id' => $customer->customer_id,
+                'user_id' => auth('users')->id(),
+                'description' => $request->report,
+            ]);
+            $customer->update([
+                'project_level_id' => $request->project_level_id,
+            ]);
+        }
 
         $item = $customer->reports()->create([
             'user_id' => auth('users')->id(),
@@ -214,7 +226,7 @@ class UserCustomerRepository implements UserCustomerInterface
         if ($user_project){
             $user_project->update(['total_reports' => $user_project->total_reports + 1]);
         }
-        return helper_response_fetch(new UserCustomerReportResource($item));
+        return helper_response_fetch(new UserCustomerIndexResource($item));
     }
 
     public function all_reports_latest($customer)

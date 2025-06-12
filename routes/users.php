@@ -35,7 +35,6 @@ Route::group(['middleware' => ['auth:users']], function () {
 
 
 
-
         //Statuses
         Route::prefix('{customer}/statuses')->as('statuses.')->group(function () {
 
