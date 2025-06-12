@@ -70,7 +70,7 @@ class UserCustomerRepository implements UserCustomerInterface
             if (!empty(request()->search['phone'])){
                 $data->whereHas('project_customer', function ($project) {
                     $project->whereHas('customer', function ($customer) {
-                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%');
+                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%')->Orwhere('name', 'LIKE', '%' . request()->search['phone'] . '%');
                     });
                 });
             }
@@ -105,7 +105,7 @@ class UserCustomerRepository implements UserCustomerInterface
             if (!empty(request()->search['phone'])){
                 $data->whereHas('project_customer', function ($project) {
                     $project->whereHas('customer', function ($customer) {
-                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%');
+                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%')->Orwhere('name', 'LIKE', '%' . request()->search['phone'] . '%');
                     });
                 });
             }
@@ -142,7 +142,7 @@ class UserCustomerRepository implements UserCustomerInterface
             if (!empty(request()->search['phone'])){
                 $data->whereHas('project_customer', function ($project) {
                     $project->whereHas('customer', function ($customer) {
-                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%');
+                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%')->Orwhere('name', 'LIKE', '%' . request()->search['phone'] . '%');
                     });
                 });
             }
