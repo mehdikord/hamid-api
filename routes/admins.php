@@ -54,7 +54,6 @@ Route::middleware('auth:admins')->group(function () {
         Route::get('statuses/all',[\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'all'])->name('all');
         Route::apiResource('statuses',\App\Http\Controllers\Admins\Projects\ProjectStatusController::class);
 
-
         //Customers
         Route::prefix('{project}/customers')->as('customers.')->group(function () {
             Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'all_customers'])->name('all');

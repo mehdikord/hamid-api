@@ -345,7 +345,7 @@ class ProjectRepository implements ProjectInterface
         $users =[];
         if ($request->filled('divides') && is_array($request->divides)) {
             foreach ($request->divides as $divide) {
-                User_Project_Customer::updateOrcreate(['user_id' => $divide['user_id'],'project_customer_id' => $divide['customer_id']],['position_id' => $divide['position_id']]);
+                User_Project_Customer::updateOrcreate(['start_at' => Carbon::now(),'user_id' => $divide['user_id'],'project_customer_id' => $divide['customer_id']],['position_id' => $divide['position_id']]);
                 $customers[]=$divide['customer_id'];
                 if (!in_array($divide['user_id'], $users)) {
                     $users[] = $divide['user_id'];

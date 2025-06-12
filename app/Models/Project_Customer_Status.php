@@ -16,4 +16,6 @@ class Project_Customer_Status extends Model
     {
         return $this->hasMany(Project_Customer::class,'project_customer_status_id');
     }
+
+
 }

@@ -35,6 +35,22 @@ class CustomerController extends Controller
         return $this->repository->users_index(auth('users')->user());
     }
 
+    public function consultant()
+    {
+        return $this->repository->users_consultants(auth('users')->user());
+    }
+
+    public function seller()
+    {
+        return $this->repository->users_seller(auth('users')->user());
+    }
+
+    public function consultant_old()
+    {
+        return $this->repository->users_consultants_old(auth('users')->user());
+    }
+
+
     public function show(Customer $customer)
     {
         return $this->repository->show($customer);

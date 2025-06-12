@@ -13,6 +13,7 @@ use App\Interfaces\ProjectLevels\ProjectLevelInterface;
 use App\Interfaces\Projects\ProjectCategoryInterface;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Interfaces\Projects\ProjectStatusInterface;
+use App\Interfaces\Projects\UserProjectInterface;
 use App\Interfaces\Reporting\ReportingInterface;
 use App\Interfaces\Tags\TagInterface;
 use App\Interfaces\Users\UserCustomerInterface;
@@ -28,6 +29,7 @@ use App\Repositories\ProjectLevels\ProjectLevelRepository;
 use App\Repositories\Projects\ProjectCategoryRepository;
 use App\Repositories\Projects\ProjectRepository;
 use App\Repositories\Projects\ProjectStatusRepository;
+use App\Repositories\Projects\UserProjectRepository;
 use App\Repositories\Reporting\ReportingRepository;
 use App\Repositories\Tags\TagRepository;
 use App\Repositories\Users\UserCustomerRepository;
@@ -68,6 +70,8 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(ReportingInterface::class,ReportingRepository::class);
 
         $this->app->bind(PositionInterface::class,PositionRepository::class);
+
+        $this->app->bind(UserProjectInterface::class,UserProjectRepository::class);
 
     }
 

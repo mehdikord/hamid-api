@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User_Project_Customer extends Model
 {
-    use HasFactory;
+
     protected $table='user_project_customers';
     protected $guarded=[];
 

@@ -1,5 +1,4 @@
 <?php
-/** @var \Illuminate\Support\Facades\Route $route */
 
 //All Users Routing
 
@@ -23,11 +22,19 @@ Route::group(['middleware' => ['auth:users']], function () {
 
         Route::get('',[\App\Http\Controllers\Users\Profile\ProfileController::class,'index'])->name('index');
         Route::get('projects',[\App\Http\Controllers\Users\Profile\ProfileController::class,'projects'])->name('projects');
-        
+
     });
 
     //Customers
     Route::prefix('customers')->as('customers.')->group(function () {
+
+        Route::get('consultant',[\App\Http\Controllers\Users\Customers\CustomerController::class,'consultant'])->name('consultant');
+        Route::get('consultant/old',[\App\Http\Controllers\Users\Customers\CustomerController::class,'consultant_old'])->name('consultant.old');
+
+        Route::get('seller',[\App\Http\Controllers\Users\Customers\CustomerController::class,'seller'])->name('seller');
+
+
+
 
         //Statuses
         Route::prefix('{customer}/statuses')->as('statuses.')->group(function () {
@@ -85,7 +92,11 @@ Route::group(['middleware' => ['auth:users']], function () {
         Route::put('{customer}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'update'])->name('update');
 
 
+    });
 
+    //Project
+    Route::prefix('projects')->as('projects.')->group(function () {
+        Route::get('all',[\App\Http\Controllers\Users\Products\ProductController::class,'all'])->name('all');
     });
 
 

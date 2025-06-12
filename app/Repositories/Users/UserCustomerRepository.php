@@ -9,10 +9,13 @@ use App\Http\Resources\Users\UserCustomerIndexResource;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Models\Customer;
 use App\Models\Fields\Project_Customer_Field;
+use App\Models\Position;
 use App\Models\Project;
 use App\Models\Project_Customer;
 use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
+use App\Models\Project_Customer_Status;
+use App\Models\Project_Status;
 use App\Models\User_Project;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -22,6 +25,7 @@ class UserCustomerRepository implements UserCustomerInterface
     public function users_index($user)
     {
         $data = $user->customers();
+        $data->where('position_id',helper_data_position_seller());
         if (request()->filled('search')) {
             if (!empty(request()->search['status_id'])){
                 $data->whereHas('project_customer', function ($query) {
@@ -41,9 +45,111 @@ class UserCustomerRepository implements UserCustomerInterface
                 });
             }
         }
-
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(UserCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
+    }
+
+    public function users_consultants($user)
+    {
+        $data = $user->customers();
+        $data->where('position_id',helper_data_position_consultant());
+
+        if (request()->filled('search')) {
+            if (!empty(request()->search['status_id'])){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->where('project_customer_status_id', request()->search['status_id']);
+                });
+            }
+
+            if (!empty(request()->search['project_id'])){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->where('project_id', request()->search['project_id']);
+                });
+            }
+
+            if (!empty(request()->search['phone'])){
+                $data->whereHas('project_customer', function ($project) {
+                    $project->whereHas('customer', function ($customer) {
+                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%');
+                    });
+                });
+            }
+        }
+
+
+        $data->whereHas('project_customer', function ($query){
+            $query->whereNotIn('project_customer_status_id',[helper_data_customer_status_success(),helper_data_customer_status_failed()])->OrWhereNull('project_customer_status_id');
+        });
+        $data->orderBy(request('sort_by'),request('sort_type'));
+        return helper_response_fetch(UserCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
+
+    }
+
+    public function users_consultants_old($user)
+    {
+        $data = $user->customers();
+        $data->where('position_id',helper_data_position_consultant());
+        if (request()->filled('search')) {
+            if (!empty(request()->search['status_id'])){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->where('project_customer_status_id', request()->search['status_id']);
+                });
+            }
+
+            if (!empty(request()->search['project_id'])){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->where('project_id', request()->search['project_id']);
+                });
+            }
+
+            if (!empty(request()->search['phone'])){
+                $data->whereHas('project_customer', function ($project) {
+                    $project->whereHas('customer', function ($customer) {
+                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%');
+                    });
+                });
+            }
+        }
+
+        $data->whereHas('project_customer', function ($query) {
+            $query->whereIn('project_customer_status_id',[helper_data_customer_status_success(),helper_data_customer_status_failed()]);
+        });
+        $data->orderBy(request('sort_by'),request('sort_type'));
+        return helper_response_fetch(UserCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
+
+    }
+    public function users_seller($user)
+    {
+        $data = $user->customers();
+        $data->where('position_id',helper_data_position_seller());
+        if (request()->filled('search')) {
+            if (!empty(request()->search['status_id'])){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->where('project_customer_status_id', request()->search['status_id']);
+                });
+            }
+            if (!empty(request()->search['level_id'])){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->where('project_level_id', request()->search['level_id']);
+                });
+            }
+            if (!empty(request()->search['project_id'])){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->where('project_id', request()->search['project_id']);
+                });
+            }
+
+            if (!empty(request()->search['phone'])){
+                $data->whereHas('project_customer', function ($project) {
+                    $project->whereHas('customer', function ($customer) {
+                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%');
+                    });
+                });
+            }
+        }
+        $data->orderBy(request('sort_by'),request('sort_type'));
+        return helper_response_fetch(UserCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
+
     }
 
     public function statuses_store($customer,$request)
