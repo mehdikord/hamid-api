@@ -57,8 +57,8 @@ Route::middleware('auth:admins')->group(function () {
         //Customers
         Route::prefix('{project}/customers')->as('customers.')->group(function () {
             Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'all_customers'])->name('all');
-            Route::get('pending',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'pending_customers'])->name('pending');
             Route::get('pending/success',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'pending_customers_success'])->name('pending.success');
+            Route::get('pending',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'pending_customers'])->name('pending');
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customers'])->name('get');
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'add_customers'])->name('add');
             Route::delete('{customer}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'delete_customers'])->name('delete');

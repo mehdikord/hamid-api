@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project_Level extends Model
 {
-    use HasFactory;
+
     protected $table = 'project_levels';
     protected $guarded=[];
 

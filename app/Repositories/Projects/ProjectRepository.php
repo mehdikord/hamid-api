@@ -73,18 +73,12 @@ class ProjectRepository implements ProjectInterface
 
     public function pending_customers_success($project)
     {
-        //get level
-        $level = Project_Level::where('name','LIKE','%'.'مشاوره'.'%')->first();
-        $status = Project_Customer_Status::where('name','LIKE','%'.'موفق'.'%')->first();
 
-        if ($level && $status){
-            $data = $project->customers()->where("project_level_id",$level->id)->where('project_customer_status_id',$status->id);
-            $data->with('users',function ($user){
-                $user->where('position_id',1);
-            });
-            return helper_response_fetch(ProjectCustomerShortResource::collection($data->get()));
-        }
-        return helper_response_fetch([]);
+        $data = $project->customers()->where("project_level_id",helper_data_project_level_consultant())->where('project_customer_status_id',helper_data_customer_status_success());
+        $data->with('users',function ($user){
+            $user->where('position_id',1);
+        });
+        return helper_response_fetch(ProjectCustomerShortResource::collection($data->get()));
 
     }
 
@@ -351,7 +345,19 @@ class ProjectRepository implements ProjectInterface
                     $users[] = $divide['user_id'];
                 }
             }
-            $item->customers()->whereIn('id',$customers)->update(['status' => Project_Customer::STATUS_ASSIGNED]);
+            $get_customers = $item->customers()->whereIn('id',$customers)->get();
+            foreach ($get_customers as $customer) {
+                $customer->update(['status' => Project_Customer::STATUS_ASSIGNED]);
+                if ($request->filled('type') && $request->type == 'success'){
+                    $customer->update(['project_level_id' => helper_data_project_level_checkup(),'project_customer_status_id' => helper_data_customer_status_follow()]);
+                    $customer->statuses()->create([
+                        'customer_id' => $customer->customer_id,
+                        'project_level_id' => helper_data_project_level_checkup(),
+                        'customer_status_id' => helper_data_customer_status_follow(),
+                        'description' => 'تخصیص کارشناس فروش بعد از وضعیت موفق'
+                    ]);
+                }
+            }
             foreach ($users as $user_id) {
                 if (!$item->users()->where('user_id',$user_id)->exists()) {
                     $item->users()->create(['user_id' => $user_id]);
