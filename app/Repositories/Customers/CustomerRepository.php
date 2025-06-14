@@ -3,6 +3,7 @@ namespace App\Repositories\Customers;
 use App\Http\Resources\Customers\CustomerAdminIndexResource;
 use App\Http\Resources\Customers\CustomerSingleResource;
 use App\Http\Resources\ImportMethods\ImportMethodIndexResource;
+use App\Http\Resources\Projects\Reports\ProjectReportIndexResource;
 use App\Interfaces\Customers\CustomerInterface;
 use App\Models\Customer;
 use App\Models\Import_Method;
@@ -42,7 +43,7 @@ class CustomerRepository implements CustomerInterface
 
    public function show($item)
    {
-
+       return helper_response_fetch(new CustomerSingleResource($item));
    }
 
    public function update($request, $item)
@@ -87,11 +88,22 @@ class CustomerRepository implements CustomerInterface
 
    public function projects_fields($item, $project)
    {
-
        $project_customer = $item->projects()->where('project_id', $project->id)->first();
        if ($project_customer){
            return helper_response_fetch($project_customer->fields);
        }
+       return helper_response_error('Project not found');
+   }
+
+   public function projects_reports($item,$project)
+   {
+       $project_customer = $item->projects()->where('project_id', $project->id)->first();
+       if ($project_customer){
+           $data = $project_customer->reports();
+           $data->orderBy(request('sort_by'),request('sort_type'));
+           return helper_response_fetch(ProjectReportIndexResource::collection($data->paginate(request('per_page')))->resource);
+       }
+       return helper_response_error('Project not found');
    }
 
 

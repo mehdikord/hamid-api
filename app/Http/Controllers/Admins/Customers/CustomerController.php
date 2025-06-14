@@ -13,7 +13,7 @@ class CustomerController extends Controller
 
     public function __construct(CustomerInterface $customer)
     {
-        $this->middleware('generate_fetch_query_params')->only('index');
+        $this->middleware('generate_fetch_query_params')->only('index','projects_reports');
         $this->repository = $customer;
     }
 
@@ -64,5 +64,11 @@ class CustomerController extends Controller
     public function projects_fields(Customer $customer,Project $project)
     {
         return $this->repository->projects_fields($customer,$project);
+    }
+
+    public function projects_reports(Customer $customer,Project $project)
+    {
+        return $this->repository->projects_reports($customer,$project);
+
     }
 }
