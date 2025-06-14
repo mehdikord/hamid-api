@@ -18,6 +18,8 @@ class CustomerCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'province_id' => 'nullable|exists:provinces,id',
+            'city_id' => 'nullable|exists:cities,id',
             'name' => 'required|string|max:225',
             'email' => 'nullable|string|email|unique:customers,email',
             'phone' => 'required|numeric|unique:customers,phone',

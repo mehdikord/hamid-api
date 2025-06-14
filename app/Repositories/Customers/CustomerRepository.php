@@ -1,8 +1,10 @@
 <?php
 namespace App\Repositories\Customers;
+use App\Http\Resources\Customers\CustomerAdminIndexResource;
 use App\Http\Resources\Customers\CustomerSingleResource;
 use App\Http\Resources\ImportMethods\ImportMethodIndexResource;
 use App\Interfaces\Customers\CustomerInterface;
+use App\Models\Customer;
 use App\Models\Import_Method;
 
 
@@ -11,36 +13,43 @@ class CustomerRepository implements CustomerInterface
 
    public function index()
    {
-       $data = Import_Method::query();
+       $data = Customer::query();
        $data->orderBy(request('sort_by'),request('sort_type'));
-       return helper_response_fetch(ImportMethodIndexResource::collection($data->paginate(request('per_page')))->resource);
+       return helper_response_fetch(CustomerAdminIndexResource::collection($data->paginate(request('per_page')))->resource);
    }
 
     public function all()
     {
-        $data = Import_Method::query();
-        $data->orderByDesc('id');
-        return helper_response_fetch(ImportMethodIndexResource::collection($data->get()));
+
     }
 
    public function store($request)
    {
-       $data = Import_Method::create([
-           'name' => $request->name,
-           'description' => $request->description,
-
+       $data = Customer::create([
+           'province_id' =>  $request->province_id,
+           'city_id' =>  $request->city_id,
+           'name' =>  $request->name,
+           'email' =>  $request->email,
+           'phone' =>  $request->phone,
+           'national_code' =>   $request->national_code,
+           'gender' =>  $request->gender,
+           'instagram_id' =>   $request->instagram_id,
+           'description' =>  $request->description,
        ]);
-       return helper_response_fetch(new ImportMethodIndexResource($data));
+       $data->load(['province','city']);
+       return helper_response_fetch(new CustomerAdminIndexResource($data));
    }
 
    public function show($item)
    {
-       return helper_response_fetch(new CustomerSingleResource($item));
+
    }
 
    public function update($request, $item)
    {
        $item->update([
+           'province_id' =>  $request->province_id,
+           'city_id' =>  $request->city_id,
            'name' => $request->name,
            'email' => $request->email,
            'phone' => $request->phone,
@@ -48,7 +57,6 @@ class CustomerRepository implements CustomerInterface
            'instagram_id' => $request->instagram_id,
            'tel' => $request->tel,
            'address' => $request->address,
-           'job' => $request->job,
            'postal_code' => $request->postal_code,
            'description' => $request->description,
        ]);
@@ -68,7 +76,7 @@ class CustomerRepository implements CustomerInterface
        }
 
 
-       return helper_response_updated(new CustomerSingleResource($item));
+       return helper_response_updated(new CustomerAdminIndexResource($item));
    }
 
    public function destroy($item)

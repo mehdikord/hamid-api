@@ -18,7 +18,7 @@ class CustomerUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:225',
+            'name' => 'nullable|string|max:225',
             'email' => "nullable|string|email|unique:customers,email,".$this->customer->id,
             'phone' => "required|numeric|unique:customers,phone,".$this->customer->id,
             'national_code' => "nullable|numeric|unique:customers,national_code,".$this->customer->id,

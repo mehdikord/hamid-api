@@ -28,8 +28,8 @@ Route::middleware('auth:admins')->group(function () {
 //
 //        });
     });
-
     Route::apiResource('users',\App\Http\Controllers\Admins\Users\UserController::class);
+
 
     Route::prefix('dashboards')->as('dashboards.')->group(function () {
        Route::prefix('reports')->as('reports.')->group(function () {
