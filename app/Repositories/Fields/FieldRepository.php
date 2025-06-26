@@ -34,6 +34,15 @@ class FieldRepository implements FieldInterface
            'description' => $request->description,
 
        ]);
+       if ($request->filled('options')) {
+           foreach ($request->options as $option) {
+               if ($option['option']) {
+                   $data->options()->create([
+                       'option' => $option['option'],
+                   ]);
+               }
+           }
+       }
        return helper_response_fetch(new FieldIndexResource($data));
    }
 
@@ -51,6 +60,17 @@ class FieldRepository implements FieldInterface
            'default' => $request->default,
            'description' => $request->description,
        ]);
+       if ($request->filled('options')) {
+           $item->options()->delete();
+           foreach ($request->options as $option) {
+               if ($option['option']) {
+                   $item->options()->create([
+                       'option' => $option['option'],
+                   ]);
+               }
+           }
+       }
+
        return helper_response_updated(new FieldIndexResource($item));
    }
 
