@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Projects\Projects;
 
+use App\Http\Resources\Fields\FieldIndexResource;
 use App\Http\Resources\Projects\Categories\ProjectCategoryShortResource;
 use App\Http\Resources\Projects\levels\ProjectLevelIndexResource;
 use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
@@ -46,7 +47,7 @@ class ProjectSingleResource extends JsonResource
             'updated_at' => $this->updated_at,
             'category' => new ProjectCategoryShortResource($this->category),
             'status' => new ProjectStatusShortResource($this->status),
-            'fields' => $this->fields,
+            'fields' => FieldIndexResource::collection($this->fields),
             'positions' => ProjectPositionResource::collection($this->positions),
             'levels' => ProjectLevelIndexResource::collection($this->levels)
         ];

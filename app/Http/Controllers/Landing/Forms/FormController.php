@@ -33,7 +33,7 @@ class FormController extends Controller
             //Find Customer
             $customer = Customer::where('phone','LIKE','%'. $phone .'%')->first();
             if ($customer){
-                $customer->update(['name' =>  $request->name]);
+                $customer->update(['name' =>  $request->name,'description' => $request->description]);
                 //check customer in project
                 $project_customer = $project->customers()->where('customer_id',$customer->id)->first();
                 if ($project_customer){
@@ -66,6 +66,7 @@ class FormController extends Controller
                 $customer = Customer::create([
                     'phone' => $phone,
                     'name' => $request->name,
+                    'description' => $request->description,
                 ]);
                 $project_customer = $project->customers()->create([
                     'customer_id' => $customer->id,
