@@ -3,6 +3,7 @@
 namespace App\Models;
 
 
+use App\Models\Scopes\MemberScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,11 +24,15 @@ class User extends Authenticatable implements JWTSubject
      */
    protected $guarded = [];
 
-    protected static function booted(): void
+    protected static function booted()
     {
-//        static::creating(static function ($model) {
-//            $model->created_by = auth()->id();
-//        });
+        static::addGlobalScope(new MemberScope);
+        static::creating(function ($model) {
+            if (helper_auth_is_member()){
+                $model->member_id = auth('admins')->id();
+            }
+        });
+
     }
 
     /**
@@ -48,6 +53,7 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
 
     public function getJWTIdentifier()
     {

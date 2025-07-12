@@ -41,3 +41,8 @@ function helper_auth_otp_make_code($phone): void
 
 }
 
+function helper_auth_is_member()
+{
+    return auth('admins')->check() && auth('admins')->user()->type === 'user';
+}
+

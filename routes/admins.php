@@ -13,10 +13,13 @@ Route::prefix('auth')->group(function () {
 
 Route::middleware('auth:admins')->group(function () {
 
+    Route::group(['prefix' => 'members','as' => 'members.'], function () {
+
+        Route::post('{member}/change/password',[\App\Http\Controllers\Admins\Members\MemberController::class, 'change_password'])->name('change.password');
+    });
+    Route::apiResource('members',\App\Http\Controllers\Admins\Members\MemberController::class);
 
     Route::prefix('users')->as('users.')->group(function () {
-
-
 
         Route::get('all',[\App\Http\Controllers\Admins\Users\UserController::class, 'all'])->name('all');
         Route::get('{user}/activation',[\App\Http\Controllers\Admins\Users\UserController::class, 'activation'])->name('activation');
@@ -29,7 +32,6 @@ Route::middleware('auth:admins')->group(function () {
 //        });
     });
     Route::apiResource('users',\App\Http\Controllers\Admins\Users\UserController::class);
-
 
     Route::prefix('dashboards')->as('dashboards.')->group(function () {
        Route::prefix('reports')->as('reports.')->group(function () {
@@ -151,7 +153,6 @@ Route::middleware('auth:admins')->group(function () {
     });
     Route::apiResource('customers',\App\Http\Controllers\Admins\Customers\CustomerController::class);
 
-
     //Tags
     Route::get('tags/all',[\App\Http\Controllers\Admins\Tags\TagController::class, 'all'])->name('tags.all');
     Route::apiResource('tags',\App\Http\Controllers\Admins\Tags\TagController::class);
@@ -170,8 +171,6 @@ Route::middleware('auth:admins')->group(function () {
        });
 
     });
-
-
 
 
 });

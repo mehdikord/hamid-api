@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Fields\Field;
+use App\Models\Scopes\MemberScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,18 +11,28 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
-    use HasFactory;
+
     protected $table = 'projects';
     protected $guarded=[];
 
     protected static function booted(): void
     {
+        static::addGlobalScope(new MemberScope);
+
         static::creating(static function ($model) {
             $model->created_by = auth()->id();
+            if (helper_auth_is_member()){
+                $model->member_id = auth('admins')->id();
+            }
         });
         static::updating(static function ($model) {
             $model->updated_by = auth()->id();
         });
+    }
+
+    public function member(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'member_id');
     }
     public function category(): BelongsTo
     {

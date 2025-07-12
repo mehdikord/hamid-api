@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Auth;
+namespace App\Http\Resources\Members;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $profile
  * @property mixed $config
  */
-class AdminInfoAuthResource extends JsonResource
+class MemberIndexResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -24,8 +24,10 @@ class AdminInfoAuthResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'phone' => $this->phone,
             'email' => $this->email,
-            'type' => $this->type,
+            'is_active' => $this->is_active,
+            'created_at' => $this->created_at,
         ];
     }
 }
