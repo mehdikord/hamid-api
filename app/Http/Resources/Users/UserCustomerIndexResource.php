@@ -34,6 +34,7 @@ class UserCustomerIndexResource extends JsonResource
             'project' => new ProjectShortResource($this->project_customer->project),
             'target_price' => $this->target_price,
             'start_at' => $this->start_at,
+            'created_at' => $this->created_at,
             'end_at' => $this->end_at,
             'description' => $this->description,
             'status' => new ProjectStatusShortResource($this->project_customer->project_status),

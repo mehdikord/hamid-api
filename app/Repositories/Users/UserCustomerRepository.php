@@ -229,6 +229,12 @@ class UserCustomerRepository implements UserCustomerInterface
         return helper_response_fetch(new UserCustomerIndexResource($item));
     }
 
+    public function reports_delete($item)
+    {
+
+
+    }
+
     public function all_reports_latest($customer)
     {
         $projects = helper_core_get_user_customer_access($customer);

@@ -14,6 +14,7 @@ use App\Interfaces\Users\UserCustomerInterface;
 use App\Models\Customer;
 use App\Models\Project;
 use App\Models\Project_Customer;
+use App\Models\Project_Customer_Report;
 
 class CustomerController extends Controller
 {
@@ -82,6 +83,12 @@ class CustomerController extends Controller
     public function reports_store(Project_Customer $customer,UserCustomerReportStoreRequest $request)
     {
         return $this->repository->reports_store($customer,$request);
+    }
+
+    public function reports_delete(Project_Customer $customer,Project_Customer_Report $report)
+    {
+        return $this->repository->reports_delete($report);
+
     }
 
     public function invoices_index(Customer $customer)

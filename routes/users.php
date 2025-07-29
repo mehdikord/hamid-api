@@ -46,6 +46,7 @@ Route::group(['middleware' => ['auth:users']], function () {
         Route::prefix('{customer}/reports')->as('reports.')->group(function () {
             Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'reports_store'])->name('store');
             Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'reports_index'])->name('index');
+            Route::delete('{report}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'reports_delete'])->name('delete');
             Route::get('latest',[\App\Http\Controllers\Users\Customers\CustomerController::class,'all_reports_latest'])->name('latest');
 
         });

@@ -20,6 +20,8 @@ interface UserCustomerInterface
     //Reports
     public function reports_store($customer,$request);
 
+    public function reports_delete($item);
+
 
     public function all_reports_latest($customer);
     public function reports_index($customer);
