@@ -122,6 +122,12 @@ class ProjectController extends Controller
         return $this->repository->delete_customers($project,$customer);
     }
 
+    public function delete_multi(Project $project,Request $request)
+    {
+        return $this->repository->delete_multi($project,$request);
+
+    }
+
     public function assigned_customers(Project $project,ProjectCustomersAssignedRequest $request)
     {
         return $this->repository->assigned_customers($project,$request);
@@ -130,6 +136,11 @@ class ProjectController extends Controller
     public function assigned_customers_single(Project $project,Request $request)
     {
         return $this->repository->assigned_customers_single($project,$request);
+    }
+
+    public function assigned_customers_multi(Project $project,Request $request)
+    {
+        return $this->repository->assigned_customers_multi($project,$request);
     }
 
     public function reports(Project $project)

@@ -64,8 +64,10 @@ Route::middleware('auth:admins')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customers'])->name('get');
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'add_customers'])->name('add');
             Route::delete('{customer}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'delete_customers'])->name('delete');
+            Route::post('delete/multi',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'delete_multi'])->name('delete_multi');
             Route::post('assigned',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'assigned_customers'])->name('assign');
             Route::post('assigned/single',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'assigned_customers_single'])->name('assign.single');
+            Route::post('assigned/multi',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'assigned_customers_multi'])->name('assign.multi');
             Route::post('change/status',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_status'])->name('change.status');
             Route::post('change/level',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_level'])->name('change.level');
         });

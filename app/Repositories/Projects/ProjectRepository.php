@@ -333,6 +333,15 @@ class ProjectRepository implements ProjectInterface
         return helper_response_deleted();
     }
 
+    public function delete_multi($project, $request)
+    {
+        $project_customers = Project_Customer::whereIn('id',$request->ids)->get();
+        foreach ($project_customers as $project_customer){
+            $this->delete_customers($project,$project_customer);
+        }
+        return helper_response_deleted();
+    }
+
     public function assigned_customers($item,$request)
     {
         $customers=[];
@@ -391,6 +400,30 @@ class ProjectRepository implements ProjectInterface
         $data->update(['status' => Project_Customer::STATUS_ASSIGNED]);
         $item->users()->updateOrCreate(['user_id' => $request->user_id,'position_id' => $request->position_id],[]);
         return helper_response_fetch(new ProjectCustomerIndexResource($data));
+    }
+
+    public function assigned_customers_multi($item, $request)
+    {
+        if ($request->filled('items') && is_array($request->items)) {
+            foreach ($request->items as $customer) {
+                $current_user = User_Project_Customer::where('position_id',$request->position_id)->where('project_customer_id',$customer)->first();
+                $target=null;
+                if ($current_user){
+                    $target = $current_user->target_price;
+                    $current_user->delete();
+                }
+                User_Project_Customer::create([
+                    'user_id' => $request->user_id,
+                    'project_customer_id' => $customer,
+                    'position_id' => $request->position_id,
+                    'description' => $request->description,
+                    'target_price' => $target,
+                    'start_at' => Carbon::now(),
+                ]);
+            }
+            $item->users()->updateOrCreate(['user_id' => $request->user_id,'position_id' => $request->position_id],[]);
+        }
+        return helper_response_updated('');
     }
 
     public function reports($item)

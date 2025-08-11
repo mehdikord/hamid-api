@@ -31,8 +31,12 @@ interface ProjectInterface
 
     public function delete_customers($project,$item);
 
+    public function delete_multi($project,$request);
+
     public function assigned_customers($item,$request);
     public function assigned_customers_single($item,$request);
+
+    public function assigned_customers_multi($item,$request);
 
     public function reports($item);
     public function reports_store($item,$request);
