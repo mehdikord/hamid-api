@@ -19,5 +19,7 @@ interface CustomerInterface
     public function projects_fields($item,$project);
     public function projects_reports($item,$project);
 
+    public function projects_invoices($item,$project);
+
 
 }

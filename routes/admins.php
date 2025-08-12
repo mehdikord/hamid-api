@@ -149,6 +149,7 @@ Route::middleware('auth:admins')->group(function () {
         Route::prefix('{customer}/projects')->as('projects.')->group(function () {
             Route::get('{project}/fields',[\App\Http\Controllers\Admins\Customers\CustomerController::class,'projects_fields'])->name('fields');
             Route::get('{project}/reports',[\App\Http\Controllers\Admins\Customers\CustomerController::class,'projects_reports'])->name('reports');
+            Route::get('{project}/invoices',[\App\Http\Controllers\Admins\Customers\CustomerController::class,'projects_invoices'])->name('invoices');
 
         });
 
