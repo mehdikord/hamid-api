@@ -157,16 +157,17 @@ class ProjectRepository implements ProjectInterface
             foreach ($excel[0] as $key => $value) {
                 if ($value['1']){
                     if (mb_substr($value['1'], 0, 1, 'UTF-8') != '0'){
-                        $value['1'] = '0'.$value['1'];
+                        $value['0'] = '0'.$value['0'];
                     }
                 }
-                $customer = Customer::where('phone',$value[1])->first();
+                $customer = Customer::where('phone',$value[0])->first();
                 if ($customer && $item->customers()->where('customer_id',$customer->id)->exists()) {
-                    $exists_projects[] = $value[1];
+                    $exists_projects[] = $value[0];
                 }else{
                     if (!$customer){
                         $customer = Customer::create([
-                            'phone' => $value[1],
+                            'phone' => $value[0],
+                            'name' => $value[1],
                             'instagram_id' => $value[2],
                         ]);
                     }
@@ -179,6 +180,7 @@ class ProjectRepository implements ProjectInterface
                         'customer_id' => $customer->id,
                         'import_method_id' => $request->import_method_id,
                         'import_at' => $import_date,
+                        'created_at' => $import_date,
                         'description' => $request->description,
                         'status' => Project_Customer::STATUS_PENDING,
                     ]);
