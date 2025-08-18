@@ -212,6 +212,7 @@ class ProjectRepository implements ProjectInterface
                         }
                         $new_customer = $item->customers()->create([
                             'customer_id' => $customer->id,
+                            'import_method_id' => $request->import_method_id,
                             'import_at' => Carbon::now(),
                             'description' => $request->description,
                             'status' => Project_Customer::STATUS_PENDING,
