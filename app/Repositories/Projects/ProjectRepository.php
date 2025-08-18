@@ -155,8 +155,8 @@ class ProjectRepository implements ProjectInterface
             $excel = Excel::toArray([], request()->file('excel'));
             $import_date = null;
             foreach ($excel[0] as $key => $value) {
-                if ($value['1']){
-                    if (mb_substr($value['1'], 0, 1, 'UTF-8') != '0'){
+                if ($value['0']){
+                    if (mb_substr($value['0'], 0, 1, 'UTF-8') != '0'){
                         $value['0'] = '0'.$value['0'];
                     }
                 }

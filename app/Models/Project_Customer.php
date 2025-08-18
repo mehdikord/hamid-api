@@ -73,4 +73,9 @@ class Project_Customer extends Model
     {
         return $this->morphToMany(Tag::class, 'taggable','taggable');
     }
+
+    public function import_method(): BelongsTo
+    {
+        return $this->belongsTo(Import_Method::class, 'import_method_id');
+    }
 }
