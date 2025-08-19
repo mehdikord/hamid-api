@@ -70,6 +70,7 @@ Route::middleware('auth:admins')->group(function () {
             Route::post('assigned/multi',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'assigned_customers_multi'])->name('assign.multi');
             Route::post('change/status',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_status'])->name('change.status');
             Route::post('change/level',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_level'])->name('change.level');
+            Route::post('change/target',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_target'])->name('change.target');
         });
 
         //Project Fields
@@ -93,7 +94,6 @@ Route::middleware('auth:admins')->group(function () {
         });
 
 
-
         Route::prefix('{project}/levels')->as('levels.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_levels'])->name('get');
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_levels'])->name('store');
@@ -115,9 +115,15 @@ Route::middleware('auth:admins')->group(function () {
             Route::get('settle/{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_settle'])->name('change_settle');
             Route::post('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_update'])->name('update');
             Route::delete('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_destroy'])->name('destroy');
-
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_invoices'])->name('get_latest_invoices');
 
+        });
+
+
+        //Exports
+        Route::group(['prefix' => '{project}/export','as' => 'export.'],function(){
+
+            Route::get('customers',[\App\Http\Controllers\Admins\Projects\ProjectsExportController::class,'customers'])->name('customers')->withoutMiddleware('auth:admins');
         });
 
 

@@ -28,6 +28,7 @@ interface ProjectInterface
 
     public function customers_change_status($request,$item);
     public function customers_change_level($request,$item);
+    public function customers_change_target($request,$item);
 
     public function delete_customers($project,$item);
 
@@ -81,6 +82,9 @@ interface ProjectInterface
     public function destroy_forms($project,$item);
 
     public function activation_forms($project,$item);
+
+    //Exports
+    public function export_customers($project);
 
 
 

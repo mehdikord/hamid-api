@@ -117,6 +117,11 @@ class ProjectController extends Controller
         return $this->repository->customers_change_level($request,$project);
     }
 
+    public function customers_change_target(Project $project,Request $request)
+    {
+        return $this->repository->customers_change_target($request,$project);
+    }
+
     public function delete_customers(Project $project,Project_Customer $customer)
     {
         return $this->repository->delete_customers($project,$customer);

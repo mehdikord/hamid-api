@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Projects;
 
+use App\Exports\ProjectCustomersExport;
 use App\Http\Resources\Fields\FieldIndexResource;
 use App\Http\Resources\Positions\PositionsShortResource;
 use App\Http\Resources\Projects\Forms\ProjectFromIndexResource;
@@ -318,6 +319,21 @@ class ProjectRepository implements ProjectInterface
         $project_customer = $item->customers()->find($request->project_customer_id);
         if ($project_customer){
             $project_customer->update(['project_level_id' => $request->level_id]);
+            return helper_response_updated(new ProjectCustomerIndexResource($project_customer));
+        }
+        return helper_response_error('Project Customer not found');
+    }
+
+    public function customers_change_target($request, $item)
+    {
+        $project_customer = $item->customers()->find($request->project_customer_id);
+        if ($project_customer){
+            if ($request->users){
+                foreach ($request->users as $user){
+                    $get_user = $project_customer->users()->find($user['id']);
+                    $get_user->update(['target_price' => $user['price']]);
+                }
+            }
             return helper_response_updated(new ProjectCustomerIndexResource($project_customer));
         }
         return helper_response_error('Project Customer not found');
@@ -682,6 +698,50 @@ class ProjectRepository implements ProjectInterface
     {
         $item->update(['is_active' => !$item->is_active]);
         return helper_response_updated([]);
+    }
+
+    public function export_customers($project)
+    {
+        $header = [
+            'نام',
+            'موبایل',
+            'اینستاگرام',
+        ];
+        foreach ($project->fields()->orderBy('id','asc')->get() as $field){
+            $header[] = $field->title;
+        }
+
+        $result=[];
+
+        $data = $project->customers();
+        $data->with('customer',function ($query){
+            $query->select(['id','name','phone','instagram_id']);
+        });
+        $data->with('fields',function ($query){
+            $query->select(['id','val','field_id']);
+        });
+        $data->with('fields.field',function ($query){
+            $query->select(['id','title']);
+        });
+        foreach ($data->get() as $item){
+            $fields = [];
+            foreach ($item->fields as $field){
+                $fields[] = $field->val;
+            }
+
+            $result[]=[
+                'name'=> $item->customer->name,
+                'phone'=> $item->customer->phone,
+                'instagram_id'=> $item->customer->instagram_id,
+                'field_one' => $fields[0] ?? '',
+                'field_two' => $fields[1] ?? ''
+            ];
+        }
+
+        return Excel::download(new ProjectCustomersExport($result,$header), 'users.xlsx');
+
+
+
     }
 
 }
