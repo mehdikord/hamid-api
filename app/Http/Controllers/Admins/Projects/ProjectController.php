@@ -159,6 +159,11 @@ class ProjectController extends Controller
 
     }
 
+    public function reports_download(Project $project,Project_Customer_Report $report)
+    {
+        return $this->repository->reports_download($project,$report);
+    }
+
     public function reports_update(Project $project,Project_Customer_Report $report,Request $request)
     {
         return $this->repository->reports_update($project,$report,$request);
@@ -186,6 +191,12 @@ class ProjectController extends Controller
     public function invoices_settle(Project $project,Project_Customer_Invoice $invoice)
     {
         return $this->repository->invoices_settle($project,$invoice);
+
+    }
+
+    public function invoices_download(Project $project,Project_Customer_Invoice $invoice)
+    {
+        return $this->repository->invoices_download($project,$invoice);
 
     }
 

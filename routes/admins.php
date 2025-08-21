@@ -104,19 +104,19 @@ Route::middleware('auth:admins')->group(function () {
         Route::prefix('{project}/reports')->as('reports.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports'])->name('index');
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_store'])->name('store');
+            Route::get('download/{report}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_download'])->name('download');
             Route::post('{report}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_update'])->name('update');
             Route::delete('{report}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_destroy'])->name('destroy');
-
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_reports'])->name('get_latest_reports');
         });
 
         Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices'])->name('index');
             Route::get('settle/{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_settle'])->name('change_settle');
+            Route::get('download/{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_download'])->name('download');
             Route::post('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_update'])->name('update');
             Route::delete('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_destroy'])->name('destroy');
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_invoices'])->name('get_latest_invoices');
-
         });
 
 

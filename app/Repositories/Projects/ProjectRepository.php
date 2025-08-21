@@ -525,6 +525,24 @@ class ProjectRepository implements ProjectInterface
         return helper_response_updated(new ProjectInvoiceIndexResource($invoice));
     }
 
+    public function invoices_download($project, $invoice)
+    {
+        if ($invoice->file_url){
+           return Storage::download($invoice->file_path,$invoice->file_name);
+        }
+        return helper_response_error('nofile');
+
+
+    }
+
+   public function reports_download($project, $report)
+   {
+       if ($report->file_url){
+           return Storage::download($report->file_path,$report->file_name);
+        }
+        return helper_response_error('nofile');
+   }
+
     public function invoices_destroy($project, $invoice)
     {
         $user_project = User_Project::where('project_id', $project->id)->where('user_id',$invoice->user_id)->first();
