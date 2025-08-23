@@ -112,6 +112,7 @@ Route::middleware('auth:admins')->group(function () {
 
         Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices'])->name('index');
+            Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_store'])->name('store');
             Route::get('settle/{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_settle'])->name('change_settle');
             Route::get('download/{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_download'])->name('download');
             Route::post('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_update'])->name('update');

@@ -11,6 +11,7 @@ use App\Http\Requests\Projects\Forms\ProjectFormsUpdateRequest;
 use App\Http\Requests\Projects\Invoices\ProjectInvoiceUpdateRequest;
 use App\Http\Requests\Projects\levels\ProjectLevelPriorityRequest;
 use App\Http\Requests\Projects\levels\ProjectLevelRequest;
+use App\Http\Requests\Projects\Projects\Invoices\ProjectInvoiceCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectCustomersCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectUpdateRequest;
@@ -175,6 +176,12 @@ class ProjectController extends Controller
     public function invoices(Project $project)
     {
         return $this->repository->invoices($project);
+
+    }
+
+    public function invoices_store(Project $project,ProjectInvoiceCreateRequest $request)
+    {
+        return $this->repository->invoices_store($project,$request);
 
     }
 

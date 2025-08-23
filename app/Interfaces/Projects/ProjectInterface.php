@@ -56,6 +56,9 @@ interface ProjectInterface
     public function invoices_destroy($project,$invoice);
 
     public function invoices($item);
+
+    public function invoices_store($item,$request);
+
     public function get_latest_reports($item);
 
     public function get_latest_invoices($item);

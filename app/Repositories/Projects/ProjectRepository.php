@@ -18,6 +18,7 @@ use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Customer;
 use App\Models\Project;
 use App\Models\Project_Customer;
+use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
 use App\Models\Project_Customer_Status;
 use App\Models\Project_Level;
@@ -571,6 +572,54 @@ class ProjectRepository implements ProjectInterface
 
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(ProjectInvoiceIndexResource::collection($data->paginate(request('per_page')))->resource);
+    }
+
+    public function invoices_store($item,$request)
+    {
+
+         //find customer_project
+        $customer_project = Project_Customer::find($request->project_customer_id);
+        if ($customer_project){
+            $file_url = null;
+            $file_size = null;
+            $file_path = null;
+            $file_name = null;
+            if ($request->hasFile('file')){
+                $file_name = $request->file('file')->getClientOriginalName();
+                $file_size = $request->file('file')->getSize();
+                $file_path = Storage::put('public/users/invoices/'.$customer_project->customer_id.'/', $request->file('file'),'public');
+                $file_url = Storage::url($file_path);
+            }
+            $date = \Illuminate\Support\Carbon::now();
+            if ($request->filled('date')){
+                $date = Carbon::make($request->date);
+            }
+
+            //find project customer user
+            $user = $customer_project->users()->where('user_id',$request->user_id)->first();
+            if($user){
+                if($request->target_price){
+                    $user->update(['target_price' => $request->target_price]);
+                }
+
+            }
+
+            $data = Project_Customer_Invoice::create([
+                'project_id' => $item->id,
+                'project_customer_id' =>  $request->project_customer_id,
+                'user_id' => $request->user_id,
+                'admin_id' => auth('admins')->id(),
+                'description' => $request->description,
+                'amount' => $request->amount,
+                'file_path' => $file_path,
+                'file_url' => $file_url,
+                'file_size' => $file_size,
+                'file_name' => $file_name,
+                'created_at' => $date,
+            ]);
+            return helper_response_created(new ProjectInvoiceIndexResource($data));
+        }
+
     }
 
     public function get_latest_reports($item)
