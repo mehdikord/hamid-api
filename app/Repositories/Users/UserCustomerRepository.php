@@ -288,9 +288,6 @@ class UserCustomerRepository implements UserCustomerInterface
             'national_code' => $request->national_code,
             'instagram_id' => $request->instagram_id,
             'tel' => $request->tel,
-            'job' => $request->job,
-            'register_reason' => $request->register_reason,
-            'obstacles' => $request->obstacles,
             'address' => $request->address,
             'postal_code' => $request->postal_code,
         ]);
