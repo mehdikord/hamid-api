@@ -285,6 +285,8 @@ class UserCustomerRepository implements UserCustomerInterface
         $customer->update([
             'name' => $request->name,
             'email' => $request->email,
+            'province_id' => $request->province_id,
+            'city_id' => $request->city_id,
             'national_code' => $request->national_code,
             'instagram_id' => $request->instagram_id,
             'tel' => $request->tel,

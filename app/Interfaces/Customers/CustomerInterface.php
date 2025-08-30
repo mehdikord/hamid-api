@@ -21,5 +21,7 @@ interface CustomerInterface
 
     public function projects_invoices($item,$project);
 
+    public function projects_statuses($item,$project);
+
 
 }

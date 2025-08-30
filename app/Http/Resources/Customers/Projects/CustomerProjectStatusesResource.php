@@ -26,10 +26,9 @@ class CustomerProjectStatusesResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'phone' => $this->phone,
-            'email' => $this->email,
-            'instagram_id' => $this->instagram_id,
-            'created_at' => $this->created_at
+            'color' => $this->color,
+            'description' => $this->description,
+            'created_at' => $this->created_at,
         ];
     }
 }

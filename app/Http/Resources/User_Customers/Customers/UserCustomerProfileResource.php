@@ -28,6 +28,8 @@ class UserCustomerProfileResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'proinvce_id' => $this->province_id,
+            'city_id' => $this->city_id,
             'phone' => $this->phone,
             'email' => $this->email,
             'national_code' => $this->national_code,

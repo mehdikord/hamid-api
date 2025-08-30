@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Users;
 
 use App\Http\Resources\Customers\CustomerIndexResource;
+use App\Http\Resources\ImportMethods\ImportMethodShortResource;
 use App\Http\Resources\Projects\Projects\ProjectShortResource;
 use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
 use App\Http\Resources\User_Customers\UserCustomerReportResource;
@@ -44,6 +45,8 @@ class UserCustomerIndexResource extends JsonResource
             'reports_count' => $this->project_customer->reports()->count(),
             'invoices_count' => $this->project_customer->invoices()->count(),
             'sum_invoices' => $this->project_customer->invoices()->sum('amount'),
+            'import_method' => new ImportMethodShortResource($this->import_method)
+
         ];
     }
 }
