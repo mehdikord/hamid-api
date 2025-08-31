@@ -14,6 +14,7 @@ use App\Http\Resources\Projects\Projects\ProjectPositionResource;
 use App\Http\Resources\Projects\Projects\ProjectShortResource;
 use App\Http\Resources\Projects\Projects\ProjectSingleResource;
 use App\Http\Resources\Projects\Reports\ProjectReportIndexResource;
+use App\Http\Resources\Users\UserProjectCustomerResource;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Customer;
 use App\Models\Project;
@@ -163,8 +164,14 @@ class ProjectRepository implements ProjectInterface
                     }
                 }
                 $customer = Customer::where('phone',$value[0])->first();
-                if ($customer && $item->customers()->where('customer_id',$customer->id)->exists()) {
-                    $exists_projects[] = $value[0];
+                $find_customer = $item->customers()->where('customer_id',$customer->id)->first();
+                if ($customer && $find_customer) {
+                    $exists_projects[] = [
+                        'phone' => $value[0],
+                        'created_at' => $find_customer->created_at,
+                        'users' => UserProjectCustomerResource::collection($find_customer->users),
+                    ];
+
                 }else{
                     if (!$customer){
                         $customer = Customer::create([
@@ -204,9 +211,15 @@ class ProjectRepository implements ProjectInterface
                         $number = '0'.$number;
                     }
                     $customer = Customer::where('phone',$number)->first();
-                    if ($customer && $item->customers()->where('customer_id',$customer->id)->exists()) {
-                        $exists_projects[] = $number;
-                    }else{
+                    $find_customer = $item->customers()->where('customer_id',$customer->id)->first();
+                    if ($customer && $find_customer) {
+                        $exists_projects[] = [
+                            'phone' => $number,
+                            'created_at' => $find_customer->created_at,
+                            'users' => UserProjectCustomerResource::collection($find_customer->users),
+                        ];
+
+                }else{
                         if (!$customer){
                             $customer = Customer::create([
                                 'phone' => $number,

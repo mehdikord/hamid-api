@@ -32,5 +32,10 @@ class User_Project_Customer_Status extends Model
         return $this->belongsTo(Project_Customer_Status::class,'customer_status_id');
     }
 
+    public function level():BelongsTo
+    {
+        return $this->belongsTo(Project_Level::class,'project_level_id');
+    }
+
 
 }
