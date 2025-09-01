@@ -55,17 +55,36 @@ class ProjectRepository implements ProjectInterface
    {
        $data = $project->customers();
        $data->where('status', Project_Customer::STATUS_PENDING);
-       if (request()->filled('search') && request()->search !== 'all'){
-           if (request()->search === 'has_name'){
-               $data->whereHas('customer',function ($query){
-                   $query->whereNotNull('name');
-               });
-           }else{
-               $data->whereHas('customer',function ($query){
-                   $query->whereNull('name');
-               });
-           }
+
+       if (request()->filled('search')){
+
+            if (isset(request()->search['has_name']) && request()->search['has_name'] != 'all'){
+                if (request()->search['has_name'] == '1'){
+                    $data->whereHas('customer',function ($query){
+                        $query->whereNotNull('name');
+                    });
+                }else{
+                    $data->whereHas('customer',function ($query){
+                        $query->whereNull('name');
+                    });
+                }
+            }
+            if(isset(request()->search['import_method_id'])){
+                $data->where('import_method_id',request()->search['import_method_id']);
+            }
+            if(isset(request()->search['tag'])){
+                $data->whereHas('tags',function ($query){
+                    $query->where('tag_id',request()->search['tag']);
+                });
+            }
+            if(isset(request()->search['from_date']) && !empty(request()->search['from_date'])){
+                $data->where('created_at','>=',request()->search['from_date']);
+            }
+            if(isset(request()->search['to_date']) && !empty(request()->search['to_date'])){
+                $data->where('created_at','<=',request()->search['to_date']);
+            }
        }
+
        if (request()->filled('total') && is_numeric(request()->total) && request()->total > 0){
            $result = $data->take(request()->total)->get();
        }else{
