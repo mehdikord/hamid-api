@@ -434,6 +434,7 @@ class ProjectRepository implements ProjectInterface
         if ($request->filled('user_id') && $request->filled('project_customer_id')) {
             $target = null;
             $current_user = User_Project_Customer::where('position_id',$request->position_id)->where('project_customer_id',$request->project_customer_id)->first();
+            User_Project_Customer::where('position_id',$request->position_id)->where('project_customer_id',$request->project_customer_id)->delete();
             if ($current_user){
                 $target = $current_user->target_price;
                 $current_user->delete();
@@ -446,11 +447,12 @@ class ProjectRepository implements ProjectInterface
                 'target_price' => $target,
                 'start_at' => Carbon::now(),
             ]);
+                 //get project customer
+            $data = $item->customers()->find($request->project_customer_id);
+            $data->update(['status' => Project_Customer::STATUS_ASSIGNED]);
+            $item->users()->updateOrCreate(['user_id' => $request->user_id,'position_id' => $request->position_id],[]);
         }
-        //get project customer
-        $data = $item->customers()->find($request->project_customer_id);
-        $data->update(['status' => Project_Customer::STATUS_ASSIGNED]);
-        $item->users()->updateOrCreate(['user_id' => $request->user_id,'position_id' => $request->position_id],[]);
+
         return helper_response_fetch(new ProjectCustomerIndexResource($data));
     }
 
@@ -459,6 +461,7 @@ class ProjectRepository implements ProjectInterface
         if ($request->filled('items') && is_array($request->items)) {
             foreach ($request->items as $customer) {
                 $current_user = User_Project_Customer::where('position_id',$request->position_id)->where('project_customer_id',$customer)->first();
+                User_Project_Customer::where('position_id',$request->position_id)->where('project_customer_id',$customer)->delete();
                 $target=null;
                 if ($current_user){
                     $target = $current_user->target_price;
@@ -472,6 +475,8 @@ class ProjectRepository implements ProjectInterface
                     'target_price' => $target,
                     'start_at' => Carbon::now(),
                 ]);
+                $data = $item->customers()->find($customer);
+                $data->update(['status' => Project_Customer::STATUS_ASSIGNED]);
             }
             $item->users()->updateOrCreate(['user_id' => $request->user_id,'position_id' => $request->position_id],[]);
         }
