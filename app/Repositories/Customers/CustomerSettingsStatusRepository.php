@@ -33,6 +33,8 @@ class CustomerSettingsStatusRepository implements CustomerSettingsStatusInterfac
            'description' => $request->description,
 
        ]);
+       // activity log
+       helper_activity_create(null,null,null,null,'ایجاد وضعیت مشتری',' : ایجاد وضعیت مشتری '.$data->name);
        return helper_response_fetch(new CustomerSettingsStatusSingleResource($data));
    }
 
@@ -48,11 +50,15 @@ class CustomerSettingsStatusRepository implements CustomerSettingsStatusInterfac
            'color' => $request->color,
            'description' => $request->description,
        ]);
+       // activity log
+       helper_activity_create(null,null,null,null,'ویرایش وضعیت مشتری',"ویرایش وضعیت مشتری ".$item->name);
        return helper_response_updated(new CustomerSettingsStatusSingleResource($item));
    }
 
    public function destroy($item)
    {
+       // activity log
+       helper_activity_create(null,null,null,null,'حذف وضعیت مشتری','حذف وضعیت مشتری '.$item->name);
        $item->delete();
        return helper_response_deleted();
    }

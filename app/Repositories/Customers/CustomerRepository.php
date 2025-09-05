@@ -39,6 +39,8 @@ class CustomerRepository implements CustomerInterface
            'instagram_id' =>   $request->instagram_id,
            'description' =>  $request->description,
        ]);
+       // activity log
+       helper_activity_create(null,null,null,$data->id,'ایجاد مشتری','ایجاد مشتری موفقیت آمیز ');
        $data->load(['province','city']);
        return helper_response_fetch(new CustomerAdminIndexResource($data));
    }
@@ -78,6 +80,8 @@ class CustomerRepository implements CustomerInterface
            }
        }
 
+       // activity log
+       helper_activity_create(null,null,null,$item->id,'ویرایش مشتری',"ویرایش مشتری موفقیت آمیز ");
 
        return helper_response_updated(new CustomerAdminIndexResource($item));
    }
@@ -85,6 +89,8 @@ class CustomerRepository implements CustomerInterface
    public function destroy($item)
    {
        $item->delete();
+       // activity log
+       helper_activity_create(null,null,null,$item->id,'حذف مشتری','حذف مشتری موفقیت آمیز ');
        return helper_response_deleted();
    }
 

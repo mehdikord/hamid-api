@@ -36,6 +36,8 @@ class UserRepository implements UserInterface
            'description' => $request->description,
            'is_active' => true,
        ]);
+       // activity log
+       helper_activity_create(null,$data->id,null,null,'ایجاد کاربر'," : ایجاد کاربر ".$data->name."");
        return helper_response_fetch(new UserIndexResource($data));
    }
 
@@ -52,6 +54,8 @@ class UserRepository implements UserInterface
            'email' => $request->email,
            'description' => $request->description,
        ]);
+       // activity log
+       helper_activity_create(null,$item->id,null,null,'ویرایش کارشناس'," : ویرایش کارشناس ".$item->name."");
        return helper_response_updated(new UserSingleResource($item));
    }
 
@@ -60,18 +64,24 @@ class UserRepository implements UserInterface
        $item->update([
            'password' => Hash::make($request->password),
        ]);
+       // activity log
+       helper_activity_create(null,$item->id,null,null,'تغییر رمز عبور کارشناس'," : تغییر رمز عبور کارشناس ".$item->name."");
        return helper_response_updated(new UserSingleResource($item));
    }
 
    public function destroy($item)
    {
        $item->delete();
+       // activity log
+       helper_activity_create(null,$item->id,null,null,'حذف کارشناس'," : حذف کارشناس ".$item->name."");
        return helper_response_deleted();
    }
 
    public function change_activation($item)
    {
        $item->update(['is_active' => !$item->is_active]);
+       // activity log
+       helper_activity_create(null,$item->id,null,null,'تغییر وضعیت کارشناس'," : تغییر وضعیت کارشناس ".$item->name."");
        return helper_response_updated([]);
    }
 

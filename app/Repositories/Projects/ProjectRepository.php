@@ -17,6 +17,7 @@ use App\Http\Resources\Projects\Reports\ProjectReportIndexResource;
 use App\Http\Resources\Users\UserProjectCustomerResource;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Models\Customer;
+use App\Models\Position;
 use App\Models\Project;
 use App\Models\Project_Customer;
 use App\Models\Project_Customer_Invoice;
@@ -122,6 +123,8 @@ class ProjectRepository implements ProjectInterface
            'is_active' => true,
        ]);
        $data->update(['code' => helper_core_code_generator($data->id)]);
+       // activity log
+       helper_activity_create(null,null,$data->id,null,'ایجاد پروژه','ایجاد پروژه '.$data->name);
        return helper_response_fetch(new ProjectSingleResource($data));
    }
 
@@ -142,6 +145,8 @@ class ProjectRepository implements ProjectInterface
            'end_at' => $request->end_at,
            'description' => $request->description,
        ]);
+       // activity log
+       helper_activity_create(null,null,$item->id,null,'ویرایش پروژه',"ویرایش پروژه ".$item->name);
        return helper_response_updated(new ProjectSingleResource($item));
    }
 
@@ -149,6 +154,8 @@ class ProjectRepository implements ProjectInterface
    public function destroy($item)
    {
        $item->delete();
+       // activity log
+       helper_activity_create(null,null,$item->id,null,'حذف پروژه','حذف پروژه '.$item->name);
        return helper_response_deleted();
    }
 
@@ -169,6 +176,8 @@ class ProjectRepository implements ProjectInterface
     public function change_activation($item)
    {
        $item->update(['is_active' => !$item->is_active]);
+       // activity log
+       helper_activity_create(null,null,$item->id,null,'تغییر فعالیت پروژه',"تغییر فعالیت پروژه ".$item->name);
        return helper_response_updated([]);
    }
 
@@ -266,6 +275,8 @@ class ProjectRepository implements ProjectInterface
             }
         }
         $item->update(['total_customers' => $counter + $item->total_customers]);
+        // activity log
+        helper_activity_create(null,null,$item->id,null,'افزودن مشتری',': افزودن مشتری '.$counter.' مشتری');
         return helper_response_created($exists_projects);
     }
 
@@ -349,6 +360,10 @@ class ProjectRepository implements ProjectInterface
         $project_customer = $item->customers()->find($request->project_customer_id);
         if ($project_customer){
             $project_customer->update(['project_customer_status_id' => $request->status_id]);
+            // activity log
+            $status = Project_Customer_Status::find($request->status_id)->name;
+            helper_activity_create(null,null,$item->id,$project_customer->customer_id,'تغییر وضعیت مشتری',"تغییر وضعیت مشتری "." به ".$status);
+
             return helper_response_updated(new ProjectCustomerIndexResource($project_customer));
         }
         return helper_response_error('Project Customer not found');
@@ -358,6 +373,9 @@ class ProjectRepository implements ProjectInterface
         $project_customer = $item->customers()->find($request->project_customer_id);
         if ($project_customer){
             $project_customer->update(['project_level_id' => $request->level_id]);
+            // activity log
+            $level = Project_Level::find($request->level_id)->name;
+            helper_activity_create(null,null,$item->id,$project_customer->customer_id,'تغییر مرحله مشتری',"تغییر مرحله مشتری "." به ".$level);
             return helper_response_updated(new ProjectCustomerIndexResource($project_customer));
         }
         return helper_response_error('Project Customer not found');
@@ -386,6 +404,8 @@ class ProjectRepository implements ProjectInterface
         $item->reports()->delete();
         //delete invoices
         $item->invoices()->delete();
+        // activity log
+        helper_activity_create(null,null,$project->id,null,'حذف مشتری',' : حذف مشتری '.$item->customer->name);
         $item->delete();
         $project->update(['total_customers' => $project->total_customers - 1]);
         return helper_response_deleted();
@@ -407,6 +427,9 @@ class ProjectRepository implements ProjectInterface
         if ($request->filled('divides') && is_array($request->divides)) {
             foreach ($request->divides as $divide) {
                 User_Project_Customer::updateOrcreate(['start_at' => Carbon::now(),'user_id' => $divide['user_id'],'project_customer_id' => $divide['customer_id']],['position_id' => $divide['position_id']]);
+                // activity log
+                $position = Position::find($divide['position_id'])->name;
+
                 $customers[]=$divide['customer_id'];
                 if (!in_array($divide['user_id'], $users)) {
                     $users[] = $divide['user_id'];
@@ -453,6 +476,8 @@ class ProjectRepository implements ProjectInterface
                 'target_price' => $target,
                 'start_at' => Carbon::now(),
             ]);
+            // activity log
+            $position = Position::find($request->position_id)->name;
                  //get project customer
             $data = $item->customers()->find($request->project_customer_id);
             $data->update(['status' => Project_Customer::STATUS_ASSIGNED]);
@@ -530,6 +555,8 @@ class ProjectRepository implements ProjectInterface
                 'file_name' => $file_name,
                 'created_at' => $date,
             ]);
+            // activity log
+            helper_activity_create(null,$request->user_id,$item->id,$customer_project->customer_id,'ثبت گزارش'," : ثبت گزارش ".$request->report."");
             return helper_response_created(new ProjectReportIndexResource($data));
         }
 
@@ -538,11 +565,15 @@ class ProjectRepository implements ProjectInterface
     public function reports_update($project, $report, $request)
     {
         $report->update(['report' => $request->report]);
+        // activity log
+        helper_activity_create(null,$report->user_id,$project->id,$report->project_customer->customer_id,'ویرایش گزارش'," : ویرایش گزارش ".$request->report."");
         return helper_response_updated(new ProjectReportIndexResource($report));
     }
 
     public function reports_destroy($project, $report)
     {
+        // activity log
+        helper_activity_create(null,$report->user_id,$project->id,$report->project_customer->customer_id,'حذف گزارش'," : حذف گزارش ".$report->report."");
         $report->delete();
         return helper_response_deleted();
     }
@@ -559,6 +590,8 @@ class ProjectRepository implements ProjectInterface
             'description' => $request->description,
         ]);
         $invoice->load('user');
+        // activity log
+        helper_activity_create(null,$invoice->user_id,$project->id,$invoice->project_customer->customer_id,'ویرایش فاکتور',"# : ویرایش فاکتور ".$invoice->id."");
         return helper_response_updated(new ProjectInvoiceIndexResource($invoice));
 
     }
@@ -566,6 +599,8 @@ class ProjectRepository implements ProjectInterface
     public function invoices_settle($project, $invoice)
     {
         $invoice->update(['settle' => !$invoice->settle]);
+        // activity log
+        helper_activity_create(null,$invoice->user_id,$project->id,$invoice->project_customer->customer_id,'تسویه فاکتور',"# : تسویه فاکتور ".$invoice->id."");
         return helper_response_updated(new ProjectInvoiceIndexResource($invoice));
     }
 
@@ -593,6 +628,8 @@ class ProjectRepository implements ProjectInterface
         if ($user_project){
             $user_project->update(['total_price' => $user_project->total_price - $invoice->amount]);
         }
+        // activity log
+        helper_activity_create(null,$invoice->user_id,$project->id,$invoice->project_customer->customer_id,'حذف فاکتور',"# : حذف فاکتور ".$invoice->id."");
         $invoice->delete();
 
         return helper_response_deleted();
@@ -660,6 +697,8 @@ class ProjectRepository implements ProjectInterface
                 'file_name' => $file_name,
                 'created_at' => $date,
             ]);
+            // activity log
+            helper_activity_create(null,$request->user_id,$item->id,$customer_project->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$data->id."");
             return helper_response_created(new ProjectInvoiceIndexResource($data));
         }
 
@@ -775,6 +814,8 @@ class ProjectRepository implements ProjectInterface
             }
         }
         DB::commit();
+        // activity log
+        helper_activity_create(null,null,$project->id,null,'ایجاد فرم'," : ایجاد فرم ".$form->name."");
         return helper_response_created(new ProjectFromIndexResource($form));
     }
 
@@ -795,11 +836,15 @@ class ProjectRepository implements ProjectInterface
             }
         }
         DB::commit();
+        // activity log
+        helper_activity_create(null,null,$project->id,null,'ویرایش فرم'," : ویرایش فرم ".$item->name."");
         return helper_response_created(new ProjectFromIndexResource($item));
     }
 
     public function destroy_forms($project,$item)
     {
+        // activity log
+        helper_activity_create(null,null,$project->id,null,'حذف فرم'," : حذف فرم ".$item->name."");
         $item->delete();
         return helper_response_deleted();
     }
@@ -807,6 +852,8 @@ class ProjectRepository implements ProjectInterface
     public function activation_forms($project,$item)
     {
         $item->update(['is_active' => !$item->is_active]);
+        // activity log
+        helper_activity_create(null,null,$project->id,null,'فعالسازی فرم'," : ".($item->is_active ? 'فعالسازی' : 'غیرفعالسازی')." فرم ".$item->name."");
         return helper_response_updated([]);
     }
 

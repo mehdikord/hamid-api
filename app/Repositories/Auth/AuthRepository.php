@@ -12,9 +12,13 @@ class AuthRepository implements AuthInterface
     public function admin_login($request)
     {
         if (! $token = auth('admins')->attempt(request(['email', 'password']))){
+            // activity log
+            helper_activity_create(null,null,null,null,'ورود مدیر','ورود ناموفقیت آمیز ');
             return helper_response_error('email or password is wrong');
         }
         $user = auth('admins')->user();
+        // activity log
+        helper_activity_create(null,null,null,null,'ورود مدیر','ورود موفقیت آمیز ');
         return helper_response_main('user login success',[
             'token' => $token,
             'user' => (new AdminInfoAuthResource($user)),
@@ -48,6 +52,8 @@ class AuthRepository implements AuthInterface
             $user = User::where('phone',$request->phone)->first();
             $token =  auth('users')->login($user);
             helper_auth_otp_remove_code($request->phone);
+            // activity log
+            helper_activity_create(null,null,null,null,'ورود کاربر','ورود موفقیت آمیز ');
             return helper_response_main('user login success',[
                 'token' => $token,
                 'user' => (new UserInfoAuthResource($user)),
@@ -66,12 +72,13 @@ class AuthRepository implements AuthInterface
             return helper_response_error('wrong info');
         }
         $user = auth('users')->user();
+        // activity log
+        helper_activity_create(null,null,null,null,'ورود کاربر','ورود موفقیت آمیز ');
         return helper_response_main('user login success',[
             'token' => $token,
             'user' => (new UserInfoAuthResource($user)),
             'token_type' => 'Bearer'
         ]);
-
     }
 
 }

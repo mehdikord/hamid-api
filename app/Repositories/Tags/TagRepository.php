@@ -26,6 +26,8 @@ class TagRepository implements TagInterface
        $data = Tag::create([
            'name' => $request->name,
        ]);
+       // activity log
+       helper_activity_create(null,null,null,null,'ایجاد تگ'," : ایجاد تگ ".$data->name."");
        return helper_response_fetch($data);
    }
 
@@ -39,11 +41,15 @@ class TagRepository implements TagInterface
        $item->update([
            'name' => $request->name,
        ]);
+       // activity log
+       helper_activity_create(null,null,null,null,'ویرایش تگ'," : ویرایش تگ ".$item->name."");
        return helper_response_updated($item);
    }
 
    public function destroy($item)
    {
+       // activity log
+       helper_activity_create(null,null,null,null,'حذف تگ'," : حذف تگ ".$item->name."");
        $item->delete();
        return helper_response_deleted();
    }

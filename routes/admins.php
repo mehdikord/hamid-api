@@ -179,6 +179,7 @@ Route::middleware('auth:admins')->group(function () {
     Route::get('positions/all',[\App\Http\Controllers\Admins\Positions\PositionController::class, 'all'])->name('positions.all');
     Route::apiResource('positions',\App\Http\Controllers\Admins\Positions\PositionController::class);
 
+
     //Reports
     Route::prefix('reports')->as('reports.')->group(function () {
        Route::prefix('projects')->as('projects.')->group(function () {

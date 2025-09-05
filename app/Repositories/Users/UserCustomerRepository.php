@@ -226,6 +226,8 @@ class UserCustomerRepository implements UserCustomerInterface
         if ($user_project){
             $user_project->update(['total_reports' => $user_project->total_reports + 1]);
         }
+        // activity log
+        helper_activity_create(null,null,$customer->project_id,$customer->customer_id,'ثبت گزارش'," : ثبت گزارش ".$request->report."");
         return helper_response_fetch(new UserCustomerIndexResource($item));
     }
 
@@ -306,8 +308,8 @@ class UserCustomerRepository implements UserCustomerInterface
                 }
             }
         }
-
-
+        // activity log
+        helper_activity_create(null,null,$customer->project_id,$customer->customer_id,'ویرایش مشتری'," : ویرایش مشتری ".$request->name."");
 
         return helper_response_updated(new UserCustomerProfileResource($customer));
     }
@@ -349,6 +351,8 @@ class UserCustomerRepository implements UserCustomerInterface
         if ($user_project){
             $user_project->update(['total_price' => $user_project->total_price + $item->amount]);
         }
+        // activity log
+        helper_activity_create(null,null,$customer->project_id,$customer->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$item->id."");
         return helper_response_fetch(new UserCustomerInvoiceResource($item));
     }
 
@@ -443,6 +447,8 @@ class UserCustomerRepository implements UserCustomerInterface
             'report' => $request->report,
             'created_at' => $date,
         ]);
+        //activity log
+        helper_activity_create(null,null,$project_customer->project_id,$project_customer->customer_id,'ثبت گزارش'," : ثبت گزارش ".$request->report."");
         return helper_response_fetch(new UserCustomerReportResource($item));
 
     }
@@ -486,6 +492,8 @@ class UserCustomerRepository implements UserCustomerInterface
             'file_size' => $file_size,
             'file_name' => $file_name,
         ]);
+        //activity log
+        helper_activity_create(null,null,$project_customer->project_id,$project_customer->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$item->id."");
         return helper_response_fetch(new UserCustomerInvoiceResource($item));
     }
 

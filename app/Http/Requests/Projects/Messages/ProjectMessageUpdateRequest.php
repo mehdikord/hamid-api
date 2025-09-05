@@ -18,7 +18,7 @@ class ProjectMessageUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|unique:project_messages,title,'.$this->message->id,
+            'title' => 'required|string|unique:project_messages,title,'.request()->id,
             'message' => 'required|string',
         ];
     }

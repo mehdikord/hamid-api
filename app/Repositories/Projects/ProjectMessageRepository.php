@@ -29,6 +29,8 @@ class ProjectMessageRepository implements ProjectMessageInterface
             'title' => $request->title,
         ]);
 
+        // activity log
+        helper_activity_create(null,null,$project->id, null,'ایجاد پیام','ایجاد پیام '.$data->title);
         return helper_response_fetch($data);
     }
 
@@ -43,11 +45,15 @@ class ProjectMessageRepository implements ProjectMessageInterface
             'title' => $request->title,
             'message' => $request->message,
         ]);
+        // activity log
+        helper_activity_create(null,null,$project->id,null,'ویرایش پیام',"ویرایش پیام ".$item->title);
         return helper_response_updated($item);
     }
 
     public function destroy($project,$item)
     {
+        // activity log
+        helper_activity_create(null,null,$project->id,null,'حذف پیام','حذف پیام '.$item->title);
         $item->delete();
         return helper_response_deleted();
     }

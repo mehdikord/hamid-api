@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Interfaces\Activities\ActivityInterface;
 use App\Interfaces\Auth\AuthInterface;
 use App\Interfaces\Customers\CustomerInterface;
 use App\Interfaces\Customers\CustomerSettingsStatusInterface;
@@ -20,6 +21,7 @@ use App\Interfaces\Reporting\ReportingInterface;
 use App\Interfaces\Tags\TagInterface;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Interfaces\Users\UserInterface;
+use App\Repositories\Activities\ActivityRepository;
 use App\Repositories\Auth\AuthRepository;
 use App\Repositories\Customers\CustomerRepository;
 use App\Repositories\Customers\CustomerSettingsStatusRepository;
@@ -45,6 +47,8 @@ class RepositoryProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->app->bind(ActivityInterface::class,ActivityRepository::class);
+
         $this->app->bind(AuthInterface::class,AuthRepository::class);
 
         $this->app->bind(ProfileInterface::class,ProfileRepository::class);
