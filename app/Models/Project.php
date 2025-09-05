@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Models\Fields\Field;
+use App\Models\Projects\Project_Message;
 use App\Models\Scopes\MemberScope;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -82,5 +82,10 @@ class Project extends Model
     public function forms(): HasMany
     {
         return $this->hasMany(Project_Form::class,'project_id');
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Project_Message::class,'project_id');
     }
 }

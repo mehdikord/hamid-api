@@ -55,6 +55,7 @@ class ProjectRepository implements ProjectInterface
    {
        $data = $project->customers();
        $data->where('status', Project_Customer::STATUS_PENDING);
+       $data->whereDoesntHave('users');
 
        if (request()->filled('search')){
 
@@ -69,8 +70,8 @@ class ProjectRepository implements ProjectInterface
                     });
                 }
             }
-            if(isset(request()->search['import_method_id'])){
-                $data->where('import_method_id',request()->search['import_method_id']);
+            if(isset(request()->search['import_method'])){
+                $data->where('import_method_id',request()->search['import_method']);
             }
             if(isset(request()->search['tag'])){
                 $data->whereHas('tags',function ($query){
@@ -78,10 +79,13 @@ class ProjectRepository implements ProjectInterface
                 });
             }
             if(isset(request()->search['from_date']) && !empty(request()->search['from_date'])){
-                $data->where('created_at','>=',request()->search['from_date']);
+                $fromDate = Carbon::make(request()->search['from_date']);
+                $data->where('created_at','>=',$fromDate);
             }
             if(isset(request()->search['to_date']) && !empty(request()->search['to_date'])){
-                $data->where('created_at','<=',request()->search['to_date']);
+
+                $toDate = Carbon::make(request()->search['to_date']);
+                $data->where('created_at','<=',$toDate);
             }
        }
 
@@ -96,7 +100,7 @@ class ProjectRepository implements ProjectInterface
     public function pending_customers_success($project)
     {
 
-        $data = $project->customers()->where("project_level_id",helper_data_project_level_consultant())->where('project_customer_status_id',helper_data_customer_status_success());
+        $data = $project->customers()->where('project_customer_status_id',helper_data_customer_status_success());
         $data->with('users',function ($user){
             $user->where('position_id',1);
         });

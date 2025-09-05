@@ -30,6 +30,7 @@ Route::middleware('auth:admins')->group(function () {
 //           Route::post('',[\App\Http\Controllers\Admins\Users\UserController::class, 'positions_store'])->name('store');
 //
 //        });
+
     });
     Route::apiResource('users',\App\Http\Controllers\Admins\Users\UserController::class);
 
@@ -119,6 +120,12 @@ Route::middleware('auth:admins')->group(function () {
             Route::delete('{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_destroy'])->name('destroy');
             Route::get('/latest',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_latest_invoices'])->name('get_latest_invoices');
         });
+
+        //Messages
+        Route::prefix('{project}/messages')->as('messages.')->group(function () {
+            Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectMessageController::class, 'all'])->name('all');
+        });
+        Route::apiResource('{project}/messages',\App\Http\Controllers\Admins\Projects\ProjectMessageController::class);
 
 
         //Exports

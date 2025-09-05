@@ -30,6 +30,9 @@ class ProjectCustomerShortResource extends JsonResource
             'project_id' => $this->project_id,
             'customer' => new CustomerIndexResource($this->customer),
             'users' => UserProjectCustomerResource::collection($this->users),
+            'import_method' => $this->import_method,
+            'created_at' => $this->created_at,
+
         ];
     }
 }
