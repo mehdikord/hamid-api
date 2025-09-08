@@ -24,6 +24,7 @@ use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
 use App\Models\Project_Customer_Status;
 use App\Models\Project_Level;
+use App\Models\User;
 use App\Models\User_Project;
 use App\Models\User_Project_Customer;
 use Carbon\Carbon;
@@ -57,7 +58,6 @@ class ProjectRepository implements ProjectInterface
        $data = $project->customers();
        $data->where('status', Project_Customer::STATUS_PENDING);
        $data->whereDoesntHave('users');
-
        if (request()->filled('search')){
 
             if (isset(request()->search['has_name']) && request()->search['has_name'] != 'all'){
@@ -425,11 +425,12 @@ class ProjectRepository implements ProjectInterface
         $customers=[];
         $users =[];
         if ($request->filled('divides') && is_array($request->divides)) {
+            $counter=[];
             foreach ($request->divides as $divide) {
                 User_Project_Customer::updateOrcreate(['start_at' => Carbon::now(),'user_id' => $divide['user_id'],'project_customer_id' => $divide['customer_id']],['position_id' => $divide['position_id']]);
                 // activity log
                 $position = Position::find($divide['position_id'])->name;
-
+                $counter[$divide['user_id']] = ($counter[$divide['user_id']] ?? 0) + 1;
                 $customers[]=$divide['customer_id'];
                 if (!in_array($divide['user_id'], $users)) {
                     $users[] = $divide['user_id'];
@@ -448,7 +449,11 @@ class ProjectRepository implements ProjectInterface
                     ]);
                 }
             }
+
             foreach ($users as $user_id) {
+                $message = "تعداد ".$counter[$user_id]." شماره از پروژه : ".$item->name." به عنوان : ".$position." به شما تخصیص داده شد";
+                $user = User::find($user_id);
+                helper_bot_send_markdown($user->telegram_id,$message);
                 if (!$item->users()->where('user_id',$user_id)->exists()) {
                     $item->users()->create(['user_id' => $user_id]);
                 }
@@ -482,6 +487,9 @@ class ProjectRepository implements ProjectInterface
             $data = $item->customers()->find($request->project_customer_id);
             $data->update(['status' => Project_Customer::STATUS_ASSIGNED]);
             $item->users()->updateOrCreate(['user_id' => $request->user_id,'position_id' => $request->position_id],[]);
+            $message = "تعداد ۱ شماره از پروژه : ".$item->name." به عنوان : ".$position." به شما تخصیص داده شد";
+            $user = User::find($request->user_id);
+            helper_bot_send_markdown($user->telegram_id,$message);
         }
 
         return helper_response_fetch(new ProjectCustomerIndexResource($data));

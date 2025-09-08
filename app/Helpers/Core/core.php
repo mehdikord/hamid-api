@@ -24,6 +24,77 @@ function helper_core_get_user_customer_access($customer): array
 
 }
 
+function helper_core_send_post_request($url, $data = []): array
+{
+    try {
+        $client = new \GuzzleHttp\Client();
+
+        $response = $client->post($url, [
+            'json' => $data,
+            'timeout' => 30,
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ]
+        ]);
+
+        $statusCode = $response->getStatusCode();
+        $body = $response->getBody()->getContents();
+        return [
+            'success' => true,
+            'status_code' => $statusCode,
+            'data' => json_decode($body, true) ?? $body,
+            'message' => 'Request completed successfully'
+        ];
+
+    } catch (\GuzzleHttp\Exception\ClientException $e) {
+        $response = $e->getResponse();
+        $statusCode = $response->getStatusCode();
+        $body = $response->getBody()->getContents();
+
+        return [
+            'success' => false,
+            'status_code' => $statusCode,
+            'data' => null,
+            'message' => 'Client error: ' . $e->getMessage(),
+            'error_body' => json_decode($body, true) ?? $body
+        ];
+
+    } catch (\GuzzleHttp\Exception\ServerException $e) {
+        $response = $e->getResponse();
+        $statusCode = $response->getStatusCode();
+        $body = $response->getBody()->getContents();
+
+        return [
+            'success' => false,
+            'status_code' => $statusCode,
+            'data' => null,
+            'message' => 'Server error: ' . $e->getMessage(),
+            'error_body' => json_decode($body, true) ?? $body
+        ];
+
+    } catch (\GuzzleHttp\Exception\ConnectException $e) {
+        return [
+            'success' => false,
+            'status_code' => 0,
+            'data' => null,
+            'message' => 'Connection error: ' . $e->getMessage()
+        ];
+
+    } catch (\Exception $e) {
+        return [
+            'success' => false,
+            'status_code' => 0,
+            'data' => null,
+            'message' => 'General error: ' . $e->getMessage()
+        ];
+    }
+}
+
+
+
+
+
 
 
 
