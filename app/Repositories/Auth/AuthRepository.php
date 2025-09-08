@@ -81,4 +81,41 @@ class AuthRepository implements AuthInterface
         ]);
     }
 
+    public function bot_send($request)
+    {
+        //check user exists
+        if (!User::where('phone',$request->phone)->exists()){
+            return helper_response_error('user not found');
+        }
+        $user = User::where('phone',$request->phone)->first();
+        //update user telegram id
+        $user->update([
+            'telegram_id' => $request->telegram_id,
+        ]);
+
+        //create auth code in database
+        helper_auth_otp_make_code($request->phone);
+
+        return helper_response_main('success');
+    }
+    public function bot_verify($request)
+    {
+        //get phone with telegram id
+        $user = User::where('telegram_id',$request->telegram_id)->first();
+        if (!$user){
+            return helper_response_error('user not found');
+        }
+
+        if (helper_auth_otp_check_code($user->phone,$request->code)){
+
+            // active telegram session
+            $user->update([
+                'telegram_session' => 1,
+            ]);
+            return helper_response_fetch(new UserInfoAuthResource($user));
+
+        }
+        return helper_response_error('code is wrong');
+    }
+
 }

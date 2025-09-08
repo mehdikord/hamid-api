@@ -25,7 +25,8 @@ class UserInfoAuthResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'phone' => $this->phone,
-            'image' => $this->image
+            'image' => $this->image,
+            'telegram_session' => $this->telelgram_session
         ];
     }
 }

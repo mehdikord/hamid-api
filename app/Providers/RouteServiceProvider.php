@@ -45,6 +45,10 @@ class RouteServiceProvider extends ServiceProvider
                 ->as('landing.')
                 ->group(base_path('routes/landing.php'));
 
+            Route::middleware('api')
+                ->prefix('bot')
+                ->as('bot.')
+                ->group(base_path('routes/bot.php'));
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));

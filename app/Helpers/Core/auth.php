@@ -29,7 +29,7 @@ function helper_auth_otp_make_code($phone): void
     }else{
         $code = random_int(100000,999999);
     }
-    \App\Models\Auth_Code::updateorcreate([
+    \App\Models\Auth_Code::updateOrCreate([
         'phone' => $phone],[
         'code' => $code,
         'updated_at' => \Carbon\Carbon::now(),
