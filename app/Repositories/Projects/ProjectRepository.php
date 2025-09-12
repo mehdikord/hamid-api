@@ -33,11 +33,12 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Morilog\Jalali\Jalalian;
+use App\Traits\SearchingTrait;
 
 
 class ProjectRepository implements ProjectInterface
 {
-
+   use SearchingTrait;
    public function index()
    {
        $data = Project::query();
@@ -58,6 +59,8 @@ class ProjectRepository implements ProjectInterface
        $data = $project->customers();
        $data->where('status', Project_Customer::STATUS_PENDING);
        $data->whereDoesntHave('users');
+
+
        if (request()->filled('search')){
 
             if (isset(request()->search['has_name']) && request()->search['has_name'] != 'all'){
@@ -283,73 +286,7 @@ class ProjectRepository implements ProjectInterface
     public function get_customers($item)
     {
         $data = $item->customers();
-        if (request()->filled('search') && request()->search['status_id'] != 0 ){
-            if (request()->search['status_id'] == 'none'){
-                $data->whereNull('project_customer_status_id');
-            }else{
-                $data->where('project_customer_status_id', request()->search['status_id']);
-
-            }
-        }
-        if (request()->filled('search') && request()->search['level_id'] != 0 ){
-            if (request()->search['level_id'] == 'none'){
-                $data->whereNull('project_level_id');
-            }else{
-                $data->where('project_level_id', request()->search['level_id']);
-            }
-        }
-
-
-        if (request()->filled('search') && request()->search['seller_id'] != 0 ){
-
-            if (request()->search['seller_id'] == 'none'){
-                $data->whereDoesntHave('users',function ($query){
-                    $query->where('position_id','2');
-                });
-            }else{
-                $data->whereHas('users', function ($query) {$query->where('position_id',2)->where('user_id', request()->search['seller_id']);});
-            }
-        }
-        if (request()->filled('search') && request()->search['consultant_id'] != 0 ){
-
-            if (request()->search['consultant_id'] == 'none'){
-                $data->whereDoesntHave('users',function ($query){
-                    $query->where('position_id','1');
-                });
-            }else{
-                $data->whereHas('users', function ($query) {$query->where('position_id',1)->where('user_id', request()->search['consultant_id']);});
-            }
-        }
-
-
-
-        if (request()->filled('search') && isset(request()->search['phone']) && request()->search['phone'] ){
-            $data->whereHas('customer', function ($query) {$query->where('phone','LIKE','%'.request()->search['phone'].'%');});
-        }
-        if (request()->filled('search') && request()->search['has_name'] != 'all' ){
-            if (request()->search['has_name'] == '1'){
-                $data->whereHas('customer', function ($query) {$query->whereNotNull('name');});
-            }else{
-                $data->whereHas('customer', function ($query) {$query->whereNull('name');});
-            }
-        }
-        if (request()->filled('search') && request()->search['has_report'] != 'all' ){
-            if (request()->search['has_report'] == 1){
-                $data->whereHas('reports');
-            }
-            if (request()->search['has_report'] == 0){
-                $data->whereDosentHas('reports');
-            }
-        }
-        if (request()->filled('search') && request()->search['has_invoice'] != 'all' ){
-            if (request()->search['has_invoice'] == 1){
-                $data->whereHas('invoices');
-            }
-            if (request()->search['has_invoice'] == 0){
-                $data->whereDosentHas('invoices');
-            }
-        }
-
+        $this->advance_search($data);
         $data->orderBy(request('sort_by'),request('sort_type'));
         $data->with('tags');
         return helper_response_fetch(ProjectCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
@@ -907,6 +844,10 @@ class ProjectRepository implements ProjectInterface
 
 
 
+    }
+    public function get_columns()
+    {
+        return helper_response_fetch(Project_Customer::columns());
     }
 
 }

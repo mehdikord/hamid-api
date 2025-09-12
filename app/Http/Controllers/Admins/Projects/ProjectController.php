@@ -288,6 +288,10 @@ class ProjectController extends Controller
         return  $this->repository->activation_forms($project,$form);
     }
 
+    public function get_columns()
+    {
+        return $this->repository->get_columns();
+    }
 
 
 }

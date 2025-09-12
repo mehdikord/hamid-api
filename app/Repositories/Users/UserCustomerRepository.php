@@ -506,7 +506,7 @@ class UserCustomerRepository implements UserCustomerInterface
 
     }
 
-    public function projects_levels($customer, $project)
+    public function projects_le vels($customer, $project)
     {
         $project_customer = $customer->projects()->where('project_id', $project->id)->first();
         if ($project_customer){

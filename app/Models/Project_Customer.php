@@ -78,4 +78,67 @@ class Project_Customer extends Model
     {
         return $this->belongsTo(Import_Method::class, 'import_method_id');
     }
+
+    public static function columns(){
+        $columns = [
+            [
+                'field' => 'id',
+                'title' => 'ID',
+                'type' => 'number',
+            ],
+            [
+                'field' => 'import_method_id',
+                'title' => 'نوع ورودی',
+                'type' => 'select',
+                'data' => Import_Method::select('id','name')->get(),
+            ],
+            [
+                'field' => 'project_customer_status_id',
+                'title' => 'وضعیت',
+                'type' => 'select',
+                'data' => Project_Customer_Status::select('id','name')->get(),
+            ],
+            [
+                'field' => 'project_level_id',
+                'title' => 'مرحله',
+                'type' => 'select',
+                'data' => Project_Level::select('id','name')->get(),
+            ],
+            [
+                'field' => 'status',
+                'title' => 'وضعیت ارجاع',
+                'type' => 'select',
+                'data' => [
+                    [
+                        'id' => 'assigned',
+                        'name' => 'ارجاع شده',
+                    ],
+                    [
+                        'id' => 'pending',
+                        'name' => 'در انتظار',
+                    ],
+                ],
+            ],
+            [
+                'field' => 'created_at',
+                'title' => 'تاریخ ایجاد',
+                'type' => 'date',
+            ],
+            [
+                'field' => 'import_at',
+                'title' => 'تاریخ ورودی',
+                'type' => 'date',
+            ],
+        ];
+        //Add relation
+        foreach (Customer::columns() as $column) {
+            $columns[] = [
+                'field' => 'customer.'.$column['field'],
+                'title' =>'اطلاعات مشتری : '.$column['title'],
+                'type' => $column['type'],
+                'relation' => 'belongs_to',
+            ];
+        }
+        return $columns;
+    }
 }

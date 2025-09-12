@@ -28,5 +28,41 @@ class Customer extends Model
         return $this->belongsTo(City::class,'city_id');
     }
 
+    public static function columns(){
+        return [
+            [
+                'field' => 'id',
+                'title' => 'ID',
+                'type' => 'number',
+            ],
+            [
+                'field' => 'name',
+                'title' => 'نام',
+                'type' => 'text',
+            ],
+            [
+                'field' => 'phone',
+                'title' => 'موبایل',
+                'type' => 'text',
+            ],
+            [
+                'field' => 'email',
+                'title' => 'ایمیل',
+                'type' => 'text',
+            ],
+            [
+                'field' => 'instagram_id',
+                'title' => 'اینستاگرام',
+                'type' => 'text',
+            ],
+            [
+                'field' => 'created_at',
+                'title' => 'تاریخ ایجاد',
+                'type' => 'date',
+            ],
+            
+        ];
+    }
+
 
 }

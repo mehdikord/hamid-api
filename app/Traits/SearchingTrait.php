@@ -1,5 +1,5 @@
 <?php
-namespace App\Traits\Searching;
+namespace App\Traits;
 //advance searching trait for use in all repository for searching on columns in index functions
 
 trait SearchingTrait
@@ -10,11 +10,27 @@ trait SearchingTrait
         if (request()->filled('search')){
             foreach (request()->search as $item){
                 if (!empty($item['field']) && isset($item['value']) && !empty($item['condition'])){
-                    if ($item['condition'] == 'LIKE'){
-                        $query->where($item['field'],"LIKE",'%'.$item['value'].'%');
+                    if(isset($item['relation']) && !empty($item['relation'])){
+                        //get relation model
+                        $field = $item['field'];
+                        $relation_parts = explode('.',$field);
+                        $relation = $relation_parts[0];
+                        $relation_field = $relation_parts[1];
+                        $query->whereHas($relation,function($query) use ($relation_field,$item){
+                            if($item['condition'] == 'LIKE'){
+                                $query->where($relation_field,"LIKE",'%'.$item['value'].'%');
+                            }else{
+                                $query->where($relation_field,$item['condition'],$item['value']);
+                            }
+                        });
                     }else{
-                        $query->where($item['field'],$item['condition'],$item['value']);
+                        if ($item['condition'] == 'LIKE'){
+                            $query->where($item['field'],"LIKE",'%'.$item['value'].'%');
+                        }else{
+                            $query->where($item['field'],$item['condition'],$item['value']);
+                        }
                     }
+
                 }
 
             }
