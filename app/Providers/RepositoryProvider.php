@@ -21,6 +21,7 @@ use App\Interfaces\Reporting\ReportingInterface;
 use App\Interfaces\Tags\TagInterface;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Interfaces\Users\UserInterface;
+use App\Interfaces\Bot\BotInterface;
 use App\Repositories\Activities\ActivityRepository;
 use App\Repositories\Auth\AuthRepository;
 use App\Repositories\Customers\CustomerRepository;
@@ -40,6 +41,7 @@ use App\Repositories\Reporting\ReportingRepository;
 use App\Repositories\Tags\TagRepository;
 use App\Repositories\Users\UserCustomerRepository;
 use App\Repositories\Users\UserRepository;
+use App\Repositories\Bot\BotRepository;
 use Carbon\Laravel\ServiceProvider;
 
 class RepositoryProvider extends ServiceProvider
@@ -84,6 +86,8 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(MemberInterface::class,MemberRepository::class);
 
         $this->app->bind(ProjectMessageInterface::class,ProjectMessageRepository::class);
+
+        $this->app->bind(BotInterface::class,BotRepository::class);
 
     }
 

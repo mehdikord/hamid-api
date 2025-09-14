@@ -19,4 +19,7 @@ Route::group(['prefix' => 'auth','as' => 'auth.'], function () {
     Route::post( 'verify',[\App\Http\Controllers\Bot\Auth\AuthController::class, 'verify'])->name('verify');
 
 });
+Route::group(['prefix' => 'groups','as' => 'groups.'], function () {
+    Route::post('join',[\App\Http\Controllers\Bot\Groups\GroupsController::class, 'join'])->name('add');
+});
 
