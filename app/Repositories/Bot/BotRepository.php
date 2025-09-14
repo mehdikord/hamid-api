@@ -89,12 +89,9 @@ class BotRepository implements BotInterface
                     'type' => $type,
                     'description' => $description
                 ]);
-
                 return helper_response_created(result: $telegramGroup);
             }
             return helper_response_error('Group metadata not found');
-
-        
     }
 
     public function leave_group($request)
