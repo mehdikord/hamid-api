@@ -30,4 +30,27 @@ class Project_Customer_Invoice extends Model
     {
         return $this->belongsTo(Project_Customer::class,'project_customer_id');
     }
+
+    public static function columns()
+    {
+        $columns =  [
+            [
+                'field' => 'user_id',
+                'title' => 'کارشناس',
+                'type' => 'select',
+                'data' => User::select('id','name')->get(),
+            ],
+            [
+                'field' => 'created_at',
+                'title' => 'تاریخ ایجاد',
+                'type' => 'date',
+            ],
+             [
+                'field' => 'amount',
+                'title' => 'مبلغ',
+                'type' => 'number',
+            ],
+        ];
+        return $columns;
+    }
 }

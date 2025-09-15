@@ -217,6 +217,11 @@ class ProjectController extends Controller
         return $this->repository->get_latest_invoices($project);
     }
 
+    public function invoices_columns(Project $project)
+    {
+        return $this->repository->invoices_columns();
+    }
+
     //Fields
     public function get_fields(Project $project)
     {

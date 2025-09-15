@@ -10,31 +10,33 @@ trait SearchingTrait
         if (request()->filled('search')){
             foreach (request()->search as $item){
                 if (!empty($item['field']) && isset($item['value']) && !empty($item['condition'])){
-                    if(isset($item['relation']) && !empty($item['relation'])){
+                    // Check if field contains a dot (indicating a relation field)
+                    if(strpos($item['field'], '.') !== false){
                         //get relation model
                         $field = $item['field'];
                         $relation_parts = explode('.',$field);
                         $relation = $relation_parts[0];
                         $relation_field = $relation_parts[1];
-                        $query->whereHas($relation,function($query) use ($relation_field,$item){
+
+                        $query->whereHas($relation,function($subQuery) use ($relation_field,$item){
                             if($item['condition'] == 'LIKE'){
-                                $query->where($relation_field,"LIKE",'%'.$item['value'].'%');
+                                $subQuery->where($relation_field,"LIKE",'%'.$item['value'].'%');
                             }else{
-                                $query->where($relation_field,$item['condition'],$item['value']);
+                                $subQuery->where($relation_field,$item['condition'],$item['value']);
                             }
                         });
+                    }elseif($item['type'] == 'date'){
+                        $query->whereDate($item['field'],$item['condition'],$item['value']);
                     }else{
+                        // Direct field search
                         if ($item['condition'] == 'LIKE'){
                             $query->where($item['field'],"LIKE",'%'.$item['value'].'%');
                         }else{
                             $query->where($item['field'],$item['condition'],$item['value']);
                         }
                     }
-
                 }
-
             }
-
         }
     }
 

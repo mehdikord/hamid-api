@@ -129,6 +129,14 @@ class Project_Customer extends Model
                 'title' => 'تاریخ ورودی',
                 'type' => 'date',
             ],
+            [
+                'field' => 'users.user_id',
+                'title' => 'کارشناس',
+                'type' => 'select',
+                'data' => User::select('id','name')->get(),
+                'relation' => 'has_many',
+            ]
+
         ];
         //Add relation
         foreach (Customer::columns() as $column) {

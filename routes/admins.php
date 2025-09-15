@@ -59,6 +59,7 @@ Route::middleware('auth:admins')->group(function () {
 
         //Customers
         Route::get('customers/columns',action: [\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_columns'])->name('columns');
+        Route::get('invoices/columns',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_columns'])->name('columns');
 
         Route::prefix('{project}/customers')->as('customers.')->group(function () {
             Route::get('columns',action: [\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_columns'])->name('columns');

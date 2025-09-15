@@ -583,18 +583,7 @@ class ProjectRepository implements ProjectInterface
     public function invoices($item)
     {
         $data = $item->invoices();
-        if (request()->filled('search') && request()->search['user_id']){
-            $data->where('user_id',request()->search['user_id']);
-        }
-        if (request()->filled('search') && request()->search['settle'] && request()->search['settle'] !== 'all'){
-            if (request()->search['settle'] == 'yes'){
-                $data->where('settle',true);
-            }else{
-                $data->where('settle',false);
-            }
-        }
-
-
+        $this->advance_search($data);
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(ProjectInvoiceIndexResource::collection($data->paginate(request('per_page')))->resource);
     }
@@ -848,6 +837,11 @@ class ProjectRepository implements ProjectInterface
     public function get_columns()
     {
         return helper_response_fetch(Project_Customer::columns());
+    }
+
+    public function invoices_columns()
+    {
+        return helper_response_fetch(Project_Customer_Invoice::columns());
     }
 
 }
