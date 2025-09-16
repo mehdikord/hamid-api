@@ -76,10 +76,6 @@ class UserCustomerRepository implements UserCustomerInterface
             }
         }
 
-
-        $data->whereHas('project_customer', function ($query){
-            $query->whereNotIn('project_customer_status_id',[helper_data_customer_status_success(),helper_data_customer_status_failed()])->OrWhereNull('project_customer_status_id');
-        });
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(UserCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
 
