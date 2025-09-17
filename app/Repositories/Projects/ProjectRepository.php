@@ -533,6 +533,7 @@ class ProjectRepository implements ProjectInterface
             'amount' => $request->amount,
             'user_id' => $request->user_id,
             'description' => $request->description,
+            'created_at' => $request->created_at,
         ]);
         $invoice->load('user');
         // activity log
@@ -585,7 +586,15 @@ class ProjectRepository implements ProjectInterface
         $data = $item->invoices();
         $this->advance_search($data);
         $data->orderBy(request('sort_by'),request('sort_type'));
-        return helper_response_fetch(ProjectInvoiceIndexResource::collection($data->paginate(request('per_page')))->resource);
+        $all = $data;
+        $all->get();
+        $total_amount = $all->sum('amount');
+
+        $result = [
+            'items' => ProjectInvoiceIndexResource::collection($data->paginate(request('per_page')))->resource,
+            'total_amount' => $total_amount,
+        ];
+        return helper_response_fetch($result);
     }
 
     public function invoices_store($item,$request)
