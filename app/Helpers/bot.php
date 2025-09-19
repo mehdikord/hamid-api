@@ -43,7 +43,7 @@ function helper_bot_send_group_invoice($invoice)
                 if($group->topics->where('selected',true)->count() > 0){
                     $invoice_data['topic_id'] = $group->topics->where('selected',true)->first()->topic_id;
                 }
-                $url = env('BOT_ADDRESS')."/receipts";
+                $url = env('BOT_ADDRESS')."/api/receipts";
                 helper_core_send_post_request($url,$invoice_data);
             }
         }
