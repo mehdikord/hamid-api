@@ -82,13 +82,34 @@ class BotRepository implements BotInterface
                 $type = $data['type'];
                 $description = $data['description'];
 
-                $telegramGroup = Telegram_Group::create([
-                    'telegram_id' => $telegram_id,
-                    'name' => $name,
-                    'member_count' => $member_count,
-                    'type' => $type,
-                    'description' => $description
-                ]);
+                $telegramGroup = Telegram_Group::updateOrCreate(
+                    ['telegram_id' => $telegram_id],
+                    [
+                        'name' => $name,
+                        'member_count' => $member_count,
+                        'type' => $type,
+                        'description' => $description,
+                        'is_active' => true
+                    ]
+                );
+
+                // Handle topics - delete existing topics and create new ones
+                if (isset($data['available_topics'])) {
+                    $topics = $data['available_topics'];
+                    // Delete existing topics for this group
+                    $telegramGroup->topics()->delete();
+
+                    if (count($topics)) {
+                        foreach ($topics as $topic) {
+                            $telegramGroup->topics()->create([
+                                'topic_id' => $topic['topic_id'],
+                                'name' => $topic['name'],
+                            ]);
+                        }
+                    }
+                }
+
+
                 return helper_response_created(result: $telegramGroup);
             }
             return helper_response_error('Group metadata not found');
@@ -99,7 +120,7 @@ class BotRepository implements BotInterface
         try {
             $groupId = $request->input('group_id');
 
-            $telegramGroup = Telegram_Group::where('group_id', $groupId)->first();
+            $telegramGroup = Telegram_Group::where('telegram_id', $groupId)->first();
 
             if ($telegramGroup) {
                 $telegramGroup->update(['is_active' => false]);
@@ -147,7 +168,7 @@ class BotRepository implements BotInterface
     {
         try {
             $group = Telegram_Group::with('project')
-                ->where('group_id', $group_id)
+                ->where('telegram_id', $group_id)
                 ->where('is_active', true)
                 ->first();
 
@@ -236,7 +257,7 @@ class BotRepository implements BotInterface
 
             // Create or update telegram group
             $telegramGroup = Telegram_Group::updateOrCreate(
-                ['group_id' => $groupId],
+                ['telegram_id' => $groupId],
                 [
                     'project_id' => $projectId,
                     'is_active' => true

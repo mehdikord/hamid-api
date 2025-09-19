@@ -198,6 +198,7 @@ Route::middleware('auth:admins')->group(function () {
     //Telegram Groups
     Route::prefix('telegram')->as('telegram.')->group(function () {
         Route::prefix('groups')->as('groups.')->group(function () {
+            Route::post('assign/{group}',[\App\Http\Controllers\Admins\TelegramGroups\TelegramGroupsController::class, 'assign'])->name('assign');
             Route::get( '',[\App\Http\Controllers\Admins\TelegramGroups\TelegramGroupsController::class, 'all'])->name('all');
         });
     });
