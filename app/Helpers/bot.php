@@ -45,11 +45,12 @@ function helper_bot_send_group_invoice($invoice)
                     $invoice_data['topic_id'] = $group->topics->where('selected',true)->first()->topic_id;
                 }
                 $url = env('BOT_ADDRESS')."/api/receipts";
-                helper_core_send_post_request($url,$invoice_data);
+                return helper_core_send_post_request($url,$invoice_data);
             }
         }
+        return 'khata';
     }
-  
+
     return true;
 }
 
