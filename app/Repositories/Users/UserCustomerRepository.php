@@ -492,6 +492,7 @@ class UserCustomerRepository implements UserCustomerInterface
         ]);
         //activity log
         helper_activity_create(null,null,$project_customer->project_id,$project_customer->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$item->id."");
+        return 'hello';
         helper_bot_send_group_invoice($item);
         return helper_response_fetch(new UserCustomerInvoiceResource($item));
     }
