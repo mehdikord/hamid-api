@@ -30,7 +30,7 @@ function helper_bot_send_group_invoice($invoice)
     $invoice_data = [
         "price_deal"=> 111,
         "price_deposit"=> $invoice->amount,
-        "date"=> Carbon::make($invoice->created_at)->format('YYYY-MM-DD'),
+        "date"=> Carbon::make($invoice->created_at)->format('Y-M-D'),
         "customer_name"=> $invoice->project_customer->customer->name,
         "customer_phone"=> $invoice->project_customer->customer->phone,
         "assignee"=> $invoice->user->name,
