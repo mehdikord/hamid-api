@@ -49,6 +49,7 @@ function helper_bot_send_group_invoice($invoice)
             }
         }
 
+        Log::info('invoice_data',$invoice_data);
     }
 
     return true;
