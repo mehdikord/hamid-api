@@ -28,7 +28,7 @@ function helper_bot_send_group_invoice($invoice)
 {
 
     $invoice_data = [
-        "price_deal"=> 000,
+        "price_deal"=> 111,
         "price_deposit"=> $invoice->amount,
         "date"=> Carbon::make($invoice->created_at)->format('Y-m-d'),
         "customer_name"=> $invoice->project_customer->customer->name,
@@ -45,10 +45,10 @@ function helper_bot_send_group_invoice($invoice)
                     $invoice_data['topic_id'] = $group->topics->where('selected',true)->first()->topic_id;
                 }
                 $url = env('BOT_ADDRESS')."/api/receipts";
-                return helper_core_send_post_request($url,$invoice_data);
+                helper_core_send_post_request($url,$invoice_data);
             }
         }
-        return 'khata';
+
     }
 
     return true;
