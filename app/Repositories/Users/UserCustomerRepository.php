@@ -344,14 +344,13 @@ class UserCustomerRepository implements UserCustomerInterface
             'file_size' => $file_size,
             'file_name' => $file_name,
         ]);
-        Log::info('invoice','salam log');
-
         $user_project = User_Project::where('project_id', $customer->project_id)->where('user_id',auth()->id())->first();
         if ($user_project){
             $user_project->update(['total_price' => $user_project->total_price + $item->amount]);
         }
         // activity log
         helper_activity_create(null,null,$customer->project_id,$customer->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$item->id."");
+        return $item;
         helper_bot_send_group_invoice($item);
         return helper_response_fetch(new UserCustomerInvoiceResource($item));
     }
