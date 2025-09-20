@@ -344,7 +344,7 @@ class UserCustomerRepository implements UserCustomerInterface
             'file_size' => $file_size,
             'file_name' => $file_name,
         ]);
-        Log::info('invoice',$item);
+        Log::info('invoice','salam log');
 
         $user_project = User_Project::where('project_id', $customer->project_id)->where('user_id',auth()->id())->first();
         if ($user_project){
