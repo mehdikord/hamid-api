@@ -18,6 +18,7 @@ use App\Models\Project_Customer_Status;
 use App\Models\Project_Status;
 use App\Models\User_Project;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class UserCustomerRepository implements UserCustomerInterface
@@ -349,6 +350,7 @@ class UserCustomerRepository implements UserCustomerInterface
         }
         // activity log
         helper_activity_create(null,null,$customer->project_id,$customer->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$item->id."");
+        Log::info($item);
         helper_bot_send_group_invoice($item);
         return helper_response_fetch(new UserCustomerInvoiceResource($item));
     }
