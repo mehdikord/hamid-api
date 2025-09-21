@@ -45,8 +45,8 @@ class UserCustomerIndexResource extends JsonResource
             'reports_count' => $this->project_customer->reports()->count(),
             'invoices_count' => $this->project_customer->invoices()->count(),
             'sum_invoices' => $this->project_customer->invoices()->sum('amount'),
-            'import_method' => new ImportMethodShortResource($this->import_method)
-
+            'import_method' => new ImportMethodShortResource($this->project_customer->import_method),
+            'tags' => $this->project_customer->tags
         ];
     }
 }
