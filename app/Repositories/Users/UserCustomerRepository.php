@@ -55,10 +55,31 @@ class UserCustomerRepository implements UserCustomerInterface
         $data->where('position_id',helper_data_position_consultant());
 
         if (request()->filled('search')) {
+
             if (!empty(request()->search['status_id'])){
-                $data->whereHas('project_customer', function ($query) {
-                    $query->where('project_customer_status_id', request()->search['status_id']);
-                });
+                if(request()->search['status_id'] == 'no'){
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->whereNull('project_customer_status_id');
+                    });
+                }else{
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->where('project_customer_status_id', request()->search['status_id']);
+                    });
+                }
+
+            }
+
+            if (!empty(request()->search['level_id'])){
+                if(request()->search['level_id'] == 'no'){
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->whereNull('project_level_id');
+                    });
+                }else{
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->where('project_level_id', request()->search['level_id']);
+                    });
+                }
+
             }
 
             if (!empty(request()->search['project_id'])){
@@ -118,17 +139,32 @@ class UserCustomerRepository implements UserCustomerInterface
     {
         $data = $user->customers();
         $data->where('position_id',helper_data_position_seller());
+
         if (request()->filled('search')) {
+
             if (!empty(request()->search['status_id'])){
-                $data->whereHas('project_customer', function ($query) {
-                    $query->where('project_customer_status_id', request()->search['status_id']);
-                });
+                if(request()->search['status_id'] == 'no'){
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->whereNull('project_customer_status_id');
+                    });
+                }else{
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->where('project_customer_status_id', request()->search['status_id']);
+                    });
+                }
             }
             if (!empty(request()->search['level_id'])){
-                $data->whereHas('project_customer', function ($query) {
-                    $query->where('project_level_id', request()->search['level_id']);
-                });
+                if(request()->search['level_id'] == 'no'){
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->whereNull('project_level_id');
+                    });
+                }else{
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->where('project_level_id', request()->search['level_id']);
+                    });
+                }
             }
+
             if (!empty(request()->search['project_id'])){
                 $data->whereHas('project_customer', function ($query) {
                     $query->where('project_id', request()->search['project_id']);
