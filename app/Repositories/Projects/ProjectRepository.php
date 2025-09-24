@@ -322,12 +322,9 @@ class ProjectRepository implements ProjectInterface
     {
         $project_customer = $item->customers()->find($request->project_customer_id);
         if ($project_customer){
-            if ($request->users){
-                foreach ($request->users as $user){
-                    $get_user = $project_customer->users()->find($user['id']);
-                    $get_user->update(['target_price' => $user['price']]);
-                }
-            }
+            $project_customer->update(['target_price' => $request->target_price]);
+            // activity log
+            helper_activity_create(null,null,$item->id,$project_customer->customer_id,'تغییر مبلغ معامله',"تغییر مبلغ معامله "." به ".$request->target_price);
             return helper_response_updated(new ProjectCustomerIndexResource($project_customer));
         }
         return helper_response_error('Project Customer not found');

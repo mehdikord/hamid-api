@@ -18,7 +18,6 @@ use App\Models\Project_Customer_Status;
 use App\Models\Project_Status;
 use App\Models\User_Project;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class UserCustomerRepository implements UserCustomerInterface
@@ -288,6 +287,7 @@ class UserCustomerRepository implements UserCustomerInterface
             'city_id' => $request->city_id,
             'national_code' => $request->national_code,
             'instagram_id' => $request->instagram_id,
+            'telegram_id' => $request->telegram_id,
             'tel' => $request->tel,
             'address' => $request->address,
             'postal_code' => $request->postal_code,
@@ -315,7 +315,7 @@ class UserCustomerRepository implements UserCustomerInterface
     public function invoices_store($customer, $request)
     {
         //check sum invoices amount
-        if ($customer->invoices()->sum('amount') + $request->price > $customer->user->target_price ){
+        if ($customer->invoices()->sum('amount') + $request->price > $customer->project_customer->target_price ){
             return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
         }
         $file_url = null;
@@ -356,9 +356,11 @@ class UserCustomerRepository implements UserCustomerInterface
 
     public function invoices_target_store($customer,$request)
     {
-        if (!$customer->user->target_price){
-            $customer->user->update(['target_price' => $request->price]);
-            return helper_response_fetch(new UserCustomerIndexResource($customer->user));
+        if (!$customer->target_price){
+            $customer->update(['target_price' => $request->price]);
+            //get user project customer
+            $user_project_customer = $customer->users()->where('user_id',auth()->id())->first();
+            return helper_response_fetch(new UserCustomerIndexResource($user_project_customer));
         }
         return helper_response_error('ُTarget price already exists !');
     }
@@ -378,6 +380,7 @@ class UserCustomerRepository implements UserCustomerInterface
                 $result[]=$customer_project->project;
             }
         }
+
         return helper_response_fetch(ProjectShortResource::collection($result));
     }
 
@@ -460,7 +463,7 @@ class UserCustomerRepository implements UserCustomerInterface
         }
 
         //check sum invoices amount
-        if ($project_customer->invoices()->sum('amount') + $request->price > $project_customer->user->target_price ){
+        if ($project_customer->invoices()->sum('amount') + $request->price > $project_customer->target_price ){
             return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
         }
 

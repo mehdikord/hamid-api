@@ -29,6 +29,7 @@ class CustomerIndexResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'instagram_id' => $this->instagram_id,
+            'telegram_id' => $this->telegram_id,
             'created_at' => $this->created_at
         ];
     }

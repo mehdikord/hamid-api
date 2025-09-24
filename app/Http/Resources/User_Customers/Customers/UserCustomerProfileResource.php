@@ -37,6 +37,7 @@ class UserCustomerProfileResource extends JsonResource
             'address' => $this->address,
             'description' => $this->description,
             'instagram_id' => $this->instagram_id,
+            'telegram_id' => $this->telegram_id,
             'tel' => $this->tel,
             'province' => $this->province,
             'city' => $this->city,
