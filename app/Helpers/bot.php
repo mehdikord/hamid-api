@@ -28,11 +28,15 @@ function helper_bot_send_group_invoice($invoice)
 {
 
     $invoice_data = [
-        "price_deal"=> 111,
+        'image'=> $invoice->file_url ? env('APP_URL').$invoice->file_url : null,
+        "price_deal"=> $invoice->project_customer->target_price,
         "price_deposit"=> $invoice->amount,
         "date"=> Carbon::make($invoice->created_at)->format('Y-m-d'),
         "customer_name"=> $invoice->project_customer->customer->name,
         "customer_phone"=> $invoice->project_customer->customer->phone,
+        'customer_province'=> $invoice->project_customer?->customer?->province?->name,
+        'customer_city'=> $invoice->project_customer?->customer?->city?->name,
+        'customer_id' => $invoice->project_customer?->customer?->telegram_id,
         "assignee"=> $invoice->user->name,
     ];
     if($invoice->project)
