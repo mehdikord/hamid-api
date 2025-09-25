@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Morilog\Jalali\Jalalian;
 
 function helper_bot_send_markdown($id,$message)
 {
@@ -31,7 +32,7 @@ function helper_bot_send_group_invoice($invoice)
         'image'=> $invoice->file_url ? env('APP_URL').$invoice->file_url : null,
         "price_deal"=> $invoice->project_customer->target_price,
         "price_deposit"=> $invoice->amount,
-        "date"=> Carbon::make($invoice->created_at)->format('Y-m-d'),
+        "date"=> Jalalian::fromCarbon(Carbon::make($invoice->created_at))->format('Y-m-d'),
         "customer_name"=> $invoice->project_customer->customer->name,
         "customer_phone"=> $invoice->project_customer->customer->phone,
         'customer_province'=> $invoice->project_customer?->customer?->province?->name,
