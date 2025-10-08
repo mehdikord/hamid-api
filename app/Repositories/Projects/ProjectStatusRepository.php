@@ -44,12 +44,10 @@ class ProjectStatusRepository implements ProjectStatusInterface
 
    public function update($request, $item)
    {
-    return $item;
 
         if($item->project->member_id != auth()->id()){
             return helper_response_error('شما اجازه ویرایش این وضعیت را ندارید');
         }
-
        $item->update([
            'name' => $request->name,
            'color' => $request->color,
