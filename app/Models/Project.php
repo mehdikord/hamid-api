@@ -93,4 +93,9 @@ class Project extends Model
     {
         return $this->hasMany(Telegram_Group::class,'project_id');
     }
+
+    public function statuses(): HasMany
+    {
+        return $this->hasMany(Project_Customer_Status::class,'project_id');
+    }
 }

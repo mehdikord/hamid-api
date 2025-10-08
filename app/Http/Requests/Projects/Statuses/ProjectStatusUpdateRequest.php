@@ -18,7 +18,7 @@ class ProjectStatusUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:project_statuses,name,'.$this->status->id,
+            'name' => 'required|string|unique:project_customer_statuses,name,'.$this->status->id,
         ];
     }
 

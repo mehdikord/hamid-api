@@ -10,24 +10,25 @@ use App\Models\Project_Status;
 class ProjectStatusRepository implements ProjectStatusInterface
 {
 
-   public function index()
+   public function index($project)
    {
-       $data = Project_Status::query();
+
+       $data = $project->statuses();
        $data->orderBy(request('sort_by'),request('sort_type'));
-       $data->withCount('projects');
+
        return helper_response_fetch(ProjectStatusIndexResource::collection($data->paginate(request('per_page')))->resource);
    }
 
-    public function all()
+    public function all($project)
     {
-        $data = Project_Status::query();
+        $data = $project->statuses();
         $data->orderByDesc('id');
         return helper_response_fetch(ProjectStatusShortResource::collection($data->get()));
     }
 
-   public function store($request)
+   public function store($request,$project)
    {
-       $data = Project_Status::create([
+       $data = $project->statuses()->create([
            'name' => $request->name,
            'color' => $request->color,
            'description' => $request->description,
@@ -36,13 +37,19 @@ class ProjectStatusRepository implements ProjectStatusInterface
        return helper_response_fetch(new ProjectStatusSingleResource($data));
    }
 
-   public function show($item)
+   public function show($item,$project)
    {
        return helper_response_fetch(new ProjectStatusSingleResource($item));
    }
 
    public function update($request, $item)
    {
+    return $item;
+
+        if($item->project->member_id != auth()->id()){
+            return helper_response_error('شما اجازه ویرایش این وضعیت را ندارید');
+        }
+
        $item->update([
            'name' => $request->name,
            'color' => $request->color,
@@ -51,8 +58,11 @@ class ProjectStatusRepository implements ProjectStatusInterface
        return helper_response_updated(new ProjectStatusSingleResource($item));
    }
 
-   public function destroy($item)
+   public function destroy($item,$project)
    {
+        if($item->project->member_id != auth()->id()){
+            return helper_response_error('شما اجازه حذف این وضعیت را ندارید');
+        }
        $item->delete();
        return helper_response_deleted();
    }

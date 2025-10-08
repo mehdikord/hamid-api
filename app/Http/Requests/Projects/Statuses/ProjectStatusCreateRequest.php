@@ -18,7 +18,7 @@ class ProjectStatusCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:project_statuses',
+            'name' => 'required|string|unique:project_customer_statuses',
         ];
     }
 

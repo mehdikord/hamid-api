@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Projects\Statuses\ProjectStatusCreateRequest;
 use App\Http\Requests\Projects\Statuses\ProjectStatusUpdateRequest;
 use App\Interfaces\Projects\ProjectStatusInterface;
+use App\Models\Project;
+use App\Models\Project_Customer_Status;
 use App\Models\Project_Status;
 
 class ProjectStatusController extends Controller
@@ -21,35 +23,36 @@ class ProjectStatusController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Project $project)
     {
-        return $this->repository->index();
+
+        return $this->repository->index($project);
     }
 
-    public function all()
+    public function all(Project $project)
     {
-        return $this->repository->all();
+        return $this->repository->all($project);
     }
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProjectStatusCreateRequest $request)
+    public function store(ProjectStatusCreateRequest $request,Project $project)
     {
-        return $this->repository->store($request);
+        return $this->repository->store($request,$project);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Project_Status $status)
+    public function show(Project_Customer_Status $status)
     {
-        return $this->repository->show($status);
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProjectStatusUpdateRequest $request,Project_Status $status)
+    public function update(Project $project,ProjectStatusUpdateRequest $request,Project_Customer_Status $status)
     {
         return $this->repository->update($request,$status);
     }
@@ -58,9 +61,9 @@ class ProjectStatusController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Project_Status $status)
+    public function destroy(Project $project,Project_Customer_Status $status)
     {
-        return $this->repository->destroy($status);
+        return $this->repository->destroy($status,$project  );
     }
 
 }

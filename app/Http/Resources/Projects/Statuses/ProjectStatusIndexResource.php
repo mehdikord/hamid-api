@@ -26,7 +26,6 @@ class ProjectStatusIndexResource extends JsonResource
             'name' => $this->name,
             'color' => $this->color,
             'description' => $this->description,
-            'projects_count' => $this->projects_count,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];

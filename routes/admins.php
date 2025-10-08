@@ -54,8 +54,6 @@ Route::middleware('auth:admins')->group(function () {
         Route::get('categories/all',[\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class, 'all'])->name('all');
         Route::apiResource('categories',\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class);
 
-        Route::get('statuses/all',[\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'all'])->name('all');
-        Route::apiResource('statuses',\App\Http\Controllers\Admins\Projects\ProjectStatusController::class);
 
         //Customers
         Route::get('customers/columns',action: [\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_columns'])->name('columns');
@@ -76,6 +74,11 @@ Route::middleware('auth:admins')->group(function () {
             Route::post('change/status',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_status'])->name('change.status');
             Route::post('change/level',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_level'])->name('change.level');
             Route::post('change/target',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_change_target'])->name('change.target');
+        });
+
+        Route::prefix('{project}')->as('statuses.')->group(function () {
+            Route::get('statuses/all',[\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'all'])->name('all');
+            Route::apiResource('statuses',\App\Http\Controllers\Admins\Projects\ProjectStatusController::class);
         });
 
         //Project Fields
