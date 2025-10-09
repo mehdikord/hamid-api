@@ -27,7 +27,6 @@ class CustomerProjectsShortResource extends JsonResource
             'project' => [
                 'id' => $this->project->id,
                 'name' => $this->project->name,
-
             ]
 
         ];

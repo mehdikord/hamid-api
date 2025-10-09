@@ -11,8 +11,8 @@ use App\Interfaces\ImportMethods\importMethodInterface;
 use App\Interfaces\Members\MemberInterface;
 use App\Interfaces\Positions\PositionInterface;
 use App\Interfaces\Profile\ProfileInterface;
-use App\Interfaces\ProjectLevels\ProjectLevelInterface;
 use App\Interfaces\Projects\ProjectCategoryInterface;
+use App\Interfaces\Projects\ProjectLevelInterface;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Interfaces\Projects\ProjectMessageInterface;
 use App\Interfaces\Projects\ProjectStatusInterface;
@@ -32,8 +32,8 @@ use App\Repositories\ImportMethods\ImportMethodRepository;
 use App\Repositories\Members\MemberRepository;
 use App\Repositories\Positions\PositionRepository;
 use App\Repositories\Profile\ProfileRepository;
-use App\Repositories\ProjectLevels\ProjectLevelRepository;
 use App\Repositories\Projects\ProjectCategoryRepository;
+use App\Repositories\Projects\ProjectLevelRepository;
 use App\Repositories\Projects\ProjectMessageRepository;
 use App\Repositories\Projects\ProjectRepository;
 use App\Repositories\Projects\ProjectStatusRepository;
@@ -92,6 +92,9 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(BotInterface::class,BotRepository::class);
 
         $this->app->bind(TelegramInterface::class,TelegramRepository::class);
+
+        $this->app->bind(ProjectLevelInterface::class,ProjectLevelRepository::class);
+
 
     }
 

@@ -71,7 +71,7 @@ class Project extends Model
 
     public function levels(): HasMany
     {
-        return $this->hasMany(Projects_Levels::class,'project_id');
+        return $this->hasMany(Project_Level::class,'project_id');
     }
 
     public function positions(): HasMany

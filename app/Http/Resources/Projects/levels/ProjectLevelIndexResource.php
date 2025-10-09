@@ -28,7 +28,9 @@ class ProjectLevelIndexResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'level' => $this->level,
+            'name' => $this->name,
+            'description' => $this->description,
+            'color' => $this->color,
             'priority' => $this->priority,
         ];
     }

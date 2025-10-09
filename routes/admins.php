@@ -48,8 +48,7 @@ Route::middleware('auth:admins')->group(function () {
 
         Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'all'])->name('all');
 
-        Route::get('levels/all',[\App\Http\Controllers\Admins\ProjectLevels\ProjectLevelController::class, 'all'])->name('levels.all');
-        Route::apiResource('levels',\App\Http\Controllers\Admins\ProjectLevels\ProjectLevelController::class);
+
 
         Route::get('categories/all',[\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class, 'all'])->name('all');
         Route::apiResource('categories',\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class);
@@ -81,6 +80,13 @@ Route::middleware('auth:admins')->group(function () {
             Route::apiResource('statuses',\App\Http\Controllers\Admins\Projects\ProjectStatusController::class);
         });
 
+        Route::prefix('{project}')->as('levels.')->group(function () {
+            Route::get('levels/all',[\App\Http\Controllers\Admins\Projects\ProjectLevelsController::class, 'all'])->name('all');
+            Route::apiResource('levels',\App\Http\Controllers\Admins\Projects\ProjectLevelsController::class);
+        });
+
+
+
         //Project Fields
         Route::prefix('{project}/fields')->as('fields.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_fields'])->name('get');
@@ -102,12 +108,6 @@ Route::middleware('auth:admins')->group(function () {
         });
 
 
-        Route::prefix('{project}/levels')->as('levels.')->group(function () {
-            Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_levels'])->name('get');
-            Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_levels'])->name('store');
-            Route::put('/{level}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'update_levels'])->name('update');
-            Route::delete('/{level}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'delete_levels'])->name('delete');
-        });
 
         Route::prefix('{project}/reports')->as('reports.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports'])->name('index');
