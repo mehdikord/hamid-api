@@ -199,7 +199,10 @@ class ProjectRepository implements ProjectInterface
                     }
                 }
                 $customer = Customer::where('phone',$value[0])->first();
-                $find_customer = $item->customers()->where('customer_id',$customer->id)->first();
+                $find_customer = null;
+                if($customer){
+                    $find_customer = $item->customers()->where('customer_id',$customer->id)->first();
+                }
                 if ($customer && $find_customer) {
                     $exists_projects[] = [
                         'phone' => $value[0],
