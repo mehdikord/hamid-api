@@ -95,5 +95,5 @@ interface ProjectInterface
 
     public function get_columns();
 
-
+    public function get_customer_fields($project);
 }

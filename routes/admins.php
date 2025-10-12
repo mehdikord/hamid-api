@@ -59,6 +59,7 @@ Route::middleware('auth:admins')->group(function () {
         Route::get('invoices/columns',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_columns'])->name('columns');
 
         Route::prefix('{project}/customers')->as('customers.')->group(function () {
+            Route::get('fields',action: [\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customer_fields'])->name('customer_fields');
             Route::get('columns',action: [\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_columns'])->name('columns');
             Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'all_customers'])->name('all');
             Route::get('pending/success',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'pending_customers_success'])->name('pending.success');

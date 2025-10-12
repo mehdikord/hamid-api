@@ -298,5 +298,10 @@ class ProjectController extends Controller
         return $this->repository->get_columns();
     }
 
+    public function get_customer_fields(Project $project)
+    {
+        return $this->repository->get_customer_fields($project);
+    }
+
 
 }

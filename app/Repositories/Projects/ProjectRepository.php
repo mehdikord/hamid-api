@@ -853,4 +853,11 @@ class ProjectRepository implements ProjectInterface
         return helper_response_fetch(Project_Customer_Invoice::columns());
     }
 
+    public function get_customer_fields($project)
+    {
+
+        $data = ['name','email','instagram_id','telegram_id','description'];
+        return helper_response_fetch($data);
+    }
+
 }
