@@ -1,5 +1,7 @@
 <?php
 namespace App\Repositories\ImportMethods;
+
+use App\Http\Resources\ImportMethods\ImportMethodShortResource;
 use App\Interfaces\ImportMethods\importMethodInterface;
 use App\Models\Import_Method;
 
@@ -7,35 +9,35 @@ use App\Models\Import_Method;
 class ImportMethodRepository implements importMethodInterface
 {
 
-   public function index()
+   public function index($project)
    {
-       $data = Import_Method::query();
+       $data = $project->import_methods();
        $data->orderBy(request('sort_by'),request('sort_type'));
        return helper_response_fetch($data->paginate(request('per_page')));
    }
 
-    public function all()
+    public function all($project)
     {
-        $data = Import_Method::query();
+        $data = $project->import_methods();
         $data->orderByDesc('id');
-        return helper_response_fetch($data->get());
+        return helper_response_fetch(ImportMethodShortResource::collection($data->get()));
     }
 
-   public function store($request)
+   public function store($request,$project)
    {
-       $data = Import_Method::create([
+       $data = $project->import_methods()->create([
            'name' => $request->name,
            'description' => $request->description,
        ]);
        return helper_response_fetch($data);
    }
 
-   public function show($item)
+   public function show($item,$project)
    {
        return helper_response_fetch($item);
    }
 
-   public function update($request, $item)
+   public function update($request, $item,$project)
    {
        $item->update([
            'name' => $request->name,
@@ -44,7 +46,7 @@ class ImportMethodRepository implements importMethodInterface
        return helper_response_updated($item);
    }
 
-   public function destroy($item)
+   public function destroy($item,$project)
    {
        $item->delete();
        return helper_response_deleted();

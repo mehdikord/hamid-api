@@ -5,6 +5,7 @@ use App\Http\Requests\ImportMethods\ImportMethodCreateRequest;
 use App\Http\Requests\ImportMethods\ImportMethodUpdateRequest;
 use App\Interfaces\ImportMethods\importMethodInterface;
 use App\Models\Import_Method;
+use App\Models\Project;
 
 class ImportMethodController extends Controller
 {
@@ -19,46 +20,46 @@ class ImportMethodController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Project $project)
     {
-        return $this->repository->index();
+        return $this->repository->index($project);
     }
 
-    public function all()
+    public function all(Project $project)
     {
-        return $this->repository->all();
+        return $this->repository->all($project);
     }
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ImportMethodCreateRequest $request)
+    public function store(ImportMethodCreateRequest $request,Project $project)
     {
-        return $this->repository->store($request);
+        return $this->repository->store($request,$project);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Import_Method $import_method)
+    public function show(Project $project,Import_Method $import_method)
     {
-        return $this->repository->show($import_method);
+        return $this->repository->show($import_method,$project);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(ImportMethodUpdateRequest $request,Import_Method $import_method)
+    public function update(Project $project,ImportMethodUpdateRequest $request,Import_Method $import_method)
     {
-        return $this->repository->update($request,$import_method);
+        return $this->repository->update($request,$import_method,$project);
     }
 
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Import_Method $import_method)
+    public function destroy(Project $project,Import_Method $import_method)
     {
-        return $this->repository->destroy($import_method);
+        return $this->repository->destroy($import_method,$project);
     }
 
 }

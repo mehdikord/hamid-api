@@ -222,16 +222,6 @@ class ProjectController extends Controller
         return $this->repository->invoices_columns();
     }
 
-    //Fields
-    public function get_fields(Project $project)
-    {
-        return $this->repository->get_fields($project);
-    }
-
-    public function store_fields(Project $project,Request $request)
-    {
-        return $this->repository->store_fields($project,$request);
-    }
 
     //Fields
     public function get_positions(Project $project)
@@ -245,7 +235,6 @@ class ProjectController extends Controller
     }
 
     //Levels
-
     public function get_levels(Project $project)
     {
         return $this->repository->get_levels($project);

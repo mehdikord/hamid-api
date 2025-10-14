@@ -8,25 +8,25 @@ use App\Models\Fields\Field;
 class FieldRepository implements FieldInterface
 {
 
-   public function index()
+   public function index($project)
    {
-       $data = Field::query();
+       $data = $project->fields();
        $data->with('options');
        $data->orderBy(request('sort_by'),request('sort_type'));
        return helper_response_fetch(FieldIndexResource::collection($data->paginate(request('per_page')))->resource);
    }
 
-    public function all()
+    public function all($project)
     {
-        $data = Field::query();
+        $data = $project->fields();
         $data->with('options');
         $data->orderByDesc('id');
         return helper_response_fetch(FieldIndexResource::collection($data->get()));
     }
 
-   public function store($request)
+   public function store($request,$project)
    {
-       $data = Field::create([
+       $data = $project->fields()->create([
            'title' => $request->title,
            'type' => $request->type,
            'placeholder' => $request->placeholder,
@@ -36,9 +36,9 @@ class FieldRepository implements FieldInterface
        ]);
        if ($request->filled('options')) {
            foreach ($request->options as $option) {
-               if ($option['option']) {
+               if ($option) {
                    $data->options()->create([
-                       'option' => $option['option'],
+                       'option' => $option,
                    ]);
                }
            }
@@ -46,13 +46,21 @@ class FieldRepository implements FieldInterface
        return helper_response_fetch(new FieldIndexResource($data));
    }
 
-   public function show($item)
+   public function show($item,$project)
    {
+       if($project->id != $item->project_id){
+            return helper_response_error('Project not found');
+        }
+       $item->load('options');
        return helper_response_fetch(new FieldIndexResource($item));
    }
 
-   public function update($request, $item)
+   public function update($request, $item,$project)
    {
+        if($project->id != $item->project_id){
+            return helper_response_error('Project not found');
+        }
+       $item->load('options');
        $item->update([
            'title' => $request->title,
            'type' => $request->type,
@@ -63,9 +71,9 @@ class FieldRepository implements FieldInterface
        if ($request->filled('options')) {
            $item->options()->delete();
            foreach ($request->options as $option) {
-               if ($option['option']) {
+               if ($option) {
                    $item->options()->create([
-                       'option' => $option['option'],
+                       'option' => $option,
                    ]);
                }
            }
@@ -74,8 +82,13 @@ class FieldRepository implements FieldInterface
        return helper_response_updated(new FieldIndexResource($item));
    }
 
-   public function destroy($item)
+   public function destroy($item,$project)
    {
+       if($project->id != $item->project_id){
+            return helper_response_error('Project not found');
+        }
+       $item->load('options');
+       $item->options()->delete();
        $item->delete();
        return helper_response_deleted();
    }

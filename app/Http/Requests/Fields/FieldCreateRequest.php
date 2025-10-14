@@ -6,6 +6,7 @@ namespace App\Http\Requests\Fields;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class FieldCreateRequest extends FormRequest
 {
@@ -17,12 +18,17 @@ class FieldCreateRequest extends FormRequest
 
     public function rules(): array
     {
+        $projectId = $this->route('project');
         return [
-            'title' => 'required|string|unique:fields,title',
             'type' => 'required|string',
             'placeholder' => 'nullable|string',
             'default' => 'nullable|string',
             'description' => 'nullable|string',
+            'title' => [
+                'required',
+                'string',
+                Rule::unique('fields', 'title')->where('project_id', $projectId)
+            ],
         ];
     }
 

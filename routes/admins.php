@@ -86,13 +86,18 @@ Route::middleware('auth:admins')->group(function () {
             Route::apiResource('levels',\App\Http\Controllers\Admins\Projects\ProjectLevelsController::class);
         });
 
-
+        //Import Methods
+        Route::prefix('{project}')->group(function () {
+            Route::get('import-methods/all',[\App\Http\Controllers\Admins\ImportMethods\ImportMethodController::class, 'all'])->name('import-methods.all');
+            Route::apiResource('import-methods',\App\Http\Controllers\Admins\ImportMethods\ImportMethodController::class);
+        });
 
         //Project Fields
-        Route::prefix('{project}/fields')->as('fields.')->group(function () {
-            Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_fields'])->name('get');
-            Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'store_fields'])->name('store');
+        Route::prefix('{project}')->group(function () {
+            Route::get('fields/all',[\App\Http\Controllers\Admins\Fields\FieldController::class, 'all'])->name('fields.all');
+            Route::apiResource('fields',\App\Http\Controllers\Admins\Fields\FieldController::class);
         });
+
 
         Route::prefix('{project}/forms')->group(function () {
             Route::get('activation/{form}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'activation_forms'])->name('activation');
@@ -149,8 +154,6 @@ Route::middleware('auth:admins')->group(function () {
     Route::apiResource('projects',\App\Http\Controllers\Admins\Projects\ProjectController::class);
 
     //import-methods
-    Route::get('import-methods/all',[\App\Http\Controllers\Admins\ImportMethods\ImportMethodController::class, 'all'])->name('import-methods.all');
-    Route::apiResource('import-methods',\App\Http\Controllers\Admins\ImportMethods\ImportMethodController::class);
 
     Route::prefix('fields')->as('fields.')->group(function () {
         Route::get('all',[\App\Http\Controllers\Admins\Fields\FieldController::class, 'all'])->name('all');

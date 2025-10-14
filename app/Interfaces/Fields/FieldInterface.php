@@ -4,17 +4,17 @@ namespace App\Interfaces\Fields;
 
 interface FieldInterface
 {
-    public function index();
+    public function index($project);
 
-    public function all();
+    public function all($project);
 
-    public function store($request);
+    public function store($request,$project);
 
-    public function show($item);
+    public function show($item,$project);
 
-    public function update($request,$item);
+    public function update($request,$item,$project);
 
-    public function destroy($item);
+    public function destroy($item,$project);
 
 
 }

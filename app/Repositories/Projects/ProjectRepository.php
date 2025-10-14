@@ -189,56 +189,117 @@ class ProjectRepository implements ProjectInterface
         $exists_projects=[];
         $counter=0;
         //check the Excel file
-        if ($request->hasFile('excel')) {
+        if ($request->hasFile('excel') ) {
             $excel = Excel::toArray([], request()->file('excel'));
-            $import_date = null;
-            foreach ($excel[0] as $key => $value) {
-                if ($value['0']){
-                    if (mb_substr($value['0'], 0, 1, 'UTF-8') != '0'){
-                        $value['0'] = '0'.$value['0'];
-                    }
-                }
-                $customer = Customer::where('phone',$value[0])->first();
+            $fileds=[];
+            //get fields
+            foreach(json_decode($request->fields) as $key => $value){
+                $fileds[$value] = $key;
+            }
+            $has_header = $request->has_header;
+
+            foreach($excel[0] as $key => $value){
+
+                if($has_header == 'false'){
+                $customer = Customer::where('phone',$value[$fileds['phone']])->first();
                 $find_customer = null;
                 if($customer){
                     $find_customer = $item->customers()->where('customer_id',$customer->id)->first();
                 }
-                if ($customer && $find_customer) {
+                if($customer && $find_customer) {
                     $exists_projects[] = [
-                        'phone' => $value[0],
+                        'phone' => $customer->phone,
                         'created_at' => $find_customer->created_at,
                         'users' => UserProjectCustomerResource::collection($find_customer->users),
                     ];
-
                 }else{
+                    $custoemr_data=[];
+                    $import_date = null;
+                    foreach($fileds as $customer_key => $customer_value){
+                        if($customer_key != 'date'){
+                            $custoemr_data[$customer_key] = $value[$customer_value];
+                        }
+                        if($customer_key == 'date'){
+                            $excel_date = $value[$customer_value];
+                            // Convert Excel date to Carbon format
+                            $import_date = $this->convertExcelDateToCarbon($excel_date);
+                        }
+                    }
                     if (!$customer){
-                        $customer = Customer::create([
-                            'phone' => $value[0],
-                            'name' => $value[1],
-                            'instagram_id' => $value[2],
-                        ]);
+                        $customer = Customer::create($custoemr_data);
                     }
-                    if ($value[3]){
-                        $jalali = Jalalian::fromFormat('Y/m/d', $value[3]);
-                        $import_date = $jalali->toCarbon();
-                    }
-
                     $new_customer = $item->customers()->create([
                         'customer_id' => $customer->id,
                         'import_method_id' => $request->import_method_id,
                         'import_at' => $import_date,
-                        'created_at' => $import_date,
-                        'description' => $request->description,
                         'status' => Project_Customer::STATUS_PENDING,
                     ]);
                     if ($request->filled('tags')){
                         $new_customer->tags()->attach($request->tags);
                     }
                     $counter++;
+                    }
                 }
-            }
+                $has_header = 'false';
+        }
+
+
+
+
+
+
+
+
+            // $import_date = null;
+            // foreach ($excel[0] as $key => $value) {
+            //     if ($value['0']){
+            //         if (mb_substr($value['0'], 0, 1, 'UTF-8') != '0'){
+            //             $value['0'] = '0'.$value['0'];
+            //         }
+            //     }
+            //     $customer = Customer::where('phone',$value[0])->first();
+            //     $find_customer = null;
+            //     if($customer){
+            //         $find_customer = $item->customers()->where('customer_id',$customer->id)->first();
+            //     }
+            //     if ($customer && $find_customer) {
+            //         $exists_projects[] = [
+            //             'phone' => $value[0],
+            //             'created_at' => $find_customer->created_at,
+            //             'users' => UserProjectCustomerResource::collection($find_customer->users),
+            //         ];
+
+            //     }else{
+            //         if (!$customer){
+            //             $customer = Customer::create([
+            //                 'phone' => $value[0],
+            //                 'name' => $value[1],
+            //                 'instagram_id' => $value[2],
+            //             ]);
+            //         }
+            //         if ($value[3]){
+            //             $jalali = Jalalian::fromFormat('Y/m/d', $value[3]);
+            //             $import_date = $jalali->toCarbon();
+            //         }
+
+            //         $new_customer = $item->customers()->create([
+            //             'customer_id' => $customer->id,
+            //             'import_method_id' => $request->import_method_id,
+            //             'import_at' => $import_date,
+            //             'created_at' => $import_date,
+            //             'description' => $request->description,
+            //             'status' => Project_Customer::STATUS_PENDING,
+            //         ]);
+            //         if ($request->filled('tags')){
+            //             $new_customer->tags()->attach($request->tags);
+            //         }
+            //         $counter++;
+            //     }
+            // }
 
         }
+
+
         //check numbers
         if ($request->filled('numbers')){
             $numbers = explode(',',$request->numbers);
@@ -856,8 +917,92 @@ class ProjectRepository implements ProjectInterface
     public function get_customer_fields($project)
     {
 
-        $data = ['name','email','instagram_id','telegram_id','description'];
+        $data = ['name','email','instagram_id','telegram_id','description' ,'date'];
         return helper_response_fetch($data);
+    }
+
+    /**
+     * Convert Excel date to Carbon format
+     * Detects if date is Jalali or Gregorian and converts accordingly
+     *
+     * @param mixed $excel_date
+     * @return Carbon|null
+     */
+    private function convertExcelDateToCarbon($excel_date)
+    {
+        if (empty($excel_date)) {
+            return null;
+        }
+
+        // Convert to string if it's not already
+        $date_string = (string) $excel_date;
+
+        // Remove any extra whitespace
+        $date_string = trim($date_string);
+
+        // Common Jalali date patterns (Persian calendar)
+        $jalali_patterns = [
+            '/^\d{4}\/\d{1,2}\/\d{1,2}$/',  // 1403/01/15
+            '/^\d{4}-\d{1,2}-\d{1,2}$/',    // 1403-01-15
+            '/^\d{4}\.\d{1,2}\.\d{1,2}$/',  // 1403.01.15
+        ];
+
+        // Common Gregorian date patterns
+        $gregorian_patterns = [
+            '/^\d{4}\/\d{1,2}\/\d{1,2}$/',  // 2024/01/15
+            '/^\d{4}-\d{1,2}-\d{1,2}$/',    // 2024-01-15
+            '/^\d{4}\.\d{1,2}\.\d{1,2}$/',  // 2024.01.15
+        ];
+
+        // Check if it's a Jalali date (year > 1300 and < 1500 typically)
+        $is_jalali = false;
+        foreach ($jalali_patterns as $pattern) {
+            if (preg_match($pattern, $date_string)) {
+                $parts = preg_split('/[\/\-\.]/', $date_string);
+                if (count($parts) >= 3) {
+                    $year = (int) $parts[0];
+                    // Jalali years are typically between 1300-1500
+                    if ($year >= 1300 && $year <= 1500) {
+                        $is_jalali = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        try {
+            if ($is_jalali) {
+                // Convert Jalali date to Carbon
+                // Try different separators
+                $separators = ['/', '-', '.'];
+                foreach ($separators as $sep) {
+                    if (strpos($date_string, $sep) !== false) {
+                        $jalali = Jalalian::fromFormat('Y' . $sep . 'm' . $sep . 'd', $date_string);
+                        return $jalali->toCarbon();
+                    }
+                }
+            } else {
+                // Try to parse as Gregorian date
+                // Handle different formats
+                $formats = ['Y/m/d', 'Y-m-d', 'Y.m.d', 'd/m/Y', 'd-m-Y', 'd.m.Y'];
+
+                foreach ($formats as $format) {
+                    try {
+                        return Carbon::createFromFormat($format, $date_string);
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+                }
+
+                // If all formats fail, try Carbon's default parsing
+                return Carbon::parse($date_string);
+            }
+        } catch (\Exception $e) {
+            // If conversion fails, return null
+            return null;
+        }
+
+        return null;
     }
 
 }

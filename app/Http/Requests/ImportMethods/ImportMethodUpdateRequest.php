@@ -6,6 +6,7 @@ namespace App\Http\Requests\ImportMethods;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class ImportMethodUpdateRequest extends FormRequest
 {
@@ -17,8 +18,17 @@ class ImportMethodUpdateRequest extends FormRequest
 
     public function rules(): array
     {
+        $projectId = $this->route('project');
+        $importMethodId = $this->route('import_method');
+
         return [
-            'name' => 'required|string|unique:import_methods,name,'.$this->import_method->id,
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('import_methods', 'name')
+                    ->where('project_id', $projectId)
+                    ->ignore($importMethodId)
+            ],
         ];
     }
 

@@ -64,9 +64,9 @@ class Project extends Model
         return $this->hasMany(Project_Customer_Invoice::class,'project_id');
     }
 
-    public function fields(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function fields(): HasMany
     {
-        return $this->belongsToMany(Field::class,'project_fields');
+        return $this->hasMany(Field::class,'project_id');
     }
 
     public function levels(): HasMany
@@ -97,5 +97,10 @@ class Project extends Model
     public function statuses(): HasMany
     {
         return $this->hasMany(Project_Customer_Status::class,'project_id');
+    }
+
+    public function import_methods(): HasMany
+    {
+        return $this->hasMany(Import_Method::class, 'project_id');
     }
 }
