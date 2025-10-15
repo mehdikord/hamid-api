@@ -36,6 +36,8 @@ class ProjectFromIndexResource extends JsonResource
             'is_active' => $this->is_active,
             'register' => $this->register,
             'view' => $this->view,
+            'theme_name' => $this->theme_name,
+            'theme_color' => $this->theme_color,
 
         ];
     }

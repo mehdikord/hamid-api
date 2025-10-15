@@ -808,12 +808,16 @@ class ProjectRepository implements ProjectInterface
             'link' => $link,
              'is_active' => 1,
             'description' => $request->description,
+            'theme_name' => $request->theme_name,
+            'theme_color' => $request->theme_color,
         ]);
         if ($request->filled('fields')){
             foreach ($request->fields as $field){
                 $form->fields()->create([
-                   'field_id' => $field['field']['id'],
+                   'field_id' => $field['field_id'],
                    'title' => $field['title'],
+                   'required' => $field['required'],
+                   'priority' => $field['priority'],
                 ]);
             }
         }
@@ -829,13 +833,17 @@ class ProjectRepository implements ProjectInterface
         $item->update([
             'name' => $request->name,
             'description' => $request->description,
+            'theme_name' => $request->theme_name,
+            'theme_color' => $request->theme_color,
         ]);
         if ($request->filled('fields')){
             $item->fields()->delete();
             foreach ($request->fields as $field){
                 $item->fields()->create([
-                    'field_id' => $field['field']['id'],
+                    'field_id' => $field['field_id'],
                     'title' => $field['title'],
+                    'required' => $field['required'],
+                    'priority' => $field['priority'],
                 ]);
             }
         }

@@ -17,8 +17,10 @@ class ProjectFormsCreateRequest extends FormRequest
 
     public function rules(): array
     {
+
+
         return [
-            'name' => 'required|string|unique:project_forms',
+            'name' => 'required|string|max:255',
         ];
     }
 

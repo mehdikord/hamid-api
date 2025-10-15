@@ -32,6 +32,8 @@ class ProjectFromFieldsIndexResource extends JsonResource
             'field_id' => $this->field_id,
             'id' => $this->id,
             'title' => $this->title,
+            'required' => $this->required,
+            'priority' => $this->priority,
             'field' => new FieldIndexResource($this->field)
         ];
     }
