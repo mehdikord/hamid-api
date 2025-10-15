@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $profile
  * @property mixed $config
  */
-class ProjectFromLandingResource extends JsonResource
+class ProjectFromLandingProjectResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -22,12 +22,11 @@ class ProjectFromLandingResource extends JsonResource
     {
 
         return [
+            'id' => $this->id,
             'name'=> $this->name,
-            'description' => $this->description,
-            'theme_name' => $this->theme_name,
-            'theme_color' => $this->theme_color,
-            'project' => new ProjectFromLandingProjectResource($this->whenLoaded('project')),
-            'fields' => ProjectFromFieldsIndexResource::collection($this->fields),
+            'image' => $this->image,
+            'total_customers' => $this->total_customers,
+
         ];
     }
 }

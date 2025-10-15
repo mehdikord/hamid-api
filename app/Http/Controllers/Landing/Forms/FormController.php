@@ -15,7 +15,7 @@ class FormController extends Controller
 
     public function get_form($token)
     {
-        $form = Project_Form::where('token', $token)->where('is_active',true)->firstorfail();
+        $form = Project_Form::where('token', $token)->where('is_active',true)->with('project')->firstorfail();
         $form->update(['view' => $form->view+1]);
         return helper_response_fetch(new ProjectFromLandingResource($form));
     }
