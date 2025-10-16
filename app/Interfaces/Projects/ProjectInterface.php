@@ -16,6 +16,8 @@ interface ProjectInterface
 
     public function update($request,$item);
 
+    public function update_logo($request,$item);
+
     public function destroy($item);
 
     public function all_customers($item);

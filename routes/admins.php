@@ -48,8 +48,6 @@ Route::middleware('auth:admins')->group(function () {
 
         Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'all'])->name('all');
 
-
-
         Route::get('categories/all',[\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class, 'all'])->name('all');
         Route::apiResource('categories',\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class);
 
@@ -114,7 +112,6 @@ Route::middleware('auth:admins')->group(function () {
         });
 
 
-
         Route::prefix('{project}/reports')->as('reports.')->group(function () {
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports'])->name('index');
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_store'])->name('store');
@@ -147,9 +144,11 @@ Route::middleware('auth:admins')->group(function () {
             Route::get('customers',[\App\Http\Controllers\Admins\Projects\ProjectsExportController::class,'customers'])->name('customers')->withoutMiddleware('auth:admins');
         });
 
-
+        //Update logo
+        Route::post('{project}/logo',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'update_logo'])->name('update.logo');
 
     });
+
 
     Route::apiResource('projects',\App\Http\Controllers\Admins\Projects\ProjectController::class);
 
@@ -180,6 +179,7 @@ Route::middleware('auth:admins')->group(function () {
         });
 
     });
+
     Route::apiResource('customers',\App\Http\Controllers\Admins\Customers\CustomerController::class);
 
     //Tags

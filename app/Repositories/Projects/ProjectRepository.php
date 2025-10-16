@@ -153,6 +153,21 @@ class ProjectRepository implements ProjectInterface
        return helper_response_updated(new ProjectSingleResource($item));
    }
 
+   public function update_logo($request,$item)
+   {
+        if($request->hasFile('logo')){
+            $path = Storage::put('public/projects/logo',$request->file('logo'));
+            $url = Storage::url($path);
+            $item->update(['image' => $url,'image_path' => $path]);
+            return helper_response_fetch(['logo' => $url]);
+        }else{
+            Storage::delete($item->image_path);
+            $item->update(['image' => null,'image_path' => null]);
+            return helper_response_fetch(['logo' => null]);
+        }
+   }
+
+
 
    public function destroy($item)
    {

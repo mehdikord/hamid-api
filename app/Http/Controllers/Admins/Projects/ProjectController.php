@@ -14,6 +14,7 @@ use App\Http\Requests\Projects\levels\ProjectLevelRequest;
 use App\Http\Requests\Projects\Projects\Invoices\ProjectInvoiceCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectCreateRequest;
 use App\Http\Requests\Projects\Projects\ProjectCustomersCreateRequest;
+use App\Http\Requests\Projects\Projects\ProjectUpdateLogoRequest;
 use App\Http\Requests\Projects\Projects\ProjectUpdateRequest;
 use App\Http\Requests\Projects\Projects\Reports\ProjectReportCreateRequest;
 use App\Interfaces\Projects\ProjectCategoryInterface;
@@ -83,6 +84,11 @@ class ProjectController extends Controller
     public function update(ProjectUpdateRequest $request,Project $project)
     {
         return $this->repository->update($request,$project);
+    }
+
+    public function update_logo(Project $project,ProjectUpdateLogoRequest $request)
+    {
+        return $this->repository->update_logo($request,$project);
     }
 
 
