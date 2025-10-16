@@ -1,5 +1,6 @@
 <?php
 //All Admins Routing
+
 use Illuminate\Support\Facades\Route;
 
 
@@ -96,6 +97,11 @@ Route::middleware('auth:admins')->group(function () {
             Route::apiResource('fields',\App\Http\Controllers\Admins\Fields\FieldController::class);
         });
 
+        Route::prefix('{project}')->group(function () {
+            Route::get('tags/all',[\App\Http\Controllers\Admins\Tags\TagController::class, 'all'])->name('tags.all');
+            Route::apiResource('tags',\App\Http\Controllers\Admins\Tags\TagController::class);
+        });
+
 
         Route::prefix('{project}/forms')->group(function () {
             Route::get('activation/{form}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'activation_forms'])->name('activation');
@@ -183,8 +189,8 @@ Route::middleware('auth:admins')->group(function () {
     Route::apiResource('customers',\App\Http\Controllers\Admins\Customers\CustomerController::class);
 
     //Tags
-    Route::get('tags/all',[\App\Http\Controllers\Admins\Tags\TagController::class, 'all'])->name('tags.all');
-    Route::apiResource('tags',\App\Http\Controllers\Admins\Tags\TagController::class);
+    // Route::get('tags/all',[\App\Http\Controllers\Admins\Tags\TagController::class, 'all'])->name('tags.all');
+    // Route::apiResource('tags',\App\Http\Controllers\Admins\Tags\TagController::class);
 
     //Positions
     Route::get('positions/all',[\App\Http\Controllers\Admins\Positions\PositionController::class, 'all'])->name('positions.all');

@@ -6,6 +6,7 @@ namespace App\Http\Requests\Projects\levels;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class ProjectLevelsCreateRequest extends FormRequest
 {
@@ -17,8 +18,13 @@ class ProjectLevelsCreateRequest extends FormRequest
 
     public function rules(): array
     {
+        $projectId = $this->route('project')->id;
         return [
-            'name' => 'required|string|unique:project_levels,name',
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('project_levels', 'name')->where('project_id', $projectId)
+            ],
             'description' => 'nullable|string',
             'color' => 'required|string',
             'priority' => 'required|integer|min:1',

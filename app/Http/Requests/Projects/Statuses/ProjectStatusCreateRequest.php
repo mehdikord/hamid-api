@@ -6,6 +6,7 @@ namespace App\Http\Requests\Projects\Statuses;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class ProjectStatusCreateRequest extends FormRequest
 {
@@ -17,8 +18,13 @@ class ProjectStatusCreateRequest extends FormRequest
 
     public function rules(): array
     {
+        $projectId = $this->route('project')->id;
         return [
-            'name' => 'required|string|unique:project_customer_statuses',
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('project_customer_statuses', 'name')->where('project_id', $projectId)
+            ],
         ];
     }
 

@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\ProjectLevels;
 
-
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class ProjectLevelUpdateRequest extends FormRequest
 {
@@ -16,9 +16,16 @@ class ProjectLevelUpdateRequest extends FormRequest
      */
 
     public function rules(): array
-    {
+    { $projectId = $this->route('project');
+        $levelId = $this->route('level');
         return [
-            'name' => 'required|string|unique:project_levels,name,'.$this->level->id,
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('project_levels', 'name')
+                    ->where('project_id', $projectId)
+                    ->ignore($levelId)
+            ],
         ];
     }
 

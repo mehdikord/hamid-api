@@ -6,6 +6,7 @@ namespace App\Http\Requests\Tags;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class TagUpdateRequest extends FormRequest
 {
@@ -17,8 +18,14 @@ class TagUpdateRequest extends FormRequest
 
     public function rules(): array
     {
+        $projectId = $this->route('project');
+        $tagId = $this->route('tag');
         return [
-            'name' => 'required|string|unique:tags,name,'.$this->tag->id,
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('tags', 'name')->where('project_id', $projectId)->ignore($tagId)
+            ],
         ];
     }
 
