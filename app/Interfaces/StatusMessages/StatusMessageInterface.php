@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Interfaces\StatusMessages;
+
+interface StatusMessageInterface
+{
+    public function index($project);
+
+    public function all($project);
+
+    public function store($request,$project);
+
+    public function show($item,$project);
+
+    public function update($request,$item,$project);
+
+    public function destroy($item,$project);
+
+
+}

@@ -76,7 +76,14 @@ Route::middleware('auth:admins')->group(function () {
         });
 
         Route::prefix('{project}')->as('statuses.')->group(function () {
-            Route::get('statuses/all',[\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'all'])->name('all');
+            Route::prefix('statuses')->group(function () {
+                Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'all'])->name('all');
+                Route::get( '{status}/messages',action: [\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'get_messages'])->name('get_messages');
+                Route::post( '{status}/messages',action: [\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'store_messages'])->name('store_messages');
+
+
+            });
+
             Route::apiResource('statuses',\App\Http\Controllers\Admins\Projects\ProjectStatusController::class);
         });
 
@@ -89,6 +96,12 @@ Route::middleware('auth:admins')->group(function () {
         Route::prefix('{project}')->group(function () {
             Route::get('import-methods/all',[\App\Http\Controllers\Admins\ImportMethods\ImportMethodController::class, 'all'])->name('import-methods.all');
             Route::apiResource('import-methods',\App\Http\Controllers\Admins\ImportMethods\ImportMethodController::class);
+        });
+
+        //Status Messages
+        Route::prefix('{project}')->group(function () {
+            Route::get('status-messages/all',[\App\Http\Controllers\Admins\Projects\ProjectStatusMessageController::class, 'all'])->name('status-messages.all');
+            Route::apiResource('status-messages',\App\Http\Controllers\Admins\Projects\ProjectStatusMessageController::class);
         });
 
         //Project Fields
@@ -149,7 +162,6 @@ Route::middleware('auth:admins')->group(function () {
 
             Route::get('customers',[\App\Http\Controllers\Admins\Projects\ProjectsExportController::class,'customers'])->name('customers')->withoutMiddleware('auth:admins');
         });
-
         //Update logo
         Route::post('{project}/logo',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'update_logo'])->name('update.logo');
 

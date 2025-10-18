@@ -81,9 +81,6 @@ Route::group(['middleware' => ['auth:users']], function () {
 
 
         //Statuses
-        Route::get('statuses',[\App\Http\Controllers\Users\Customers\CustomerController::class,'statuses'])->name('statuses.all');
-
-        Route::get('levels',[\App\Http\Controllers\Users\Customers\CustomerController::class,'levels'])->name('levels.all');
 
         Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'index'])->name('index');
 
@@ -97,7 +94,6 @@ Route::group(['middleware' => ['auth:users']], function () {
     //Project
     Route::prefix('projects')->as('projects.')->group(function () {
         Route::get('all',[\App\Http\Controllers\Users\Projects\ProjectController::class,'all'])->name('all');
-
         Route::get('{project}/statuses',[\App\Http\Controllers\Users\Projects\ProjectController::class,'statuses'])->name('statuses.all');
 
         Route::get('{project}/levels',[\App\Http\Controllers\Users\Projects\ProjectController::class,'levels'])->name('levels.all');

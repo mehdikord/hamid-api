@@ -3,6 +3,7 @@ namespace App\Repositories\Projects;
 use App\Http\Resources\Projects\Statuses\ProjectStatusIndexResource;
 use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
 use App\Http\Resources\Projects\Statuses\ProjectStatusSingleResource;
+use App\Http\Resources\StatusMessages\StatusMessageIndexResource;
 use App\Interfaces\Projects\ProjectStatusInterface;
 use App\Models\Project_Status;
 
@@ -65,5 +66,19 @@ class ProjectStatusRepository implements ProjectStatusInterface
        return helper_response_deleted();
    }
 
+    public function get_messages($project,$status)
+    {
+        $data = $status->status_messages();
+        $data->orderByDesc('id');
+        return helper_response_fetch(StatusMessageIndexResource::collection($data->get()));
+    }
+    public function store_messages($project,$status,$request)
+    {
 
+        if ($request->filled('status_message_id')) {
+            $status->status_messages()->attach($request->status_message_id);
+        }
+
+        return helper_response_fetch(StatusMessageIndexResource::collection($status->status_messages()->get()));
+    }
 }

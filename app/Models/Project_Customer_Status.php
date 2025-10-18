@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project_Customer_Status extends Model
@@ -20,5 +21,10 @@ class Project_Customer_Status extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class,'project_id');
+    }
+
+    public function status_messages(): BelongsToMany
+    {
+        return $this->belongsToMany(Status_Message::class,'project_customer_status_messages','customer_status_id','status_message_id');
     }
 }

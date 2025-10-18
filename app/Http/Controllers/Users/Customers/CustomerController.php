@@ -9,7 +9,7 @@ use App\Http\Requests\User_Customers\Invoices\UserCustomerInvoiceTargetStoreRequ
 use App\Http\Requests\User_Customers\Reports\UserCustomerReportStoreRequest;
 use App\Http\Requests\User_Customers\UserCustomerStatusStoreRequest;
 use App\Interfaces\Customers\CustomerSettingsStatusInterface;
-use App\Interfaces\ProjectLevels\ProjectLevelInterface;
+use App\Interfaces\Projects\ProjectLevelInterface;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Models\Customer;
 use App\Models\Project;
@@ -66,9 +66,9 @@ class CustomerController extends Controller
     {
         return $this->setting_repository->all();
     }
-    public function levels()
+    public function levels(Project $project)
     {
-        return $this->project_level_repository->all();
+        return $this->project_level_repository->all($project);
     }
 
     public function statuses_store(Project_Customer $customer,UserCustomerStatusStoreRequest $request)

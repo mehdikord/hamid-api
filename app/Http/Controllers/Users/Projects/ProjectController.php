@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Users\Projects;
 
 use App\Http\Controllers\Controller;
-use App\Interfaces\ProjectLevels\ProjectLevelInterface;
+use App\Interfaces\Projects\ProjectLevelInterface;
 use App\Interfaces\Projects\ProjectStatusInterface;
 use App\Interfaces\Projects\UserProjectInterface;
 use App\Models\Project;

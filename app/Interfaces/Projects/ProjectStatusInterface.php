@@ -16,5 +16,8 @@ interface ProjectStatusInterface
 
     public function destroy($item,$project);
 
+    public function get_messages($project,$status);
+
+    public function store_messages($project,$status,$request);
 
 }

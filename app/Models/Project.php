@@ -108,4 +108,9 @@ class Project extends Model
     {
         return $this->hasMany(Tag::class, 'project_id');
     }
+
+    public function status_messages(): HasMany
+    {
+        return $this->hasMany(Status_Message::class, 'project_id');
+    }
 }

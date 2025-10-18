@@ -22,6 +22,7 @@ use App\Interfaces\Tags\TagInterface;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Interfaces\Users\UserInterface;
 use App\Interfaces\Bot\BotInterface;
+use App\Interfaces\StatusMessages\StatusMessageInterface;
 use App\Interfaces\Telegram\TelegramInterface;
 use App\Repositories\Activities\ActivityRepository;
 use App\Repositories\Auth\AuthRepository;
@@ -43,6 +44,7 @@ use App\Repositories\Tags\TagRepository;
 use App\Repositories\Users\UserCustomerRepository;
 use App\Repositories\Users\UserRepository;
 use App\Repositories\Bot\BotRepository;
+use App\Repositories\StatusMessages\StatusMessageRepository;
 use App\Repositories\Telegram\TelegramRepository;
 use Carbon\Laravel\ServiceProvider;
 
@@ -77,8 +79,6 @@ class RepositoryProvider extends ServiceProvider
 
         $this->app->bind(TagInterface::class,TagRepository::class);
 
-        $this->app->bind(ProjectLevelInterface::class,ProjectLevelRepository::class);
-
         $this->app->bind(ReportingInterface::class,ReportingRepository::class);
 
         $this->app->bind(PositionInterface::class,PositionRepository::class);
@@ -95,7 +95,7 @@ class RepositoryProvider extends ServiceProvider
 
         $this->app->bind(ProjectLevelInterface::class,ProjectLevelRepository::class);
 
-
+        $this->app->bind(StatusMessageInterface::class,StatusMessageRepository::class);
     }
 
 }
