@@ -550,7 +550,7 @@ class UserCustomerRepository implements UserCustomerInterface
         if ($project_customer){
             $final=[];
             foreach ($project_customer->project->levels as $level){
-                $final[]=['id' => $level->project_level_id, 'name' => $level->level->name];
+                $final[]=['id' => $level->project_level_id, 'name' => $level->name];
             }
             return helper_response_fetch($final);
         }

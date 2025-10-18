@@ -15,12 +15,12 @@ class Field extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new MemberScope);
-        static::creating(function ($model) {
-            if (helper_auth_is_member()){
-                $model->member_id = auth('admins')->id();
-            }
-        });
+        // static::addGlobalScope(new MemberScope);
+        // static::creating(function ($model) {
+        //     if (helper_auth_is_member()){
+        //         $model->member_id = auth('admins')->id();
+        //     }
+        // });
     }
     public function options():HasMany
     {
