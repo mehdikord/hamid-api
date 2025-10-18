@@ -91,6 +91,43 @@ function helper_core_send_post_request($url, $data = []): array
     }
 }
 
+// Convert Persian numbers to English numbers
+function helper_core_convert_persian_to_english_numbers($string): string
+{
+    $persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    $arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    $englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    // Replace Persian numbers
+    $string = str_replace($persianNumbers, $englishNumbers, $string);
+
+    // Replace Arabic numbers
+    $string = str_replace($arabicNumbers, $englishNumbers, $string);
+
+    return $string;
+}
+
+// Format mobile number to standard format (09124435544)
+function helper_core_format_mobile_number($phone): string
+{
+    // Convert Persian/Arabic numbers to English
+    $phone = helper_core_convert_persian_to_english_numbers($phone);
+
+    // Remove all non-numeric characters
+    $phone = preg_replace('/[^0-9]/', '', $phone);
+
+    // Remove country codes and replace with 0
+    if (str_starts_with($phone, '0098')) {
+        $phone = '0' . substr($phone, 4);
+    } elseif (str_starts_with($phone, '98')) {
+        $phone = '0' . substr($phone, 2);
+    } elseif (str_starts_with($phone, '+98')) {
+        $phone = '0' . substr($phone, 3);
+    }
+
+    return $phone;
+}
+
 
 
 

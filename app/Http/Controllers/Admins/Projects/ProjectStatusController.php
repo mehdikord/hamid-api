@@ -9,6 +9,7 @@ use App\Interfaces\Projects\ProjectStatusInterface;
 use App\Models\Project;
 use App\Models\Project_Customer_Status;
 use App\Models\Project_Status;
+use App\Models\Status_Message;
 use Illuminate\Http\Request;
 
 class ProjectStatusController extends Controller
@@ -74,5 +75,9 @@ class ProjectStatusController extends Controller
     public function store_messages(Project $project,Project_Customer_Status $status,Request $request)
     {
         return $this->repository->store_messages($project,$status,$request);
+    }
+    public function delete_messages(Project $project,Project_Customer_Status $status,Status_Message $message)
+    {
+        return $this->repository->delete_messages($project,$status,$message);
     }
 }

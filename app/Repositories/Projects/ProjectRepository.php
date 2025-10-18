@@ -212,49 +212,57 @@ class ProjectRepository implements ProjectInterface
                 $fileds[$value] = $key;
             }
             $has_header = $request->has_header;
-
             foreach($excel[0] as $key => $value){
-
                 if($has_header == 'false'){
-                $customer = Customer::where('phone',$value[$fileds['phone']])->first();
-                $find_customer = null;
-                if($customer){
-                    $find_customer = $item->customers()->where('customer_id',$customer->id)->first();
-                }
-                if($customer && $find_customer) {
-                    $exists_projects[] = [
-                        'phone' => $customer->phone,
-                        'created_at' => $find_customer->created_at,
-                        'users' => UserProjectCustomerResource::collection($find_customer->users),
-                    ];
-                }else{
-                    $custoemr_data=[];
-                    $import_date = null;
-                    foreach($fileds as $customer_key => $customer_value){
-                        if($customer_key != 'date'){
-                            $custoemr_data[$customer_key] = $value[$customer_value];
+                    $phone  =  $value[$fileds['phone']];
+                    if($phone){
+                        // Format mobile number to standard format (09124435544)
+                        $phone = helper_core_format_mobile_number($phone);
+                        $customer = Customer::where('phone', $phone)->first();
+                        $find_customer = null;
+                        if($customer){
+                            $find_customer = $item->customers()->where('customer_id',$customer->id)->first();
                         }
-                        if($customer_key == 'date'){
-                            $excel_date = $value[$customer_value];
-                            // Convert Excel date to Carbon format
-                            $import_date = $this->convertExcelDateToCarbon($excel_date);
+                        if($customer && $find_customer) {
+                            $exists_projects[] = [
+                                'phone' => $customer->phone,
+                                'created_at' => $find_customer->created_at,
+                                'users' => UserProjectCustomerResource::collection($find_customer->users),
+                            ];
+                        }else{
+                            $custoemr_data=[];
+                            $import_date = null;
+                            foreach($fileds as $customer_key => $customer_value){
+                                if($customer_key != 'date'){
+                                    // Use formatted phone number for phone field
+                                    if($customer_key == 'phone'){
+                                        $custoemr_data[$customer_key] = $phone;
+                                    } else {
+                                        $custoemr_data[$customer_key] = $value[$customer_value];
+                                    }
+                                }
+                                if($customer_key == 'date'){
+                                    $excel_date = $value[$customer_value];
+                                    // Convert Excel date to Carbon format
+                                    $import_date = $this->convertExcelDateToCarbon($excel_date);
+                                }
+                            }
+                            if (!$customer){
+                                $customer = Customer::create($custoemr_data);
+                            }
+                            $new_customer = $item->customers()->create([
+                                'customer_id' => $customer->id,
+                                'import_method_id' => $request->import_method_id,
+                                'import_at' => $import_date,
+                                'status' => Project_Customer::STATUS_PENDING,
+                            ]);
+                            if ($request->filled('tags')){
+                                $new_customer->tags()->attach($request->tags);
+                            }
+                            $counter++;
+                            }
                         }
                     }
-                    if (!$customer){
-                        $customer = Customer::create($custoemr_data);
-                    }
-                    $new_customer = $item->customers()->create([
-                        'customer_id' => $customer->id,
-                        'import_method_id' => $request->import_method_id,
-                        'import_at' => $import_date,
-                        'status' => Project_Customer::STATUS_PENDING,
-                    ]);
-                    if ($request->filled('tags')){
-                        $new_customer->tags()->attach($request->tags);
-                    }
-                    $counter++;
-                    }
-                }
                 $has_header = 'false';
         }
 

@@ -76,9 +76,17 @@ class ProjectStatusRepository implements ProjectStatusInterface
     {
 
         if ($request->filled('status_message_id')) {
-            $status->status_messages()->attach($request->status_message_id);
+            // Check if the message is already attached to avoid duplicates
+            if (!$status->status_messages()->where('status_message_id', $request->status_message_id)->exists()) {
+                $status->status_messages()->attach($request->status_message_id);
+            }
         }
 
+        return helper_response_fetch(StatusMessageIndexResource::collection($status->status_messages()->get()));
+    }
+    public function delete_messages($project,$status,$message)
+    {
+        $status->status_messages()->detach($message->id);
         return helper_response_fetch(StatusMessageIndexResource::collection($status->status_messages()->get()));
     }
 }

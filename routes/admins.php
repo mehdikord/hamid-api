@@ -80,6 +80,7 @@ Route::middleware('auth:admins')->group(function () {
                 Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'all'])->name('all');
                 Route::get( '{status}/messages',action: [\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'get_messages'])->name('get_messages');
                 Route::post( '{status}/messages',action: [\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'store_messages'])->name('store_messages');
+                Route::delete( '{status}/messages/{message}',action: [\App\Http\Controllers\Admins\Projects\ProjectStatusController::class, 'delete_messages'])->name('delete_messages');
 
 
             });
@@ -106,7 +107,7 @@ Route::middleware('auth:admins')->group(function () {
 
         //Project Fields
         Route::prefix('{project}')->group(function () {
-            Route::get('fields/all',[\App\Http\Controllers\Admins\Fields\FieldController::class, 'all'])->name('fields.all');
+            Route::get('fields/all',action: [\App\Http\Controllers\Admins\Fields\FieldController::class, 'all'])->name('fields.all');
             Route::apiResource('fields',\App\Http\Controllers\Admins\Fields\FieldController::class);
         });
 
@@ -176,8 +177,8 @@ Route::middleware('auth:admins')->group(function () {
         Route::get('all',[\App\Http\Controllers\Admins\Fields\FieldController::class, 'all'])->name('all');
     });
 
-    //Fields
-    Route::apiResource('fields',\App\Http\Controllers\Admins\Fields\FieldController::class);
+    // //Fields
+    // Route::apiResource('fields',\App\Http\Controllers\Admins\Fields\FieldController::class);
 
     //Customers
     Route::prefix('customers')->as('customers.')->group(function () {
