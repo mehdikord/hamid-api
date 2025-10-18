@@ -123,6 +123,8 @@ function helper_core_format_mobile_number($phone): string
         $phone = '0' . substr($phone, 2);
     } elseif (str_starts_with($phone, '+98')) {
         $phone = '0' . substr($phone, 3);
+    }elseif (!str_starts_with($phone, '0')) {
+        $phone = '0'.$phone;
     }
 
     return $phone;

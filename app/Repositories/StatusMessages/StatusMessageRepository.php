@@ -39,7 +39,14 @@ class StatusMessageRepository implements StatusMessageInterface
                }
            }
        }
-
+       if ($request->filled('statuses') && is_array($request->statuses)) {
+       foreach ($request->statuses as $status) {
+            $get_status = $project->statuses()->find($status);
+            if ($get_status) {
+                $get_status->status_messages()->attach($data->id);
+            }
+       }
+       }
        return helper_response_fetch(new StatusMessageIndexResource($data));
    }
 
