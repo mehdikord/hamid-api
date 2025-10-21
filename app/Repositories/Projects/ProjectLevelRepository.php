@@ -42,7 +42,7 @@ class ProjectLevelRepository implements ProjectLevelInterface
    public function update($request, $item)
    {
 
-        if(!$item->project || $item->project->member_id != auth()->id()){
+        if(auth()->user()->type !== 'admin' && (!$item->project || $item->project->member_id != auth()->id())){
             return helper_response_error('شما اجازه ویرایش این وضعیت را ندارید');
         }
 
@@ -57,7 +57,7 @@ class ProjectLevelRepository implements ProjectLevelInterface
 
    public function destroy($item,$project)
    {
-        if(!$item->project || $item->project->member_id != auth()->id()){
+        if(auth()->user()->type !== 'admin' && (!$item->project || $item->project->member_id != auth()->id())){
             return helper_response_error('شما اجازه حذف این وضعیت را ندارید');
         }
        $item->delete();
