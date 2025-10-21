@@ -10,5 +10,7 @@ interface ReportingInterface
 
     public function projects_invoices_users($project);
 
+    public function summery($project);
+
 
 }

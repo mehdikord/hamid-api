@@ -128,6 +128,27 @@ function helper_core_format_mobile_number($phone): string
     }
 
     return $phone;
+
+}
+
+// Convert Jalali date to Carbon date for use in Eloquent queries
+function helper_core_jalali_to_carbon($jalaliDate): \Carbon\Carbon
+{
+    // Convert Persian/Arabic numbers to English
+    $jalaliDate = helper_core_convert_persian_to_english_numbers($jalaliDate);
+
+    // Remove any whitespace
+    $jalaliDate = trim($jalaliDate);
+
+    // Determine the separator and format
+    $separator = '/';
+    if (strpos($jalaliDate, '-') !== false) {
+        $separator = '-';
+    }
+
+    // Convert Jalali date to Carbon using morilog/jalali package
+    $jalalian = \Morilog\Jalali\Jalalian::fromFormat('Y' . $separator . 'm' . $separator . 'd', $jalaliDate);
+    return $jalalian->toCarbon();
 }
 
 

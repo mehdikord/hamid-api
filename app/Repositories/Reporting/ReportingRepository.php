@@ -142,4 +142,73 @@ class ReportingRepository implements ReportingInterface
         return helper_response_fetch($users);
     }
 
+    public function summery($project){
+
+        $main_customers = $project->customers()->count();
+        $main_customer_assigned = $project->customers()->where('status','assigned')->count();
+        $main_customer_invoices = $project->customers()->whereHas('invoices')->count();
+        $main_total_invoice_target = $project->customers()->sum('target_price');
+        $main_total_invoice_amount = $project->invoices()->sum('amount');
+        $main_total_reports = $project->reports()->count();
+        $main = [
+            'customers' => $main_customers,
+            'customer_assigned' => $main_customer_assigned,
+            'customer_invoices' => $main_customer_invoices,
+            'total_invoice_target' => $main_total_invoice_target,
+            'total_invoice_amount' => $main_total_invoice_amount,
+            'total_reports' => $main_total_reports,
+        ];
+
+        $info =[];
+        if(request()->filled("from_date") && request()->filled("to_date")){
+            $from_date = helper_core_jalali_to_carbon(request()->from_date);
+            $to_date = helper_core_jalali_to_carbon(request()->to_date);
+            $info_assigned = $project->customers()->whereHas('users',function($query)use($from_date,$to_date){
+                $query->whereBetween('start_at',[$from_date,$to_date]);
+            })->count();
+            $info_reports = $project->reports()->whereBetween('created_at',[$from_date,$to_date])->count();
+            $info_contact_support = $project->customers()->whereHas('statuses',function($query)use($from_date,$to_date){
+                $query->whereHas('level',function($level_query){
+                   $level_query->where('priority',1);
+                })->whereBetween('created_at',[$from_date,$to_date]);
+            })->count();
+            $info_present_customers = $project->customers()->whereHas('statuses',function($query)use($from_date,$to_date){
+                $query->whereHas('level',function($level_query){
+                   $level_query->where('priority',2);
+                })->whereBetween('created_at',[$from_date,$to_date]);
+            })->count();
+
+            $info_statuses =[];
+            foreach ($project->statuses as $status){
+
+                $get_status_info = $project->customers()->whereHas('statuses',function($query)use($status){
+                    $query->where('customer_status_id',$status->id);
+                })->whereBetween('created_at',[$from_date,$to_date])->count();
+                if ($get_status_info){
+                    $info_statuses[] = [
+                        'name' => $status->name,
+                        'color' => $status->color,
+                        'count' => $get_status_info,
+                    ];
+                }
+
+            }
+
+
+
+            $info = [
+                'assigned' => $info_assigned,
+                'reports' => $info_reports,
+                'contact_support' => $info_contact_support,
+                'present_customers' => $info_present_customers,
+                'statuses' => $info_statuses,
+            ];
+
+        }
+
+        return helper_response_fetch([
+            'main' => $main,
+            'info' => $info,
+        ]);
+    }
 }

@@ -179,9 +179,6 @@ Route::middleware('auth:admins')->group(function () {
         Route::get('all',[\App\Http\Controllers\Admins\Fields\FieldController::class, 'all'])->name('all');
     });
 
-    // //Fields
-    // Route::apiResource('fields',\App\Http\Controllers\Admins\Fields\FieldController::class);
-
     //Customers
     Route::prefix('customers')->as('customers.')->group(function () {
         //Settings
@@ -213,13 +210,9 @@ Route::middleware('auth:admins')->group(function () {
 
 
     //Reports
-    Route::prefix('reports')->as('reports.')->group(function () {
-
-       Route::prefix('projects')->as('projects.')->group(function () {
-    
-         Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
-            Route::get('users',[\App\Http\Controllers\Admin\Reports\InvoicesController::class,'users'])->name('users');
-         });
+    Route::prefix( 'reports')->as('reports.')->group(function () {
+       Route::prefix('projects/{project}/summery')->as('projects.summery.')->group(function () {
+        Route::get('',[\App\Http\Controllers\Admin\Reports\ProjectReportController::class, 'summery'])->name('summery');
 
        });
 
