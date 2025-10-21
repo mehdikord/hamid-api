@@ -93,6 +93,13 @@ class Project_Customer extends Model
                 'data' => Import_Method::select('id','name')->get(),
             ],
             [
+                'field' => 'tag_id',
+                'title' => 'تگ',
+                'type' => 'select',
+                'data' => Tag::where()->select('id','name')->get(),
+            ],
+
+            [
                 'field' => 'project_customer_status_id',
                 'title' => 'وضعیت',
                 'type' => 'select',
@@ -138,6 +145,8 @@ class Project_Customer extends Model
             ]
 
         ];
+
+
         //Add relation
         foreach (Customer::columns() as $column) {
             $columns[] = [
