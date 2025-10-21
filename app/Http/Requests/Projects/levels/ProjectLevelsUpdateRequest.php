@@ -24,7 +24,7 @@ class ProjectLevelsUpdateRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                Rule::unique('project_levels', 'name')->where('project_id', $projectId)->ignore($levelId)
+                
             ],
             'description' => 'nullable|string',
             'color' => 'required|string',
