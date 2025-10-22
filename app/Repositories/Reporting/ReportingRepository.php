@@ -193,9 +193,6 @@ class ReportingRepository implements ReportingInterface
                 }
 
             }
-
-
-
             $info = [
                 'assigned' => $info_assigned,
                 'reports' => $info_reports,

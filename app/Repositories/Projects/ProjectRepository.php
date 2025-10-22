@@ -935,14 +935,14 @@ class ProjectRepository implements ProjectInterface
 
 
     }
-    public function get_columns()
+    public function get_columns($project)
     {
-        return helper_response_fetch(Project_Customer::columns());
+        return helper_response_fetch(Project_Customer::columns($project));
     }
 
-    public function invoices_columns()
+    public function invoices_columns($project)
     {
-        return helper_response_fetch(Project_Customer_Invoice::columns());
+        return helper_response_fetch(Project_Customer_Invoice::columns($project));
     }
 
     public function get_customer_fields($project)

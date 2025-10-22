@@ -79,7 +79,7 @@ class Project_Customer extends Model
         return $this->belongsTo(Import_Method::class, 'import_method_id');
     }
 
-    public static function columns(){
+    public static function columns($project){
         $columns = [
             [
                 'field' => 'id',
@@ -90,26 +90,26 @@ class Project_Customer extends Model
                 'field' => 'import_method_id',
                 'title' => 'نوع ورودی',
                 'type' => 'select',
-                'data' => Import_Method::select('id','name')->get(),
+                'data' => $project->import_methods()->select('id','name')->get(),
             ],
             [
                 'field' => 'tag_id',
                 'title' => 'تگ',
                 'type' => 'select',
-                'data' => Tag::where()->select('id','name')->get(),
+                'data' => $project->tags()->select('id','name')->get(),
             ],
 
             [
                 'field' => 'project_customer_status_id',
                 'title' => 'وضعیت',
                 'type' => 'select',
-                'data' => Project_Customer_Status::select('id','name')->get(),
+                'data' => $project->statuses()->select('id','name')->get(),
             ],
             [
                 'field' => 'project_level_id',
                 'title' => 'مرحله',
                 'type' => 'select',
-                'data' => Project_Level::select('id','name')->get(),
+                'data' => $project->levels()->select('id','name')->get(),
             ],
             [
                 'field' => 'status',

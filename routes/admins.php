@@ -54,8 +54,7 @@ Route::middleware('auth:admins')->group(function () {
 
 
         //Customers
-        Route::get('customers/columns',action: [\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_columns'])->name('columns');
-        Route::get('invoices/columns',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_columns'])->name('columns');
+
 
         Route::prefix('{project}/customers')->as('customers.')->group(function () {
             Route::get('fields',action: [\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customer_fields'])->name('customer_fields');
@@ -144,6 +143,8 @@ Route::middleware('auth:admins')->group(function () {
         });
 
         Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
+            Route::get('columns',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_columns'])->name('columns');
+
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices'])->name('index');
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_store'])->name('store');
             Route::get('settle/{invoice}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'invoices_settle'])->name('change_settle');

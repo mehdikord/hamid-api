@@ -95,7 +95,8 @@ interface ProjectInterface
     //Exports
     public function export_customers($project);
 
-    public function get_columns();
+    public function get_columns($project);
+    public function invoices_columns($project);
 
     public function get_customer_fields($project);
 }

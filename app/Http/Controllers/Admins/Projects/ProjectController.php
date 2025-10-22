@@ -225,7 +225,7 @@ class ProjectController extends Controller
 
     public function invoices_columns(Project $project)
     {
-        return $this->repository->invoices_columns();
+        return $this->repository->invoices_columns($project);
     }
 
 
@@ -288,9 +288,9 @@ class ProjectController extends Controller
         return  $this->repository->activation_forms($project,$form);
     }
 
-    public function get_columns()
+    public function get_columns(Project $project)
     {
-        return $this->repository->get_columns();
+        return $this->repository->get_columns($project);
     }
 
     public function get_customer_fields(Project $project)

@@ -31,7 +31,7 @@ class Project_Customer_Invoice extends Model
         return $this->belongsTo(Project_Customer::class,'project_customer_id');
     }
 
-    public static function columns()
+    public static function columns($project)
     {
         $columns =  [
             [
