@@ -166,6 +166,7 @@ class ReportingRepository implements ReportingInterface
             $info_assigned = $project->customers()->whereHas('users',function($query)use($from_date,$to_date){
                 $query->whereBetween('start_at',[$from_date,$to_date]);
             })->count();
+            $info_registered_customers = $project->customers()->whereBetween('imported_at',[$from_date,$to_date])->count();
             $info_reports = $project->reports()->whereBetween('created_at',[$from_date,$to_date])->count();
             $info_total_invoice_amount = $project->customers()->whereHas('invoices')->whereBetween('created_at',[$from_date,$to_date])->sum('target_price');
 
@@ -204,6 +205,7 @@ class ReportingRepository implements ReportingInterface
                 'reports' => $info_reports,
                 'statuses' => $info_statuses,
                 'levels' => $info_levels,
+                'registered_customers' => $info_registered_customers,
                 'total_invoice_amount' => $info_total_invoice_amount,
             ];
 
