@@ -97,6 +97,7 @@ class Project_Customer extends Model
                 'title' => 'تگ',
                 'type' => 'select',
                 'data' => $project->tags()->select('id','name')->get(),
+                'relation' => 'morph_to_many',
             ],
 
             [

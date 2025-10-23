@@ -640,8 +640,6 @@ class ProjectRepository implements ProjectInterface
            return Storage::download($invoice->file_path,$invoice->file_name);
         }
         return helper_response_error('nofile');
-
-
     }
 
    public function reports_download($project, $report)

@@ -26,7 +26,11 @@ trait SearchingTrait
                             }
                         });
                     }elseif($item['type'] == 'date'){
-                        $query->whereDate($item['field'],$item['condition'],$item['value']);
+                        $query->where($item['field'],$item['condition'],$item['value']);
+                    }elseif($item['field'] == 'tag_id'){
+                        $query->whereHas('tags',function($subQuery) use ($item){
+                            $subQuery->where('tag_id',$item['value']);
+                        });
                     }else{
                         // Direct field search
                         if ($item['condition'] == 'LIKE'){
