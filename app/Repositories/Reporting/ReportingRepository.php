@@ -167,16 +167,8 @@ class ReportingRepository implements ReportingInterface
                 $query->whereBetween('start_at',[$from_date,$to_date]);
             })->count();
             $info_reports = $project->reports()->whereBetween('created_at',[$from_date,$to_date])->count();
-            $info_contact_support = $project->customers()->whereHas('statuses',function($query)use($from_date,$to_date){
-                $query->whereHas('level',function($level_query){
-                   $level_query->where('priority',1);
-                })->whereBetween('created_at',[$from_date,$to_date]);
-            })->count();
-            $info_present_customers = $project->customers()->whereHas('statuses',function($query)use($from_date,$to_date){
-                $query->whereHas('level',function($level_query){
-                   $level_query->where('priority',2);
-                })->whereBetween('created_at',[$from_date,$to_date]);
-            })->count();
+            $info_total_invoice_amount = $project->customers()->whereHas('invoices')->whereBetween('created_at',[$from_date,$to_date])->sum('target_price');
+
 
             $info_statuses =[];
             foreach ($project->statuses as $status){
@@ -193,12 +185,26 @@ class ReportingRepository implements ReportingInterface
                 }
 
             }
+            $info_levels =[];
+            foreach ($project->levels as $level){
+                $get_level_info = $project->customers()->whereHas('statuses',function($query)use($level){
+                    $query->where('project_level_id',$level->id);
+                })->whereBetween('created_at',[$from_date,$to_date])->count();
+                if ($get_level_info){
+                    $info_levels[] = [
+                        'name' => $level->name,
+                        'color' => $level->color,
+                        'count' => $get_level_info,
+                    ];
+                }
+            }
+
             $info = [
                 'assigned' => $info_assigned,
                 'reports' => $info_reports,
-                'contact_support' => $info_contact_support,
-                'present_customers' => $info_present_customers,
                 'statuses' => $info_statuses,
+                'levels' => $info_levels,
+                'total_invoice_amount' => $info_total_invoice_amount,
             ];
 
         }
