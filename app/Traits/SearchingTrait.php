@@ -26,6 +26,9 @@ trait SearchingTrait
                             }
                         });
                     }elseif($item['type'] == 'date'){
+                        if($item['value']){
+                            $item['value'] = helper_core_jalali_to_carbon($item['value']);
+                        }
                         $query->where($item['field'],$item['condition'],$item['value']);
                     }elseif($item['field'] == 'tag_id'){
                         $query->whereHas('tags',function($subQuery) use ($item){
