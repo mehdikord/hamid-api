@@ -29,7 +29,7 @@ trait SearchingTrait
                         if($item['value']){
                             $item['value'] = helper_core_jalali_to_carbon($item['value']);
                         }
-                        $query->where($item['field'],$item['condition'],$item['value']);
+                        $query->whereDate($item['field'],$item['condition'],$item['value']);
                     }elseif($item['field'] == 'tag_id'){
                         $query->whereHas('tags',function($subQuery) use ($item){
                             $subQuery->where('tag_id',$item['value']);
