@@ -23,6 +23,7 @@ class UserRepository implements UserInterface
     {
         $data = User::query();
         $data->orderByDesc('id');
+        $data->where('is_active',true);
         return helper_response_fetch(UserShortResource::collection($data->get()));
     }
 
