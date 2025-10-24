@@ -6,6 +6,7 @@ use App\Http\Resources\Projects\Statuses\ProjectStatusSingleResource;
 use App\Http\Resources\StatusMessages\StatusMessageIndexResource;
 use App\Interfaces\Projects\ProjectStatusInterface;
 use App\Models\Project_Status;
+use App\Models\Status_Message;
 
 
 class ProjectStatusRepository implements ProjectStatusInterface
@@ -23,6 +24,7 @@ class ProjectStatusRepository implements ProjectStatusInterface
     public function all($project)
     {
         $data = $project->statuses();
+        $data->with('status_messages');
         $data->orderByDesc('id');
         return helper_response_fetch(ProjectStatusShortResource::collection($data->get()));
     }
@@ -75,13 +77,14 @@ class ProjectStatusRepository implements ProjectStatusInterface
     public function store_messages($project,$status,$request)
     {
 
-        if ($request->filled('status_message_id')) {
-            // Check if the message is already attached to avoid duplicates
-            if (!$status->status_messages()->where('status_message_id', $request->status_message_id)->exists()) {
-                $status->status_messages()->attach($request->status_message_id);
+         if(Status_Message::find($request->status_message_id)){
+            if ($request->filled('status_message->_id')) {
+                // Check if the message is already attached to avoid duplicates
+                if (!$status->status_messages()->where('status_message_id', $request->status_message_id)->exists()) {
+                    $status->status_messages()->attach($request->status_message_id);
+                }
             }
-        }
-
+         }
         return helper_response_fetch(StatusMessageIndexResource::collection($status->status_messages()->get()));
     }
     public function delete_messages($project,$status,$message)

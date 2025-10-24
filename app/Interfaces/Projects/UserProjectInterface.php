@@ -4,6 +4,6 @@ interface UserProjectInterface
 {
 
     public function all();
-    
-    
+
+
 }
