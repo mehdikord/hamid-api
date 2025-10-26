@@ -263,7 +263,7 @@ class ProjectRepository implements ProjectInterface
                             //check customer on other projects
                             if($customer){
                                 $other_project = Project_Customer::where('customer_id',$customer->id)->where('project_id','!=',$item->id)->first();
-                                if($other_project){
+                                if($other_project && $other_project->invoices()->count()){
                                     //get user
                                     if($other_project->user()->whereHas('user',function ($user_quesry){$user_quesry->where('is_active',true);})->where('position_id',helper_data_position_seller())->exists() && $item->positions()->where('position_id',helper_data_position_seller())->exists()){
                                         $new_customer->user()->create([
@@ -389,13 +389,12 @@ class ProjectRepository implements ProjectInterface
                         //check customer on other projects
                         if($customer){
                             $other_project = Project_Customer::where('customer_id',$customer->id)->where('project_id','!=',$item->id)->first();
-                            if($other_project){
+                            if($other_project && $other_project->invoices()->count()){
                                 // return $other_project;
                                 //get user
                                 $seller_user = $other_project->users()->whereHas('user',function ($user_quesry){$user_quesry->where('is_active',true);})->where('position_id',helper_data_position_seller())->first();
                                 $consultant_user = $other_project->users()->whereHas('user',function ($user_quesry){$user_quesry->where('is_active',true);})->where('position_id',helper_data_position_consultant())->first();
                                 if($seller_user && $item->positions()->where('position_id',helper_data_position_seller())->exists()){
-
                                     $new_customer->users()->create([
                                         'user_id' => $seller_user->user_id,
                                         'position_id' => helper_data_position_seller(),
