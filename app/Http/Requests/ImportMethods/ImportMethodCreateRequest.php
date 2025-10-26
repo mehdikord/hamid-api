@@ -18,13 +18,12 @@ class ImportMethodCreateRequest extends FormRequest
 
     public function rules(): array
     {
-        $projectId = $this->route('project');
+        
 
         return [
             'name' => [
                 'required',
                 'string',
-                Rule::unique('import_methods', 'name')->where('project_id', $projectId)
             ],
         ];
     }
