@@ -18,7 +18,7 @@ class ProjectFormsUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:project_forms,name,'.$this->form->id,
+            'name' => 'required|string',
         ];
     }
 

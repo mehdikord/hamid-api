@@ -18,7 +18,7 @@ class FieldUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|unique:fields,title,'.$this->field->id,
+            'title' => 'required|string',
             'type' => 'required|string',
             'placeholder' => 'nullable|string',
             'default' => 'nullable|string',

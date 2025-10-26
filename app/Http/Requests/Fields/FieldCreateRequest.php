@@ -27,7 +27,6 @@ class FieldCreateRequest extends FormRequest
             'title' => [
                 'required',
                 'string',
-                Rule::unique('fields', 'title')->where('project_id', $projectId)
             ],
         ];
     }
