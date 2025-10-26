@@ -201,6 +201,7 @@ class ProjectRepository implements ProjectInterface
 
     public function add_customers($request,$item)
     {
+
         $exists_projects=[];
         $counter=0;
         //check the Excel file
@@ -258,6 +259,32 @@ class ProjectRepository implements ProjectInterface
                             ]);
                             if ($request->filled('tags')){
                                 $new_customer->tags()->attach($request->tags);
+                            }
+                            //check customer on other projects
+                            if($customer){
+                                $other_project = Project_Customer::where('customer_id',$customer->id)->where('project_id','!=',$item->id)->first();
+                                if($other_project){
+                                    //get user
+                                    if($other_project->user()->whereHas('user',function ($user_quesry){$user_quesry->where('is_active',true);})->where('position_id',helper_data_position_seller())->exists() && $item->positions()->where('position_id',helper_data_position_seller())->exists()){
+                                        $new_customer->user()->create([
+                                            'user_id' => $other_project->user_id,
+                                            'position_id' => helper_data_position_seller(),
+                                            'start_at' => Carbon::now(),
+                                        ]);
+                                        $message = "تعداد ".'1'." شماره از پروژه : ".$item->name." به عنوان : ".' فروش'." به شما تخصیص داده شد";
+                                        $user = User::find($other_project->user_id);
+                                        helper_bot_send_markdown($user->telegram_id,$message);
+                                    }elseif($other_project->user()->whereHas('user',function ($user_quesry){$user_quesry->where('is_active',true);})->where('position_id',helper_data_position_consultant())->exists() && $item->positions()->where('position_id',helper_data_position_consultant())->exists()){
+                                        $new_customer->user()->create([
+                                            'user_id' => $other_project->user_id,
+                                            'position_id' => helper_data_position_consultant(),
+                                            'start_at' => Carbon::now(),
+                                        ]);
+                                        $message = "تعداد ".'1'." شماره از پروژه : ".$item->name." به عنوان : ".' مشاور'." به شما تخصیص داده شد";
+                                        $user = User::find($other_project->user_id);
+                                        helper_bot_send_markdown($user->telegram_id,$message);
+                                    }
+                                }
                             }
                             $counter++;
                             }
@@ -359,6 +386,39 @@ class ProjectRepository implements ProjectInterface
                         if ($request->filled('tags')){
                             $new_customer->tags()->attach($request->tags);
                         }
+                        //check customer on other projects
+                        if($customer){
+                            $other_project = Project_Customer::where('customer_id',$customer->id)->where('project_id','!=',$item->id)->first();
+                            if($other_project){
+                                // return $other_project;
+                                //get user
+                                $seller_user = $other_project->users()->whereHas('user',function ($user_quesry){$user_quesry->where('is_active',true);})->where('position_id',helper_data_position_seller())->first();
+                                $consultant_user = $other_project->users()->whereHas('user',function ($user_quesry){$user_quesry->where('is_active',true);})->where('position_id',helper_data_position_consultant())->first();
+                                if($seller_user && $item->positions()->where('position_id',helper_data_position_seller())->exists()){
+
+                                    $new_customer->users()->create([
+                                        'user_id' => $seller_user->user_id,
+                                        'position_id' => helper_data_position_seller(),
+                                        'start_at' => Carbon::now(),
+                                    ]);
+                                    $message = "تعداد ".'1'." شماره از پروژه : ".$item->name." به عنوان : ".' فروش'." به شما تخصیص داده شد";
+                                    $user = User::find($seller_user->user_id);
+                                    helper_bot_send_markdown($user->telegram_id,$message);
+                                }elseif($consultant_user && $item->positions()->where('position_id',helper_data_position_consultant())->exists()){
+                                    $new_customer->users()->create([
+                                        'user_id' => $consultant_user->user_id,
+                                        'position_id' => helper_data_position_consultant(),
+                                        'start_at' => Carbon::now(),
+                                    ]);
+                                    $message = "تعداد ".'1'." شماره از پروژه : ".$item->name." به عنوان : ".' مشاور'." به شما تخصیص داده شد";
+                                    $user = User::find($consultant_user->user_id);
+                                    helper_bot_send_markdown($user->telegram_id,$message);
+                                }
+                            }
+                        }
+
+
+
                         $counter++;
                     }
                 }
