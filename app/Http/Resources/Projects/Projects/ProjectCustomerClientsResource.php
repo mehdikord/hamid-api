@@ -30,7 +30,7 @@ class ProjectCustomerClientsResource extends JsonResource
             'target_price' => $this->target_price,
             'sum_invoices' => $this->invoices()->sum('amount'),
             'first_invoice_date' => $this->invoices() ? $this->invoices()->first()->created_at : null,
-            'last_invoice_date' => $this->invoices() ? $this->invoices()->last()->created_at : null,
+            'last_invoice_date' => $this->invoices() ? $this->invoices()->latest()->first()->created_at : null,
         ];
     }
 }
