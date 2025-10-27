@@ -4,20 +4,13 @@ use App\Http\Resources\Projects\Projects\ProjectShortResource;
 use App\Http\Resources\User_Customers\Customers\UserCustomerProfileResource;
 use App\Http\Resources\User_Customers\UserCustomerInvoiceResource;
 use App\Http\Resources\User_Customers\UserCustomerReportResource;
-use App\Http\Resources\User_Customers\UserCustomerStatusResource;
 use App\Http\Resources\Users\UserCustomerIndexResource;
 use App\Interfaces\Users\UserCustomerInterface;
-use App\Models\Customer;
-use App\Models\Fields\Project_Customer_Field;
-use App\Models\Position;
-use App\Models\Project;
 use App\Models\Project_Customer;
 use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
-use App\Models\Project_Customer_Status;
-use App\Models\Project_Status;
 use App\Models\User_Project;
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 class UserCustomerRepository implements UserCustomerInterface
@@ -94,6 +87,13 @@ class UserCustomerRepository implements UserCustomerInterface
                         $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%')->Orwhere('name', 'LIKE', '%' . request()->search['phone'] . '%');
                     });
                 });
+            }
+
+            if (!empty(request()->search['from_date'])){
+                $data->whereDate('start_at', '>=', request()->search['from_date']);
+            }
+            if (!empty(request()->search['to_date'])){
+                $data->whereDate('start_at', '<=', request()->search['to_date']);
             }
         }
 
@@ -177,6 +177,12 @@ class UserCustomerRepository implements UserCustomerInterface
                         $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%')->Orwhere('name', 'LIKE', '%' . request()->search['phone'] . '%');
                     });
                 });
+            }
+            if (!empty(request()->search['from_date'])){
+                $data->whereDate('start_at', '>=', request()->search['from_date']);
+            }
+            if (!empty(request()->search['to_date'])){
+                $data->whereDate('start_at', '<=', request()->search['to_date']);
             }
         }
         $data->orderBy(request('sort_by'),request('sort_type'));
