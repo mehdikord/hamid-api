@@ -7,6 +7,7 @@ use App\Http\Resources\Positions\PositionsShortResource;
 use App\Http\Resources\Projects\Forms\ProjectFromIndexResource;
 use App\Http\Resources\Projects\Invoices\ProjectInvoiceIndexResource;
 use App\Http\Resources\Projects\levels\ProjectLevelIndexResource;
+use App\Http\Resources\Projects\Projects\ProjectCustomerClientsResource;
 use App\Http\Resources\Projects\Projects\ProjectCustomerIndexResource;
 use App\Http\Resources\Projects\Projects\ProjectCustomerShortResource;
 use App\Http\Resources\Projects\Projects\ProjectIndexResource;
@@ -52,6 +53,13 @@ class ProjectRepository implements ProjectInterface
        $data = Project::query();
        $data->orderBy(request('sort_by'),request('sort_type'));
        return helper_response_fetch(ProjectShortResource::collection($data->get()));
+   }
+   public function customers_client_index($project)
+   {
+       $data = $project->customers();
+       $data->whereHas('invoices');
+       $data->orderBy(request('sort_by'),request('sort_type'));
+       return helper_response_fetch(ProjectCustomerClientsResource::collection($data->paginate(request('per_page')))->resource);
    }
 
    public function pending_customers($project)

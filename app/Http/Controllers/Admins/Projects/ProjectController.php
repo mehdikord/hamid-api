@@ -34,7 +34,7 @@ class ProjectController extends Controller
 
     public function __construct(ProjectInterface $project)
     {
-        $this->middleware('generate_fetch_query_params')->only('index','all','get_customers','reports','invoices');
+        $this->middleware('generate_fetch_query_params')->only('index','all','get_customers','reports','invoices','customers_client');
         $this->repository = $project;
     }
 
@@ -50,6 +50,11 @@ class ProjectController extends Controller
     {
         return $this->repository->all();
 
+    }
+
+    public function customers_client(Project $project)
+    {
+        return $this->repository->customers_client_index($project);
     }
 
     public function pending_customers(Project $project)

@@ -26,7 +26,7 @@ class UserProjectCustomerResource extends JsonResource
             'id' => $this->id,
             'position_id' => $this->position_id,
             'start_at' => $this->start_at,
-            'get_customers' => $this->end_at,
+            'end_at' => $this->end_at,
             'is_active' => $this->is_active,
             'target_price' => $this->target_price,
             'user' => new UserShortResource($this->user),

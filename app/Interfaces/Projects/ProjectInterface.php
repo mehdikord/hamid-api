@@ -6,6 +6,9 @@ interface ProjectInterface
 {
     public function index();
     public function all();
+
+    public function customers_client_index($project);
+    
     public function pending_customers($project);
 
     public function pending_customers_success($project);
