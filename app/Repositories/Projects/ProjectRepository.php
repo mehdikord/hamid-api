@@ -524,7 +524,7 @@ class ProjectRepository implements ProjectInterface
                     $users[] = $divide['user_id'];
                 }
             }
-            $get_customers = $item->customers()->whereIn('id',$customers)->get();
+            $get_customers = $item->customers()->(whereIn'id',$customers)->get();
             foreach ($get_customers as $customer) {
                 $customer->update(['status' => Project_Customer::STATUS_ASSIGNED]);
                 if ($request->filled('type') && $request->type == 'success'){
