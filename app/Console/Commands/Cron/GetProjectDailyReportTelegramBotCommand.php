@@ -108,7 +108,7 @@ class GetProjectDailyReportTelegramBotCommand extends Command
                 $total_month_invoice_amount = Project_Customer_Invoice::where('project_id',$project->id)->where('user_id',$user->user_id)->whereBetween('created_at', [$monthStartCarbon, $monthEndCarbon])->sum('amount');
 
                 $message .= "👤 ".$user?->user?->name."\n\n";
-                $message .= "📱 تعداد شماره‌های ارجاع شده : ".$total_assigned_customers."\n\n";
+                // $message .= "📱 تعداد شماره‌های ارجاع شده : ".$total_assigned_customers."\n\n";
                 $message .= "🛒 تعداد فروش امروز : ".$total_invoice_count."\n\n";
                 $message .= "💰 مجموع فروش امروز : ".number_format($total_invoice_amount)."\n\n";
                 $message .= "📊 مجموع فروش این ماه : ".number_format($total_month_invoice_amount)."\n\n";
