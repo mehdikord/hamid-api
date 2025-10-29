@@ -10,7 +10,7 @@ function helper_bot_send_markdown($id,$topic_id=null,$message)
         "chat_id"=> $id,
         "topic_id"=> $topic_id ? $topic_id : null,
         "message"=> "$message",
-        "parse_mode"=> "Markdown"
+        "parse_mode"=> "HTML"
     ];
     $url = env('BOT_ADDRESS')."/webhook/notify";
     return helper_core_send_post_request($url,$data);

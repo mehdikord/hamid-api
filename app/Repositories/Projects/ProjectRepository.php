@@ -524,7 +524,7 @@ class ProjectRepository implements ProjectInterface
                     $users[] = $divide['user_id'];
                 }
             }
-            $get_customers = $item->customers()->(whereIn'id',$customers)->get();
+            $get_customers = $item->customers()->whereIn('id',$customers)->get();
             foreach ($get_customers as $customer) {
                 $customer->update(['status' => Project_Customer::STATUS_ASSIGNED]);
                 if ($request->filled('type') && $request->type == 'success'){
@@ -541,7 +541,7 @@ class ProjectRepository implements ProjectInterface
             foreach ($users as $user_id) {
                 $message = "تعداد ".$counter[$user_id]." شماره از پروژه : ".$item->name." به عنوان : ".$position." به شما تخصیص داده شد";
                 $user = User::find($user_id);
-                helper_bot_send_markdown($user->telegram_id,$message);
+                helper_bot_send_markdown($user->telegram_id,null,$message);
                 if (!$item->users()->where('user_id',$user_id)->exists()) {
                     $item->users()->create(['user_id' => $user_id]);
                 }
@@ -577,7 +577,7 @@ class ProjectRepository implements ProjectInterface
             $item->users()->updateOrCreate(['user_id' => $request->user_id,'position_id' => $request->position_id],[]);
             $message = "تعداد ۱ شماره از پروژه : ".$item->name." به عنوان : ".$position." به شما تخصیص داده شد";
             $user = User::find($request->user_id);
-            helper_bot_send_markdown($user->telegram_id,$message);
+            helper_bot_send_markdown($user->telegram_id,null,$message);
         }
 
         return helper_response_fetch(new ProjectCustomerIndexResource($data));
