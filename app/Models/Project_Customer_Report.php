@@ -31,4 +31,27 @@ class Project_Customer_Report extends Model
         return $this->belongsTo(Project_Customer::class,'project_customer_id');
     }
 
+    public static function columns($project)
+    {
+        $columns =  [
+            [
+                'field' => 'user_id',
+                'title' => 'کارشناس',
+                'type' => 'select',
+                'data' => User::select('id','name')->where('is_active',true)->get(),
+            ],
+            [
+                'field' => 'created_at',
+                'title' => 'تاریخ ایجاد',
+                'type' => 'date',
+            ],
+            [
+                'field' => 'report',
+                'title' => 'گزارش',
+                'type' => 'text',
+            ],
+        ];
+        return $columns;
+    }
+
 }

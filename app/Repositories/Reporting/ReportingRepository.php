@@ -216,4 +216,10 @@ class ReportingRepository implements ReportingInterface
             'info' => $info,
         ]);
     }
+
+    public function users_summery($project)
+    {
+        $users = $project->users;
+        return helper_response_fetch($users);
+    }
 }

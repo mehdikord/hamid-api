@@ -5,10 +5,12 @@ namespace App\Interfaces\Projects;
 interface ProjectInterface
 {
     public function index();
+    public function inactive();
+    public function activation($item);
     public function all();
 
     public function customers_client_index($project);
-    
+
     public function pending_customers($project);
 
     public function pending_customers_success($project);
@@ -100,6 +102,7 @@ interface ProjectInterface
 
     public function get_columns($project);
     public function invoices_columns($project);
+    public function reports_columns($project);
 
     public function get_customer_fields($project);
 }

@@ -48,7 +48,8 @@ Route::middleware('auth:admins')->group(function () {
     Route::prefix('projects')->as('projects.')->group(function () {
 
         Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'all'])->name('all');
-
+        Route::get('inactive',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'inactive'])->name('inactive');
+        Route::get('{project}/activation',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'activation'])->name('activation');
         Route::get('categories/all',[\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class, 'all'])->name('all');
         Route::apiResource('categories',\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class);
 
@@ -139,7 +140,7 @@ Route::middleware('auth:admins')->group(function () {
 
         Route::prefix('{project}/reports')->as('reports.')->group(function () {
 
-
+            Route::get('columns',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_columns'])->name('columns');
             Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports'])->name('index');
             Route::post('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_store'])->name('store');
             Route::get('download/{report}',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'reports_download'])->name('download');
@@ -220,6 +221,9 @@ Route::middleware('auth:admins')->group(function () {
     Route::prefix( 'reports')->as('reports.')->group(function () {
        Route::prefix('projects/{project}/summery')->as('projects.summery.')->group(function () {
         Route::get('',[\App\Http\Controllers\Admin\Reports\ProjectReportController::class, 'summery'])->name('summery');
+       });
+       Route::prefix('projects/{project}/users')->as('users.')->group(function () {
+        Route::get('summery',[\App\Http\Controllers\Admin\Reports\ProjectReportController::class, 'users_summery'])->name('summery');
 
        });
 

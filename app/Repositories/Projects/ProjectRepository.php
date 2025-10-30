@@ -43,9 +43,25 @@ class ProjectRepository implements ProjectInterface
    public function index()
    {
        $data = Project::query();
+       $data->where('is_active', true);
+
        $data->orderBy(request('sort_by'),request('sort_type'));
        $data->withCount('users');
        return helper_response_fetch(ProjectIndexResource::collection($data->paginate(request('per_page')))->resource);
+   }
+
+   public function inactive()
+   {
+       $data = Project::query();
+       $data->where('is_active', false);
+       $data->orderBy(request('sort_by'), request('sort_type'));
+       $data->withCount('users');
+       return helper_response_fetch(ProjectIndexResource::collection($data->paginate(request('per_page')))->resource);
+   }
+   public function activation($item)
+   {
+       $item->update(['is_active' => !$item->is_active]);
+       return helper_response_updated(new ProjectIndexResource($item));
    }
 
    public function all()
@@ -1008,6 +1024,11 @@ class ProjectRepository implements ProjectInterface
     public function invoices_columns($project)
     {
         return helper_response_fetch(Project_Customer_Invoice::columns($project));
+    }
+
+    public function reports_columns($project)
+    {
+        return helper_response_fetch(Project_Customer_Report::columns($project));
     }
 
     public function get_customer_fields($project)

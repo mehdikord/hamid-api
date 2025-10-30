@@ -38,7 +38,7 @@ class Project_Customer_Invoice extends Model
                 'field' => 'user_id',
                 'title' => 'کارشناس',
                 'type' => 'select',
-                'data' => User::select('id','name')->get(),
+                'data' => User::select('id','name')->where('is_active',true)->get(),
             ],
             [
                 'field' => 'created_at',

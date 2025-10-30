@@ -34,7 +34,7 @@ class ProjectController extends Controller
 
     public function __construct(ProjectInterface $project)
     {
-        $this->middleware('generate_fetch_query_params')->only('index','all','get_customers','reports','invoices','customers_client');
+        $this->middleware('generate_fetch_query_params')->only('index','inactive','all','get_customers','reports','invoices','customers_client');
         $this->repository = $project;
     }
 
@@ -44,6 +44,16 @@ class ProjectController extends Controller
     public function index()
     {
         return $this->repository->index();
+    }
+
+    public function inactive()
+    {
+        return $this->repository->inactive();
+    }
+
+    public function activation(Project $project)
+    {
+        return $this->repository->activation($project);
     }
 
     public function all()
@@ -301,6 +311,11 @@ class ProjectController extends Controller
     public function get_customer_fields(Project $project)
     {
         return $this->repository->get_customer_fields($project);
+    }
+
+    public function reports_columns(Project $project)
+    {
+        return $this->repository->reports_columns($project);
     }
 
 
