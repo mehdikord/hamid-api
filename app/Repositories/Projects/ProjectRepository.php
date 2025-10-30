@@ -629,9 +629,7 @@ class ProjectRepository implements ProjectInterface
     public function reports($item)
     {
         $data = $item->reports();
-        if (request()->filled('search') && request()->search['user_id']){
-            $data->where('user_id',request()->search['user_id']);
-        }
+        $this->advance_search($data);
         $data->orderBy(request('sort_by'),request('sort_type'));
         return helper_response_fetch(ProjectReportIndexResource::collection($data->paginate(request('per_page')))->resource);
     }
