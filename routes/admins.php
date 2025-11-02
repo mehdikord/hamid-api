@@ -167,12 +167,12 @@ Route::middleware('auth:admins')->group(function () {
         });
         Route::apiResource('{project}/messages',\App\Http\Controllers\Admins\Projects\ProjectMessageController::class);
 
-
         //Exports
         Route::group(['prefix' => '{project}/export','as' => 'export.'],function(){
 
             Route::get('customers',[\App\Http\Controllers\Admins\Projects\ProjectsExportController::class,'customers'])->name('customers')->withoutMiddleware('auth:admins');
         });
+        
         //Update logo
         Route::post('{project}/logo',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'update_logo'])->name('update.logo');
 

@@ -158,9 +158,11 @@ class ReportingRepository implements ReportingInterface
 
             if($is_same_date){
                 $main_customers = $project->customers()->whereDate('import_at',$from_date)->count();
+
                 $main_customer_assigned = $project->customers()->whereHas('users',function($query)use($from_date){
                     $query->whereDate('start_at',$from_date);
                 })->where('status','assigned')->count();
+                
                 $main_customer_invoices = $project->customers()->whereHas('invoices',function($query)use($from_date){
                     $query->whereDate('created_at',$from_date);
                 })->count();

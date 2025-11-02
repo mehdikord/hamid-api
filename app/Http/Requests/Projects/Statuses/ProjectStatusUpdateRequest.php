@@ -18,14 +18,12 @@ class ProjectStatusUpdateRequest extends FormRequest
 
     public function rules(): array
     {
-        $projectId = $this->route('project');
-        $statusId = $this->route('status');
+
 
         return [
             'name' => [
                 'required',
-                'string',
-                Rule::unique('project_customer_statuses', 'name')->where('project_id', $projectId)->ignore($statusId)
+                'string'
             ],
         ];
     }

@@ -256,7 +256,7 @@ class ProjectRepository implements ProjectInterface
                             ];
                         }else{
                             $custoemr_data=[];
-                            $import_date = null;
+                            $import_date = Carbon::now();
                             foreach($fileds as $customer_key => $customer_value){
                                 if($customer_key != 'date'){
                                     // Use formatted phone number for phone field
