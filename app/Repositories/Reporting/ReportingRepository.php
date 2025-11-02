@@ -163,20 +163,38 @@ class ReportingRepository implements ReportingInterface
         if(request()->filled("from_date") && request()->filled("to_date")){
             $from_date = helper_core_jalali_to_carbon(request()->from_date);
             $to_date = helper_core_jalali_to_carbon(request()->to_date);
-            $info_assigned = $project->customers()->whereHas('users',function($query)use($from_date,$to_date){
-                $query->whereBetween('start_at',[$from_date,$to_date]);
+            $is_same_date = $from_date->isSameDay($to_date);
+
+            $info_assigned = $project->customers()->whereHas('users',function($query)use($from_date,$to_date,$is_same_date){
+                if($is_same_date){
+                    $query->whereDate('start_at',$from_date);
+                } else {
+                    $query->whereBetween('start_at',[$from_date,$to_date]);
+                }
             })->count();
-            $info_registered_customers = $project->customers()->whereBetween('import_at',[$from_date,$to_date])->count();
-            $info_reports = $project->reports()->whereBetween('created_at',[$from_date,$to_date])->count();
-            $info_total_invoice_amount = $project->customers()->whereHas('invoices')->whereBetween('created_at',[$from_date,$to_date])->sum('target_price');
+
+            if($is_same_date){
+                $info_registered_customers = $project->customers()->whereDate('import_at',$from_date)->count();
+                $info_reports = $project->reports()->whereDate('created_at',$from_date)->count();
+                $info_total_invoice_amount = $project->customers()->whereHas('invoices')->whereDate('created_at',$from_date)->sum('target_price');
+            } else {
+                $info_registered_customers = $project->customers()->whereBetween('import_at',[$from_date,$to_date])->count();
+                $info_reports = $project->reports()->whereBetween('created_at',[$from_date,$to_date])->count();
+                $info_total_invoice_amount = $project->customers()->whereHas('invoices')->whereBetween('created_at',[$from_date,$to_date])->sum('target_price');
+            }
 
 
             $info_statuses =[];
             foreach ($project->statuses as $status){
-
-                $get_status_info = $project->customers()->whereHas('statuses',function($query)use($status){
-                    $query->where('customer_status_id',$status->id);
-                })->whereBetween('created_at',[$from_date,$to_date])->count();
+                if($is_same_date){
+                    $get_status_info = $project->customers()->whereHas('statuses',function($query)use($status){
+                        $query->where('customer_status_id',$status->id);
+                    })->whereDate('created_at',$from_date)->count();
+                } else {
+                    $get_status_info = $project->customers()->whereHas('statuses',function($query)use($status){
+                        $query->where('customer_status_id',$status->id);
+                    })->whereBetween('created_at',[$from_date,$to_date])->count();
+                }
                 if ($get_status_info){
                     $info_statuses[] = [
                         'name' => $status->name,
@@ -188,9 +206,15 @@ class ReportingRepository implements ReportingInterface
             }
             $info_levels =[];
             foreach ($project->levels as $level){
-                $get_level_info = $project->customers()->whereHas('statuses',function($query)use($level){
-                    $query->where('project_level_id',$level->id);
-                })->whereBetween('created_at',[$from_date,$to_date])->count();
+                if($is_same_date){
+                    $get_level_info = $project->customers()->whereHas('statuses',function($query)use($level){
+                        $query->where('project_level_id',$level->id);
+                    })->whereDate('created_at',$from_date)->count();
+                } else {
+                    $get_level_info = $project->customers()->whereHas('statuses',function($query)use($level){
+                        $query->where('project_level_id',$level->id);
+                    })->whereBetween('created_at',[$from_date,$to_date])->count();
+                }
                 if ($get_level_info){
                     $info_levels[] = [
                         'name' => $level->name,
@@ -222,6 +246,7 @@ class ReportingRepository implements ReportingInterface
         if(request()->filled("from_date") && request()->filled("to_date") && request()->filled("user_id")){
             $from_date = helper_core_jalali_to_carbon(request()->from_date);
             $to_date = helper_core_jalali_to_carbon(request()->to_date);
+            $is_same_date = $from_date->isSameDay($to_date);
             $user = User::select('id','name')->find(request()->user_id);
             $result = [
                 'user' => $user,
@@ -233,24 +258,47 @@ class ReportingRepository implements ReportingInterface
                 'second_level_count' => 0,
             ];
             if($user){
-                $assigned_customers = $user->customers()->whereHas('project_customer',function($query)use($project){
-                    $query->where('project_id',$project->id);
-                })->whereBetween('start_at',[$from_date,$to_date])->count();
+                if($is_same_date){
+                    $assigned_customers = $user->customers()->whereHas('project_customer',function($query)use($project){
+                        $query->where('project_id',$project->id);
+                    })->whereDate('start_at',$from_date)->count();
+                } else {
+                    $assigned_customers = $user->customers()->whereHas('project_customer',function($query)use($project){
+                        $query->where('project_id',$project->id);
+                    })->whereBetween('start_at',[$from_date,$to_date])->count();
+                }
 
-                $call_count = $project->customers()->whereHas('reports',function($query)use($user,$from_date,$to_date){
-                    $query->where('user_id',$user->id)->whereBetween('created_at',[$from_date,$to_date]);
-                })->count();
+                if($is_same_date){
+                    $call_count = $project->customers()->whereHas('reports',function($query)use($user,$from_date){
+                        $query->where('user_id',$user->id)->whereDate('created_at',$from_date);
+                    })->count();
+                } else {
+                    $call_count = $project->customers()->whereHas('reports',function($query)use($user,$from_date,$to_date){
+                        $query->where('user_id',$user->id)->whereBetween('created_at',[$from_date,$to_date]);
+                    })->count();
+                }
 
-                $change_level_count = $project->customers()->whereHas('statuses',function($query)use($user,$from_date,$to_date){
-                    $query->where('user_id',$user->id)->whereBetween('created_at',[$from_date,$to_date])->whereNotNull('project_level_id');
-                })->count();
+                if($is_same_date){
+                    $change_level_count = $project->customers()->whereHas('statuses',function($query)use($user,$from_date){
+                        $query->where('user_id',$user->id)->whereDate('created_at',$from_date)->whereNotNull('project_level_id');
+                    })->count();
+                } else {
+                    $change_level_count = $project->customers()->whereHas('statuses',function($query)use($user,$from_date,$to_date){
+                        $query->where('user_id',$user->id)->whereBetween('created_at',[$from_date,$to_date])->whereNotNull('project_level_id');
+                    })->count();
+                }
 
                 $info_statuses =[];
                 foreach ($project->statuses as $status){
-
-                    $get_status_info = $project->customers()->whereHas('statuses',function($query)use($status,$user,$from_date,$to_date){
-                        $query->where('customer_status_id',$status->id)->where('user_id',$user->id)->whereBetween('created_at',[$from_date,$to_date]);
-                    })->count();
+                    if($is_same_date){
+                        $get_status_info = $project->customers()->whereHas('statuses',function($query)use($status,$user,$from_date){
+                            $query->where('customer_status_id',$status->id)->where('user_id',$user->id)->whereDate('created_at',$from_date);
+                        })->count();
+                    } else {
+                        $get_status_info = $project->customers()->whereHas('statuses',function($query)use($status,$user,$from_date,$to_date){
+                            $query->where('customer_status_id',$status->id)->where('user_id',$user->id)->whereBetween('created_at',[$from_date,$to_date]);
+                        })->count();
+                    }
                     if ($get_status_info){
                             $info_statuses[] = [
                                 'name' => $status->name,
@@ -260,17 +308,32 @@ class ReportingRepository implements ReportingInterface
                         }
 
                 }
-                $first_level_count = $project->customers()->whereHas('statuses',function($query)use($user,$from_date,$to_date){
-                    $query->where('user_id',$user->id)->whereBetween('created_at',[$from_date,$to_date])->whereHas('level',function($query){
-                        $query->where('priority',1);
-                    });
-                })->count();
 
-                $second_level_count = $project->customers()->whereHas('statuses',function($query)use($user,$from_date,$to_date){
-                    $query->where('user_id',$user->id)->whereBetween('created_at',[$from_date,$to_date])->whereHas('level',function($query){
-                        $query->where('priority',2);
-                    });
-                })->count();
+                if($is_same_date){
+                    $first_level_count = $project->customers()->whereHas('statuses',function($query)use($user,$from_date){
+                        $query->where('user_id',$user->id)->whereDate('created_at',$from_date)->whereHas('level',function($query){
+                            $query->where('priority',1);
+                        });
+                    })->count();
+
+                    $second_level_count = $project->customers()->whereHas('statuses',function($query)use($user,$from_date){
+                        $query->where('user_id',$user->id)->whereDate('created_at',$from_date)->whereHas('level',function($query){
+                            $query->where('priority',2);
+                        });
+                    })->count();
+                } else {
+                    $first_level_count = $project->customers()->whereHas('statuses',function($query)use($user,$from_date,$to_date){
+                        $query->where('user_id',$user->id)->whereBetween('created_at',[$from_date,$to_date])->whereHas('level',function($query){
+                            $query->where('priority',1);
+                        });
+                    })->count();
+
+                    $second_level_count = $project->customers()->whereHas('statuses',function($query)use($user,$from_date,$to_date){
+                        $query->where('user_id',$user->id)->whereBetween('created_at',[$from_date,$to_date])->whereHas('level',function($query){
+                            $query->where('priority',2);
+                        });
+                    })->count();
+                }
 
                 $result = [
                     'user' => $user,
