@@ -195,6 +195,7 @@ class ReportingRepository implements ReportingInterface
         ];
 
         $info =[];
+        $invoices = [];
         if(request()->filled("from_date") && request()->filled("to_date")){
             $from_date = helper_core_jalali_to_carbon(request()->from_date);
             $to_date = helper_core_jalali_to_carbon(request()->to_date);
@@ -259,6 +260,17 @@ class ReportingRepository implements ReportingInterface
                 }
             }
 
+            // Populate invoices array with daily invoice amounts
+            $current_date = $from_date->copy();
+            while ($current_date->lte($to_date)) {
+                $daily_amount = $project->invoices()->whereDate('created_at', $current_date)->sum('amount');
+                $invoices[] = [
+                    'date' => $current_date->format('Y/m/d'),
+                    'amount' => $daily_amount ?? 0,
+                ];
+                $current_date->addDay();
+            }
+
             $info = [
                 'assigned' => $info_assigned,
                 'reports' => $info_reports,
@@ -273,7 +285,12 @@ class ReportingRepository implements ReportingInterface
         return helper_response_fetch([
             'main' => $main,
             'info' => $info,
+            'invoices' => $invoices,
         ]);
+
+
+
+
     }
 
     public function users_summery($project)
