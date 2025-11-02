@@ -150,6 +150,41 @@ class ReportingRepository implements ReportingInterface
         $main_total_invoice_target = $project->customers()->sum('target_price');
         $main_total_invoice_amount = $project->invoices()->sum('amount');
         $main_total_reports = $project->reports()->count();
+
+        if(request()->filled("from_date") && request()->filled("to_date")){
+            $from_date = helper_core_jalali_to_carbon(request()->from_date);
+            $to_date = helper_core_jalali_to_carbon(request()->to_date);
+            $is_same_date = $from_date->isSameDay($to_date);
+
+            if($is_same_date){
+                $main_customers = $project->customers()->whereDate('import_at',$from_date)->count();
+                $main_customer_assigned = $project->customers()->whereHas('users',function($query)use($from_date){
+                    $query->whereDate('start_at',$from_date);
+                })->where('status','assigned')->count();
+                $main_customer_invoices = $project->customers()->whereHas('invoices',function($query)use($from_date){
+                    $query->whereDate('created_at',$from_date);
+                })->count();
+                $main_total_invoice_target = $project->customers()->whereHas('invoices',function($query)use($from_date){
+                    $query->whereDate('created_at',$from_date);
+                })->sum('target_price');
+                $main_total_invoice_amount = $project->invoices()->whereDate('created_at',$from_date)->sum('amount');
+                $main_total_reports = $project->reports()->whereDate('created_at',$from_date)->count();
+            } else {
+                $main_customers = $project->customers()->whereBetween('import_at',[$from_date,$to_date])->count();
+                $main_customer_assigned = $project->customers()->whereHas('users',function($query)use($from_date,$to_date){
+                    $query->whereBetween('start_at',[$from_date,$to_date]);
+                })->where('status','assigned')->count();
+                $main_customer_invoices = $project->customers()->whereHas('invoices',function($query)use($from_date,$to_date){
+                    $query->whereBetween('created_at',[$from_date,$to_date]);
+                })->count();
+                $main_total_invoice_target = $project->customers()->whereHas('invoices',function($query)use($from_date,$to_date){
+                    $query->whereBetween('created_at',[$from_date,$to_date]);
+                })->sum('target_price');
+                $main_total_invoice_amount = $project->invoices()->whereBetween('created_at',[$from_date,$to_date])->sum('amount');
+                $main_total_reports = $project->reports()->whereBetween('created_at',[$from_date,$to_date])->count();
+            }
+        }
+
         $main = [
             'customers' => $main_customers,
             'customer_assigned' => $main_customer_assigned,
