@@ -48,7 +48,7 @@ class ProjectStatusRepository implements ProjectStatusInterface
    public function update($request, $item)
    {
 
-        if($item->project->member_id != auth()->id()){
+        if(auth()->user()->type != 'admin' && $item->project->member_id != auth()->id()){
             return helper_response_error('شما اجازه ویرایش این وضعیت را ندارید');
         }
        $item->update([
@@ -61,7 +61,7 @@ class ProjectStatusRepository implements ProjectStatusInterface
 
    public function destroy($item,$project)
    {
-        if($item->project->member_id != auth()->id()){
+        if(auth()->user()->type != 'admin' &&  $item->project->member_id != auth()->id()){
             return helper_response_error('شما اجازه حذف این وضعیت را ندارید');
         }
        $item->delete();
