@@ -19,9 +19,14 @@ class ProjectReportController extends Controller
     {
         return $this->repository->summery($project);
     }
-    
+
     public function users_summery(Project $project)
     {
         return $this->repository->users_summery($project);
+    }
+
+    public function users_data(Project $project,Request $request)
+    {
+        return $this->repository->users_data($project,$request);
     }
 }

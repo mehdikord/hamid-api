@@ -13,6 +13,7 @@ interface ReportingInterface
     public function summery($project);
 
     public function users_summery($project);
+    public function users_data($project,$request);
 
 
 }

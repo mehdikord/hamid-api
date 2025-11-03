@@ -172,7 +172,7 @@ Route::middleware('auth:admins')->group(function () {
 
             Route::get('customers',[\App\Http\Controllers\Admins\Projects\ProjectsExportController::class,'customers'])->name('customers')->withoutMiddleware('auth:admins');
         });
-        
+
         //Update logo
         Route::post('{project}/logo',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'update_logo'])->name('update.logo');
 
@@ -223,7 +223,10 @@ Route::middleware('auth:admins')->group(function () {
         Route::get('',[\App\Http\Controllers\Admin\Reports\ProjectReportController::class, 'summery'])->name('summery');
        });
        Route::prefix('projects/{project}/users')->as('users.')->group(function () {
+
         Route::get('summery',[\App\Http\Controllers\Admin\Reports\ProjectReportController::class, 'users_summery'])->name('summery');
+        Route::get('data',[\App\Http\Controllers\Admin\Reports\ProjectReportController::class, 'users_data'])->name('users_data');
+
 
        });
 
