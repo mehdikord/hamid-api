@@ -413,7 +413,6 @@ class ReportingRepository implements ReportingInterface
         $type = request()->type;
 
         foreach ($project->users as $user){
-
             if($type == 'customers'){
                 if($is_same_date){
                     $data = $user->user->customers()->whereHas('project_customer',function($query)use($project){
@@ -446,18 +445,17 @@ class ReportingRepository implements ReportingInterface
                     })->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date)->sum('amount');
                 }
             }
-
-            $result[] = [
-                'user' => $user->user->select('id','name')->first(),
-                'data' => $data,
-            ];
-
+            if($user->user->is_active){
+                $result[] = [
+                    'user' => [
+                        'id' => $user->user->id,
+                        'name' => $user->user->name,
+                    ],
+                    'data' => $data,
+                ];
+            }
 
         }
-
-
-
-
 
         return helper_response_fetch($result);
     }
