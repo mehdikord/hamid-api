@@ -80,6 +80,10 @@ class Project_Customer extends Model
     }
 
     public static function columns($project){
+
+
+
+
         $columns = [
             [
                 'field' => 'id',
@@ -90,7 +94,9 @@ class Project_Customer extends Model
                 'field' => 'import_method_id',
                 'title' => 'نوع ورودی',
                 'type' => 'select',
-                'data' => $project->import_methods()->select('id','name')->get(),
+                'data' => collect([['id' => 0, 'name' => 'بدون ورودی ']])->merge($project->import_methods()->select('id','name')->get()->map(function($item) {
+                    return ['id' => $item->id, 'name' => $item->name];
+                })),
             ],
             [
                 'field' => 'tag_id',
@@ -104,13 +110,17 @@ class Project_Customer extends Model
                 'field' => 'project_customer_status_id',
                 'title' => 'وضعیت',
                 'type' => 'select',
-                'data' => $project->statuses()->select('id','name')->get(),
+                'data' => collect([['id' => 0, 'name' => 'بدون وضعیت ']])->merge($project->statuses()->select('id','name')->get()->map(function($item) {
+                    return ['id' => $item->id, 'name' => $item->name];
+                })),
             ],
             [
                 'field' => 'project_level_id',
                 'title' => 'مرحله',
                 'type' => 'select',
-                'data' => $project->levels()->select('id','name')->get(),
+                'data' => collect([['id' => 0, 'name' => 'بدون مرحله ']])->merge($project->levels()->select('id','name')->get()->map(function($item) {
+                    return ['id' => $item->id, 'name' => $item->name];
+                })),
             ],
             [
                 'field' => 'status',
@@ -142,6 +152,12 @@ class Project_Customer extends Model
                 'title' => 'کارشناس',
                 'type' => 'select',
                 'data' => User::select('id','name')->get(),
+                'relation' => 'has_many',
+            ],
+            [
+                'field' => 'users.start_at',
+                'title' => 'تاریخ تخصیص',
+                'type' => 'date',
                 'relation' => 'has_many',
             ]
 

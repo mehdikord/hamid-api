@@ -412,7 +412,12 @@ class ReportingRepository implements ReportingInterface
         $result = [];
         $type = request()->type;
 
+        if(!in_array($type,['customers','invoices','reports'])){
+            return helper_response_error('Invalid type');
+        }
+
         foreach ($project->users as $user){
+
             if($type == 'customers'){
                 if($is_same_date){
                     $data = $user->user->customers()->whereHas('project_customer',function($query)use($project){
@@ -456,7 +461,6 @@ class ReportingRepository implements ReportingInterface
             }
 
         }
-
         return helper_response_fetch($result);
     }
 }

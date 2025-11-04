@@ -19,11 +19,23 @@ trait SearchingTrait
                         $relation_field = $relation_parts[1];
 
                         $query->whereHas($relation,function($subQuery) use ($relation_field,$item){
-                            if($item['condition'] == 'LIKE'){
-                                $subQuery->where($relation_field,"LIKE",'%'.$item['value'].'%');
+
+                            if($item['type'] == 'date'){
+                                if($item['value']){
+                                    $item['value'] = helper_core_jalali_to_carbon($item['value']);
+                                }
+                                $subQuery->whereDate($relation_field,$item['condition'],$item['value']);
+
                             }else{
-                                $subQuery->where($relation_field,$item['condition'],$item['value']);
+                                if($item['condition'] == 'LIKE'){
+                                    $subQuery->where($relation_field,"LIKE",'%'.$item['value'].'%');
+                                }else{
+                                    $subQuery->where($relation_field,$item['condition'],$item['value']);
+                                }
                             }
+
+
+
                         });
                     }elseif($item['type'] == 'date'){
                         if($item['value']){
@@ -39,7 +51,12 @@ trait SearchingTrait
                         if ($item['condition'] == 'LIKE'){
                             $query->where($item['field'],"LIKE",'%'.$item['value'].'%');
                         }else{
-                            $query->where($item['field'],$item['condition'],$item['value']);
+                            if($item['value'] == 0){
+                                $query->whereNull($item['field']);
+                            }else{
+                                $query->where($item['field'],$item['condition'],$item['value']);
+                            }
+
                         }
                     }
                 }
