@@ -1,6 +1,7 @@
 <?php
 //All Admins Routing
 
+use App\Http\Controllers\Admins\Whatsapp\WhatsappNumberController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -238,6 +239,11 @@ Route::middleware('auth:admins')->group(function () {
             Route::post('assign/{group}',[\App\Http\Controllers\Admins\TelegramGroups\TelegramGroupsController::class, 'assign'])->name('assign');
             Route::get( '',[\App\Http\Controllers\Admins\TelegramGroups\TelegramGroupsController::class, 'all'])->name('all');
         });
+    });
+
+    //WhatsApp Management
+    Route::group(['prefix'=>'wahtasapp','as'=>'whatsapp.'],function(){
+        Route::apiResource('numbers',WhatsappNumberController::class);
     });
 
 

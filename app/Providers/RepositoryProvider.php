@@ -24,6 +24,7 @@ use App\Interfaces\Users\UserInterface;
 use App\Interfaces\Bot\BotInterface;
 use App\Interfaces\StatusMessages\StatusMessageInterface;
 use App\Interfaces\Telegram\TelegramInterface;
+use App\Interfaces\Whatsapp\WhatsappInterface;
 use App\Repositories\Activities\ActivityRepository;
 use App\Repositories\Auth\AuthRepository;
 use App\Repositories\Customers\CustomerRepository;
@@ -46,6 +47,7 @@ use App\Repositories\Users\UserRepository;
 use App\Repositories\Bot\BotRepository;
 use App\Repositories\StatusMessages\StatusMessageRepository;
 use App\Repositories\Telegram\TelegramRepository;
+use App\Repositories\Whatsapp\WhatsappRepository;
 use Carbon\Laravel\ServiceProvider;
 
 class RepositoryProvider extends ServiceProvider
@@ -92,6 +94,8 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(BotInterface::class,BotRepository::class);
 
         $this->app->bind(TelegramInterface::class,TelegramRepository::class);
+
+        $this->app->bind(WhatsappInterface::class,WhatsappRepository::class);
 
         $this->app->bind(ProjectLevelInterface::class,ProjectLevelRepository::class);
 
