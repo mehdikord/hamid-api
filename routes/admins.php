@@ -242,7 +242,7 @@ Route::middleware('auth:admins')->group(function () {
     });
 
     //WhatsApp Management
-    Route::group(['prefix'=>'wahtasapp','as'=>'whatsapp.'],function(){
+    Route::group(['prefix'=>'whatsapp','as'=>'whatsapp.'],function(){
         Route::apiResource('numbers',WhatsappNumberController::class);
     });
 
