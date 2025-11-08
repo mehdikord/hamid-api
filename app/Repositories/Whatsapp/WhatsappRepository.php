@@ -5,10 +5,19 @@ namespace App\Repositories\Whatsapp;
 use App\Http\Resources\Whatsapp\WhatsappNumber\WhatsappNumberIndexResource;
 use App\Http\Resources\Whatsapp\WhatsappNumber\WhatsappNumberSingleResource;
 use App\Interfaces\Whatsapp\WhatsappInterface;
+use App\Models\Customer;
 use App\Models\Whatsapp\WhatsappNumber;
+use App\Services\WhatsappService;
 
 class WhatsappRepository implements WhatsappInterface
 {
+    protected WhatsappService $service;
+
+    public function __construct(WhatsappService $whatsapp)
+    {
+        $this->service = $whatsapp;
+    }
+
     public function index()
     {
         $data = WhatsappNumber::query();
@@ -28,6 +37,7 @@ class WhatsappRepository implements WhatsappInterface
         $data = WhatsappNumber::create([
             'admin_id' => auth('admins')->id(),
             'number' => $request->number,
+            'name' => $request->name,
             'use_count' => 0,
             'is_active' => true,
             'is_block' => false,
@@ -45,6 +55,7 @@ class WhatsappRepository implements WhatsappInterface
     {
         $item->update([
             'number' => $request->number,
+            'name' => $request->name,
         ]);
         return helper_response_updated(new WhatsappNumberSingleResource($item));
     }
@@ -54,5 +65,48 @@ class WhatsappRepository implements WhatsappInterface
         $item->delete();
         return helper_response_deleted();
     }
+
+    public function send_message($request)
+    {
+        if($request->filled('customer_id')){
+            $customer = Customer::find($request->customer_id);
+            if(!$customer){
+                return helper_response_error('Customer not found');
+            }
+            $phone = $customer->phone;
+            if (!empty($phone) && $phone[0] == '0') {
+                $phone = substr($phone, 1);
+            }
+            if($phone){
+                $result = $this->service->send_message($request->message,$phone,$customer->id,$request->project_id);
+                if($result == 'success'){
+                    return helper_response_created('Message sent successfully');
+                }elseif($result == 'error'){
+                    return helper_response_error('Message not sent');
+                }elseif($result == 'queued'){
+                    return helper_response_created('Message queued');
+                }
+            }
+            return  helper_response_error(' customer Phone not found');
+        }
+        return helper_response_error('Customer or project not found');
+    }
+    public function send_message_multi($request)
+    {
+
+        $customers = Customer::whereIn('id',$request->customer_id)->get();
+        foreach($customers as $customer){
+            $phone = $customer->phone;
+            if (!empty($phone) && $phone[0] == '0') {
+                $phone = substr($phone, 1);
+            }
+            if($phone){
+                $this->service->send_message($request->message,$phone,$customer->id,$request->project_id);
+            }
+        }
+        return helper_response_created('Successfully sent messages to customers');
+    }
+
+
 }
 

@@ -1,6 +1,7 @@
 <?php
 //All Admins Routing
 
+use App\Http\Controllers\Admins\Whatsapp\WhatsappController;
 use App\Http\Controllers\Admins\Whatsapp\WhatsappNumberController;
 use Illuminate\Support\Facades\Route;
 
@@ -243,6 +244,11 @@ Route::middleware('auth:admins')->group(function () {
 
     //WhatsApp Management
     Route::group(['prefix'=>'whatsapp','as'=>'whatsapp.'],function(){
+
+        Route::post('send',[WhatsappController::class, 'send_message'])->name('send');
+        Route::post('multi',[WhatsappController::class, 'send_message_multi'])->name('send_multi');
+
+
         Route::apiResource('numbers',WhatsappNumberController::class);
     });
 

@@ -15,5 +15,11 @@ interface WhatsappInterface
     public function update($request, $item);
 
     public function destroy($item);
+
+    public function send_message($request);
+    
+    public function send_message_multi($request);
+
+
 }
 
