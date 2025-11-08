@@ -248,7 +248,8 @@ Route::middleware('auth:admins')->group(function () {
         Route::post('send',[WhatsappController::class, 'send_message'])->name('send');
         Route::post('multi',[WhatsappController::class, 'send_message_multi'])->name('send_multi');
 
-
+        Route::get('queue',[WhatsappController::class, 'queue'])->name('queue');
+        Route::get('logs',[WhatsappController::class, 'logs'])->name('logs');
         Route::apiResource('numbers',WhatsappNumberController::class);
     });
 

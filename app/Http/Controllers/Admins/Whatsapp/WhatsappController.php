@@ -15,6 +15,9 @@ class WhatsappController extends Controller
     public function __construct(WhatsappInterface $whatsapp)
     {
         $this->repository = $whatsapp;
+        $this->middleware('generate_fetch_query_params')->only('queue','logs');
+
+
     }
 
     public function send_message(WhatsappSendRequest $request)
@@ -24,5 +27,14 @@ class WhatsappController extends Controller
     public function send_message_multi(WhatsappSendMultiRequest $request)
     {
         return $this->repository->send_message_multi($request);
+    }
+
+    public function queue()
+    {
+        return $this->repository->queue();
+    }
+    public function logs()
+    {
+        return $this->repository->logs();
     }
 }

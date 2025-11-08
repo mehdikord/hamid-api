@@ -17,9 +17,11 @@ interface WhatsappInterface
     public function destroy($item);
 
     public function send_message($request);
-    
+
     public function send_message_multi($request);
 
+    public function queue();
 
+    public function logs();
 }
 

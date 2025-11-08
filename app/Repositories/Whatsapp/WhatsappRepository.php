@@ -2,11 +2,15 @@
 
 namespace App\Repositories\Whatsapp;
 
+use App\Http\Resources\Whatsapp\WhatsappNumber\WhatsappLogIndexResource;
 use App\Http\Resources\Whatsapp\WhatsappNumber\WhatsappNumberIndexResource;
 use App\Http\Resources\Whatsapp\WhatsappNumber\WhatsappNumberSingleResource;
+use App\Http\Resources\Whatsapp\WhatsappNumber\WhatsappQueueIndexResource;
 use App\Interfaces\Whatsapp\WhatsappInterface;
 use App\Models\Customer;
+use App\Models\Whatsapp\WhatsappLog;
 use App\Models\Whatsapp\WhatsappNumber;
+use App\Models\Whatsapp\WhatsappQueue;
 use App\Services\WhatsappService;
 
 class WhatsappRepository implements WhatsappInterface
@@ -107,6 +111,21 @@ class WhatsappRepository implements WhatsappInterface
         return helper_response_created('Successfully sent messages to customers');
     }
 
+    public function queue()
+    {
+        $data = WhatsappQueue::query();
+        $data->where('admin_id', auth('admins')->id());
+        $data->orderBy(request('sort_by'), request('sort_type'));
+        return helper_response_fetch(WhatsappQueueIndexResource::collection($data->paginate(request('per_page')))->resource);
+
+    }
+    public function logs()
+    {
+        $data = WhatsappLog::query();
+        $data->where('admin_id', auth('admins')->id());
+        $data->orderBy(request('sort_by'), request('sort_type'));
+        return helper_response_fetch(WhatsappLogIndexResource::collection($data->paginate(request('per_page')))->resource);
+    }
 
 }
 
