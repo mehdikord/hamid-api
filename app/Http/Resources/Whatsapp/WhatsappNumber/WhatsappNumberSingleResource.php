@@ -18,6 +18,7 @@ class WhatsappNumberSingleResource extends JsonResource
             'id' => $this->id,
             'admin_id' => $this->admin_id,
             'number' => $this->number,
+            'name' => $this->name,
             'last_used' => $this->last_used,
             'is_active' => $this->is_active,
             'is_block' => $this->is_block,
