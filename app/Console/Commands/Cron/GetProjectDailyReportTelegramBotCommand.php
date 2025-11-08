@@ -32,7 +32,29 @@ class GetProjectDailyReportTelegramBotCommand extends Command
     public function handle()
     {
 
+
         $today = Carbon::now()->format('Y-m-d');
+
+        // Get current Jalali date
+        $jalaliToday = Jalalian::fromCarbon(Carbon::now());
+        $jalaliYear = $jalaliToday->getYear();
+        $jalaliMonth = $jalaliToday->getMonth();
+
+        // First day of the current Jalali month
+        $jalaliMonthStart = Jalalian::fromFormat('Y-m-d', sprintf('%d-%02d-01', $jalaliYear, $jalaliMonth));
+        $first_day_of_mounth = $jalaliMonthStart->toCarbon()->startOfDay();
+
+        // Last day of the current Jalali month - get first day of next month and subtract one day
+        $nextMonth = $jalaliMonth + 1;
+        $nextMonthYear = $jalaliYear;
+        if ($nextMonth > 12) {
+            $nextMonth = 1;
+            $nextMonthYear++;
+        }
+        $jalaliNextMonthStart = Jalalian::fromFormat('Y-m-d', sprintf('%d-%02d-01', $nextMonthYear, $nextMonth));
+        $end_day_of_mounth = $jalaliNextMonthStart->toCarbon()->subDay()->endOfDay();
+
+
         // $today = "2025-05-26";
         //gte projects that have telegram group
         foreach(Project::whereHas('telegram_groups')->get() as $project){
@@ -46,6 +68,7 @@ class GetProjectDailyReportTelegramBotCommand extends Command
             })->count();
 
             $today_invoice_amount = Project_Customer_Invoice::where('project_id',$project->id)->whereDate('created_at',$today)->sum('amount');
+            $mounth_invoice_amount = Project_Customer_Invoice::where('project_id',$project->id)->whereDate('created_at','>=',$first_day_of_mounth)->whereDate('created_at','<=',$end_day_of_mounth)->sum('amount');
 
             $today_completed_amount = 0;
 
@@ -70,7 +93,9 @@ class GetProjectDailyReportTelegramBotCommand extends Command
             $message .= "\n\n";
             $message .= "💰💰💰💰💰💰";
             $message .= "\n\n";
-
+            $message .= "  فروش این ماه : ".number_format($mounth_invoice_amount);
+            $message .= "💰💰💰💰💰💰";
+            $message .= "\n\n";
             //get users info
             $exists_users = [];
             foreach($project->users as $user){
