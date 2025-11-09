@@ -64,6 +64,7 @@ Route::middleware('auth:admins')->group(function () {
             //Clients customers
             Route::prefix('clients')->as('clients.')->group(function () {
                 Route::get('',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_client'])->name('index');
+                Route::get('columns',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'customers_client_columns'])->name('columns');
             });
 
             Route::get('fields',action: [\App\Http\Controllers\Admins\Projects\ProjectController::class, 'get_customer_fields'])->name('customer_fields');

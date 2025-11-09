@@ -74,6 +74,7 @@ class ProjectRepository implements ProjectInterface
    {
        $data = $project->customers();
        $data->whereHas('invoices');
+       $this->advance_search($data);
        $data->orderBy(request('sort_by'),request('sort_type'));
        return helper_response_fetch(ProjectCustomerClientsResource::collection($data->paginate(request('per_page')))->resource);
    }
@@ -83,7 +84,6 @@ class ProjectRepository implements ProjectInterface
        $data = $project->customers();
        $data->where('status', Project_Customer::STATUS_PENDING);
        $data->whereDoesntHave('users');
-
 
        if (request()->filled('search')){
 
@@ -1015,6 +1015,11 @@ class ProjectRepository implements ProjectInterface
 
     }
     public function get_columns($project)
+    {
+        return helper_response_fetch(Project_Customer::columns($project));
+    }
+
+    public function customers_client_columns($project)
     {
         return helper_response_fetch(Project_Customer::columns($project));
     }
