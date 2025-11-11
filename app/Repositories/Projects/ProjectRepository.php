@@ -691,7 +691,7 @@ class ProjectRepository implements ProjectInterface
     public function invoices_update($project, $invoice, $request)
     {
         //check sum invoices amount
-        if (($request->amount > $invoice->amount) && $invoice->project_customer->invoices()->sum('amount') + $request->amount > $invoice->project_customer->user->target_price ){
+        if (($request->amount > $invoice->amount) && $invoice->project_customer->invoices()->where('id','!=',$invoice->id)->sum('amount') + $request->amount > $invoice->project_customer->target_price ){
             return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
         }
         $invoice->update([
