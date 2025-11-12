@@ -438,7 +438,7 @@ class UserCustomerRepository implements UserCustomerInterface
 
     public function projects_own($customer, $project)
     {
-        $project_customer = $customer->projects()->where('is_active',true)->whereIn('id',helper_core_get_user_customer_access($customer))->where('project_id', $project->id)->first();
+        $project_customer = $customer->projects()->whereIn('id',helper_core_get_user_customer_access($customer))->where('project_id', $project->id)->first();
         if (!$project_customer){
             return helper_response_error('شما دسترسی لازم به این پروژه را ندارید');
         }

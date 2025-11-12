@@ -20,6 +20,8 @@ function helper_core_get_user_customer_access($customer): array
 
     return $customer->projects()->whereHas('user',function($user){
         $user->where('user_id',auth()->user()->id);
+    })->whereHas('project',function($project){
+        $project->where('is_active',true);
     })->pluck('id')->toArray();
 
 }
