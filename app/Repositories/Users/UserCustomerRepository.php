@@ -367,7 +367,7 @@ class UserCustomerRepository implements UserCustomerInterface
     public function invoices_store($customer, $request)
     {
         //check sum invoices amount
-        if ($customer->invoices()->sum('amount') + $request->price > $customer->project_customer->target_price ){
+        if ($customer->invoices()->sum('amount') + $request->price > $customer->target_price ){
             return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
         }
         $file_url = null;
