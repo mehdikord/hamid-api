@@ -45,6 +45,11 @@ class UserCustomerRepository implements UserCustomerInterface
     public function users_consultants($user)
     {
         $data = $user->customers();
+        $data->whereHas('project_customer',function($query){
+            $query->whereHas('project',function($project_query){
+                $project_query->where('is_active',true);
+            });
+        });
         $data->where('position_id',helper_data_position_consultant());
 
         if (request()->filled('search')) {
@@ -139,6 +144,11 @@ class UserCustomerRepository implements UserCustomerInterface
     {
         $data = $user->customers();
         $data->where('position_id',helper_data_position_seller());
+        $data->whereHas('project_customer',function($query){
+            $query->whereHas('project',function($project_query){
+                $project_query->where('is_active',true);
+            });
+        });
 
         if (request()->filled('search')) {
 
@@ -428,7 +438,7 @@ class UserCustomerRepository implements UserCustomerInterface
 
     public function projects_own($customer, $project)
     {
-        $project_customer = $customer->projects()->whereIn('id',helper_core_get_user_customer_access($customer))->where('project_id', $project->id)->first();
+        $project_customer = $customer->projects()->where('is_active',true)->whereIn('id',helper_core_get_user_customer_access($customer))->where('project_id', $project->id)->first();
         if (!$project_customer){
             return helper_response_error('شما دسترسی لازم به این پروژه را ندارید');
         }
