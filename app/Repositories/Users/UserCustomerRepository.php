@@ -9,6 +9,7 @@ use App\Interfaces\Users\UserCustomerInterface;
 use App\Models\Project_Customer;
 use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
+use App\Models\Projects\Invoice_Product;
 use App\Models\User_Project;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -396,6 +397,16 @@ class UserCustomerRepository implements UserCustomerInterface
             'file_size' => $file_size,
             'file_name' => $file_name,
         ]);
+
+        // Handle products if provided
+        if ($request->filled('products') && is_array($request->products)) {
+            foreach ($request->products as $product_id) {
+                $item->invoice_products()->create([
+                    'project_product_id' => $product_id,
+                ]);
+            }
+        }
+
         $user_project = User_Project::where('project_id', $customer->project_id)->where('user_id',auth()->id())->first();
         if ($user_project){
             $user_project->update(['total_price' => $user_project->total_price + $item->amount]);
@@ -545,6 +556,16 @@ class UserCustomerRepository implements UserCustomerInterface
             'file_size' => $file_size,
             'file_name' => $file_name,
         ]);
+
+        // Handle products if provided
+        if ($request->filled('products') && is_array($request->products)) {
+            foreach ($request->products as $product_id) {
+                $item->invoice_products()->create([
+                    'project_product_id' => $product_id,
+                ]);
+            }
+        }
+
         //activity log
         helper_activity_create(null,null,$project_customer->project_id,$project_customer->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$item->id."");
         helper_bot_send_group_invoice($item);

@@ -15,6 +15,7 @@ use App\Interfaces\Projects\ProjectCategoryInterface;
 use App\Interfaces\Projects\ProjectLevelInterface;
 use App\Interfaces\Projects\ProjectInterface;
 use App\Interfaces\Projects\ProjectMessageInterface;
+use App\Interfaces\Projects\ProjectProductInterface;
 use App\Interfaces\Projects\ProjectStatusInterface;
 use App\Interfaces\Projects\UserProjectInterface;
 use App\Interfaces\Reporting\ReportingInterface;
@@ -37,6 +38,7 @@ use App\Repositories\Profile\ProfileRepository;
 use App\Repositories\Projects\ProjectCategoryRepository;
 use App\Repositories\Projects\ProjectLevelRepository;
 use App\Repositories\Projects\ProjectMessageRepository;
+use App\Repositories\Projects\ProjectProductRepository;
 use App\Repositories\Projects\ProjectRepository;
 use App\Repositories\Projects\ProjectStatusRepository;
 use App\Repositories\Projects\UserProjectRepository;
@@ -90,6 +92,8 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(MemberInterface::class,MemberRepository::class);
 
         $this->app->bind(ProjectMessageInterface::class,ProjectMessageRepository::class);
+
+        $this->app->bind(ProjectProductInterface::class,ProjectProductRepository::class);
 
         $this->app->bind(BotInterface::class,BotRepository::class);
 

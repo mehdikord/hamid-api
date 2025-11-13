@@ -4,6 +4,7 @@ namespace App\Http\Resources\Projects\Invoices;
 
 use App\Http\Resources\Customers\CustomerIndexResource;
 use App\Http\Resources\Projects\Categories\ProjectCategoryShortResource;
+use App\Http\Resources\Projects\Products\ProjectProductShortResource;
 use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
 use App\Http\Resources\Users\UserShortResource;
 use Illuminate\Http\Request;
@@ -40,7 +41,9 @@ class ProjectInvoiceIndexResource extends JsonResource
             'settle' => $this->settle,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-
+            'products' => $this->when($this->relationLoaded('products') && $this->products->isNotEmpty(), function () {
+                return ProjectProductShortResource::collection($this->products);
+            }),
         ];
     }
 }

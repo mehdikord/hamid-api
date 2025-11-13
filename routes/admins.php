@@ -168,7 +168,15 @@ Route::middleware('auth:admins')->group(function () {
         Route::prefix('{project}/messages')->as('messages.')->group(function () {
             Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectMessageController::class, 'all'])->name('all');
         });
+
         Route::apiResource('{project}/messages',\App\Http\Controllers\Admins\Projects\ProjectMessageController::class);
+
+        //Products
+        Route::prefix('{project}/products')->as('products.')->group(function () {
+            Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectProductController::class, 'all'])->name('all');
+        });
+
+        Route::apiResource('{project}/products',\App\Http\Controllers\Admins\Projects\ProjectProductController::class);
 
         //Exports
         Route::group(['prefix' => '{project}/export','as' => 'export.'],function(){

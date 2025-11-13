@@ -4,6 +4,7 @@ namespace App\Http\Resources\User_Customers;
 
 use App\Http\Resources\Customers\CustomerIndexResource;
 use App\Http\Resources\Customers\Settings\Statuses\CustomerSettingsStatusShortResource;
+use App\Http\Resources\Projects\Products\ProjectProductShortResource;
 use App\Http\Resources\Users\UserShortResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -35,6 +36,9 @@ class UserCustomerInvoiceResource extends JsonResource
             'file_name' => $this->file_name,
             'file_url' => $this->file_url,
             'created_at' => $this->created_at,
+            'products' => $this->when($this->relationLoaded('products') && $this->products->isNotEmpty(), function () {
+                return ProjectProductShortResource::collection($this->products);
+            }),
         ];
     }
 }

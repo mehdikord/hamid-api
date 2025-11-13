@@ -25,6 +25,7 @@ use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
 use App\Models\Project_Customer_Status;
 use App\Models\Project_Level;
+use App\Models\Projects\Invoice_Product;
 use App\Models\User;
 use App\Models\User_Project;
 use App\Models\User_Project_Customer;
@@ -700,6 +701,19 @@ class ProjectRepository implements ProjectInterface
             'description' => $request->description,
             'created_at' => $request->created_at,
         ]);
+
+        // Remove all existing invoice products
+        $invoice->invoice_products()->delete();
+
+        // Handle products if provided
+        if ($request->filled('products') && is_array($request->products)) {
+            foreach ($request->products as $product_id) {
+                $invoice->invoice_products()->create([
+                    'project_product_id' => $product_id,
+                ]);
+            }
+        }
+
         $invoice->load('user');
         // activity log
         helper_activity_create(null,$invoice->user_id,$project->id,$invoice->project_customer->customer_id,'ویرایش فاکتور',"# : ویرایش فاکتور ".$invoice->id."");
@@ -803,6 +817,16 @@ class ProjectRepository implements ProjectInterface
                 'file_name' => $file_name,
                 'created_at' => $date,
             ]);
+
+            // Handle products if provided
+            if ($request->filled('products') && is_array($request->products)) {
+                foreach ($request->products as $product_id) {
+                    $data->invoice_products()->create([
+                        'project_product_id' => $product_id,
+                    ]);
+                }
+            }
+
             // activity log
             helper_activity_create(null,$request->user_id,$item->id,$customer_project->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$data->id."");
             return helper_response_created(new ProjectInvoiceIndexResource($data));

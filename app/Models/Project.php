@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Fields\Field;
 use App\Models\Projects\Project_Message;
+use App\Models\Projects\Project_Product;
 use App\Models\Scopes\MemberScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -112,5 +113,10 @@ class Project extends Model
     public function status_messages(): HasMany
     {
         return $this->hasMany(Status_Message::class, 'project_id');
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Project_Product::class, 'project_id');
     }
 }

@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Projects\Invoice_Product;
+use App\Models\Projects\Project_Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project_Customer_Invoice extends Model
@@ -29,6 +32,23 @@ class Project_Customer_Invoice extends Model
     public function project_customer(): BelongsTo
     {
         return $this->belongsTo(Project_Customer::class,'project_customer_id');
+    }
+
+    public function invoice_products(): HasMany
+    {
+        return $this->hasMany(Invoice_Product::class, 'project_customer_invoices_id');
+    }
+
+    public function products(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Project_Product::class,
+            Invoice_Product::class,
+            'project_customer_invoices_id', // Foreign key on invoice_products table
+            'id', // Foreign key on project_products table
+            'id', // Local key on project_customer_invoices table
+            'project_product_id' // Local key on invoice_products table
+        );
     }
 
     public static function columns($project)
