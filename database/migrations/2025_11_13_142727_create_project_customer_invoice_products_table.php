@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('project_product_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('project_customer_invoices_id')->references('id')->on('project_customer_invoices')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreign('project_product_id')->references('id')->on('project_products')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('project_customer_invoices_id', 'pci_products_invoice_id_foreign')->references('id')->on('project_customer_invoices')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('project_product_id', 'pci_products_product_id_foreign')->references('id')->on('project_products')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 
