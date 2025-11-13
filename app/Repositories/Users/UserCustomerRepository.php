@@ -558,7 +558,7 @@ class UserCustomerRepository implements UserCustomerInterface
         ]);
 
         // Handle products if provided
-        if ($request->filled('products') && is_array($request->products)) {
+        if ($request->filled('products')) {
             foreach ($request->products as $product_id) {
                 $item->invoice_products()->create([
                     'project_product_id' => $product_id,

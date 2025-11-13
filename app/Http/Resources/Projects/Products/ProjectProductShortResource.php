@@ -25,6 +25,7 @@ class ProjectProductShortResource extends JsonResource
             'project_id' => $this->project_id,
             'name' => $this->name,
             'type' => $this->type,
+            'price' => $this->price,
         ];
     }
 }

@@ -16,6 +16,7 @@ class ProjectProductController extends Controller
     public function __construct(ProjectProductInterface $product)
     {
         $this->repository = $product;
+        $this->middleware('generate_fetch_query_params')->only('index');
     }
     public function index(Project $project)
     {
