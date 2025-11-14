@@ -106,4 +106,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(User_Position::class,'user_id');
     }
+
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(User_Reminder::class,'user_id');
+    }
 }

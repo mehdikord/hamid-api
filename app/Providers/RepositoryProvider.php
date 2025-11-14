@@ -22,6 +22,7 @@ use App\Interfaces\Reporting\ReportingInterface;
 use App\Interfaces\Tags\TagInterface;
 use App\Interfaces\Users\UserCustomerInterface;
 use App\Interfaces\Users\UserInterface;
+use App\Interfaces\Users\UserReminderInterface;
 use App\Interfaces\Bot\BotInterface;
 use App\Interfaces\StatusMessages\StatusMessageInterface;
 use App\Interfaces\Telegram\TelegramInterface;
@@ -46,6 +47,7 @@ use App\Repositories\Reporting\ReportingRepository;
 use App\Repositories\Tags\TagRepository;
 use App\Repositories\Users\UserCustomerRepository;
 use App\Repositories\Users\UserRepository;
+use App\Repositories\Users\UserReminderRepository;
 use App\Repositories\Bot\BotRepository;
 use App\Repositories\StatusMessages\StatusMessageRepository;
 use App\Repositories\Telegram\TelegramRepository;
@@ -104,6 +106,8 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(ProjectLevelInterface::class,ProjectLevelRepository::class);
 
         $this->app->bind(StatusMessageInterface::class,StatusMessageRepository::class);
+
+        $this->app->bind(UserReminderInterface::class,UserReminderRepository::class);
     }
 
 }

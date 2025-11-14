@@ -101,5 +101,8 @@ Route::group(['middleware' => ['auth:users']], function () {
 
     });
 
+    //Reminders
+    Route::apiResource('reminders', \App\Http\Controllers\Users\Reminders\ReminderController::class)->names('reminders');
+
 
 });
