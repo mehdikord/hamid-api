@@ -106,10 +106,10 @@ class AuthRepository implements AuthInterface
             return helper_response_error('user not found');
         }
 
-        if (helper_auth_otp_check_code($user->phone,$request->code)){
+        if (helper_auth_otp_check_code($user->phone,(int)$request->code)){
 
             // active telegram session
-            $user->update([
+            $user->update(attributes: [
                 'telegram_session' => 1,
             ]);
             return helper_response_fetch(new UserInfoAuthResource($user));
