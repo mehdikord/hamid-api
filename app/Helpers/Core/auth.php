@@ -13,7 +13,7 @@ function helper_auth_otp_check_time($phone): bool
 
 //check auth code
 function helper_auth_otp_check_code($phone,$code){
-    return \App\Models\Auth_Code::where('phone',$phone)->where('code',$code)->exists();
+    return \App\Models\Auth_Code::where('phone',$phone)->where('code',$code)->first();
 }
 
 function helper_auth_otp_remove_code($phone): void
