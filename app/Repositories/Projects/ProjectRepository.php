@@ -256,6 +256,7 @@ class ProjectRepository implements ProjectInterface
                                 'users' => UserProjectCustomerResource::collection($find_customer->users),
                             ];
                         }else{
+                            $field_data = [];
                             $custoemr_data=[];
                             $import_date = Carbon::now();
                             foreach($fileds as $customer_key => $customer_value){
@@ -263,8 +264,15 @@ class ProjectRepository implements ProjectInterface
                                     // Use formatted phone number for phone field
                                     if($customer_key == 'phone'){
                                         $custoemr_data[$customer_key] = $phone;
-                                    } else {
+                                    }elseif(!str_starts_with($customer_key,'fields_')){
                                         $custoemr_data[$customer_key] = $value[$customer_value];
+                                    }else{
+                                        $field_id = str_replace('fields_','',$customer_key);
+                                        $field_val = $value[$customer_value];
+                                        $field_data[] = [
+                                            'id' => $field_id,
+                                            'val' => $field_val,
+                                        ];
                                     }
                                 }
                                 if($customer_key == 'date'){
@@ -284,6 +292,14 @@ class ProjectRepository implements ProjectInterface
                             ]);
                             if ($request->filled('tags')){
                                 $new_customer->tags()->attach($request->tags);
+                            }
+                            if(count($field_data) > 0){
+                                foreach($field_data as $field){
+                                    $new_customer->fields()->create([
+                                        'field_id' => $field['id'],
+                                        'val' => $field['val'],
+                                    ]);
+                                }
                             }
                             //check customer on other projects
                             if($customer){
