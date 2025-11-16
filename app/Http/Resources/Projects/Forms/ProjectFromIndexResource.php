@@ -31,8 +31,6 @@ class ProjectFromIndexResource extends JsonResource
             'project_id' => $this->project_id,
             'id'=> $this->id,
             'name'=> $this->name,
-            'import_method_id' => $this->import_method_id,
-            'tag_id' => $this->tag_id,
             'description' => $this->description,
             'link' => $this->link,
             'fields' => ProjectFromFieldsIndexResource::collection($this->fields),
