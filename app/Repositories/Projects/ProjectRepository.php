@@ -258,10 +258,13 @@ class ProjectRepository implements ProjectInterface
                             $field_data = [];
                             foreach($fileds as $customer_key => $customer_value){
                                 if(!str_starts_with($customer_key,'fields_')){
-                                    $field_data[] = [
-                                        'id' => $customer_key,
-                                        'val' => $value[$customer_value],
-                                    ];
+
+                                    $field_id = str_replace('fields_','',$customer_key);
+                                        $field_val = $value[$customer_value];
+                                        $field_data[] = [
+                                            'id' => $field_id,
+                                            'val' => $field_val,
+                                        ];
                                 }
                             }
                             if(count($field_data) > 0){
