@@ -89,11 +89,14 @@ class GetProjectDailyReportTelegramBotCommand extends Command
             $message .= "\n\n";
             $message .= "  مجموع  فیش‌های امروز: ".number_format($today_invoice_amount);
             $message .= "\n\n";
+            $message .= "💰💰💰💰💰💰";
+            $message .= "\n\n";
             $message .= "مجموع  تکمیل وجه‌های امروز: ".$today_completed_amount;
             $message .= "\n\n";
             $message .= "💰💰💰💰💰💰";
             $message .= "\n\n";
             $message .= "  فروش این ماه : ".number_format($mounth_invoice_amount);
+            $message .= "\n\n";
             $message .= "💰💰💰💰💰💰";
             $message .= "\n\n";
             //get users info
@@ -144,7 +147,7 @@ class GetProjectDailyReportTelegramBotCommand extends Command
             foreach($project->telegram_groups as $group){
                 if($group->whereHas('topics')){
                     foreach($group->topics as $topic){
-                        if($topic->selected){
+                        if($topic->type == 'reports'){
                             helper_bot_send_markdown($group->telegram_id, $topic->topic_id, $message);
                         }
                     }
