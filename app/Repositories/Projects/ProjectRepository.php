@@ -304,7 +304,7 @@ class ProjectRepository implements ProjectInterface
                             //check customer on other projects
                             if($customer){
                                 $other_project = Project_Customer::where('customer_id',$customer->id)->where('project_id','!=',$item->id)->first();
-                                if($other_project && $other_project->invoices()->count()){
+                                if($other_project && $other_project->user_id && $other_project->invoices()->count()){
                                     //get user
                                     if($other_project->user()->whereHas('user',function ($user_quesry){$user_quesry->where('is_active',true);})->where('position_id',helper_data_position_seller())->exists() && $item->positions()->where('position_id',helper_data_position_seller())->exists()){
                                         $new_customer->user()->create([
@@ -314,7 +314,7 @@ class ProjectRepository implements ProjectInterface
                                         ]);
                                         $message = "تعداد ".'1'." شماره از پروژه : ".$item->name." به عنوان : ".' فروش'." به شما تخصیص داده شد";
                                         $user = User::find($other_project->user_id);
-                                        helper_bot_send_markdown($user->telegram_id,$message);
+                                        helper_bot_send_markdown($user->telegram_id,topic_id: $message);
                                     }elseif($other_project->user()->whereHas('user',function ($user_quesry){$user_quesry->where('is_active',true);})->where('position_id',helper_data_position_consultant())->exists() && $item->positions()->where('position_id',helper_data_position_consultant())->exists()){
                                         $new_customer->user()->create([
                                             'user_id' => $other_project->user_id,
