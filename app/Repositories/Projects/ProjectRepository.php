@@ -1078,6 +1078,10 @@ class ProjectRepository implements ProjectInterface
     {
         $data = [
             [
+                'value' => 'phone',
+                'title' => 'موبایل',
+            ],
+            [
                 'value' => 'name',
                 'title' => 'نام',
             ],
