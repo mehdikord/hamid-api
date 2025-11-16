@@ -46,11 +46,16 @@ class FormController extends Controller
                             ]);
                         }
                     }
+                    if($form->tag_id){
+                        $project_customer->tags()->sync($form->tag_id);
+                    }
                 }else{
                     $project_customer = $project->customers()->create([
                        'customer_id' => $customer->id,
                         'import_at' => Carbon::now(),
                         'from_form' => true,
+                        'import_method_id' => $form->import_method_id,
+
                     ]);
                     if ($request->filled('fields')){
                         $project_customer->fields()->delete();
@@ -60,6 +65,9 @@ class FormController extends Controller
                                 'val' => $field['val']
                             ]);
                         }
+                    }
+                    if($form->tag_id){
+                        $project_customer->tags()->attach($form->tag_id);
                     }
                 }
             }else{
@@ -72,7 +80,11 @@ class FormController extends Controller
                     'customer_id' => $customer->id,
                     'import_at' => Carbon::now(),
                     'from_form' => true,
+                    'import_method_id' => $form->import_method_id,
                 ]);
+                if($form->tag_id){
+                    $project_customer->tags()->sync($form->tag_id);
+                }
                 if ($request->filled('fields')){
                     $project_customer->fields()->delete();
                     foreach ($request->fields as $field){
