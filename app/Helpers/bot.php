@@ -47,15 +47,15 @@ function helper_bot_send_group_invoice($invoice)
         foreach($project->telegram_groups as $group){
             if($group->telegram_id){
                 $invoice_data['group_id'] = $group->telegram_id;
-                if($group->topics->where('selected',true)->count() > 0){
-                    $invoice_data['topic_id'] = $group->topics->where('selected',true)->first()->topic_id;
+                if($group->topics->where('type','invoices')->count() > 0){
+                    $invoice_data['topic_id'] = $group->topics->where('type','invoices')->first()->topic_id;
                 }
                 $url = env('BOT_ADDRESS')."/api/receipts";
                 helper_core_send_post_request($url,$invoice_data);
             }
         }
 
-        Log::info('invoice_data',$invoice_data);
+
     }
 
     return true;
