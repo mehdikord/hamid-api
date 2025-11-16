@@ -1159,6 +1159,12 @@ class ProjectRepository implements ProjectInterface
         // Remove any extra whitespace
         $date_string = trim($date_string);
 
+        // Extract only the date part (remove time if exists)
+        // Handle formats like: 1404/08/24 11:49:43 or 2024/01/15 10:30:00
+        if (preg_match('/^(\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})/', $date_string, $matches)) {
+            $date_string = $matches[1];
+        }
+
         // Common Jalali date patterns (Persian calendar)
         $jalali_patterns = [
             '/^\d{4}\/\d{1,2}\/\d{1,2}$/',  // 1403/01/15

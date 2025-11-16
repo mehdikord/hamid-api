@@ -50,6 +50,7 @@ class Project_Customer_Invoice extends Model
             'project_product_id' // Local key on invoice_products table
         );
     }
+    
 
     public static function columns($project)
     {
