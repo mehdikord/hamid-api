@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Projects\Forms;
 
 use App\Http\Resources\Customers\CustomerIndexResource;
+use App\Http\Resources\ImportMethods\ImportMethodShortResource;
 use App\Http\Resources\Projects\Categories\ProjectCategoryShortResource;
 use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
 use App\Http\Resources\Users\UserShortResource;
@@ -30,6 +31,8 @@ class ProjectFromIndexResource extends JsonResource
             'project_id' => $this->project_id,
             'id'=> $this->id,
             'name'=> $this->name,
+            'import_method_id' => $this->import_method_id,
+            'tag_id' => $this->tag_id,
             'description' => $this->description,
             'link' => $this->link,
             'fields' => ProjectFromFieldsIndexResource::collection($this->fields),
@@ -38,6 +41,8 @@ class ProjectFromIndexResource extends JsonResource
             'view' => $this->view,
             'theme_name' => $this->theme_name,
             'theme_color' => $this->theme_color,
+            'import_method' => new ImportMethodShortResource($this->import_method),
+            'tag' => $this->tag,
 
         ];
     }

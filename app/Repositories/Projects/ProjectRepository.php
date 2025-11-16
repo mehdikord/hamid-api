@@ -255,6 +255,24 @@ class ProjectRepository implements ProjectInterface
                                 'created_at' => $find_customer->created_at,
                                 'users' => UserProjectCustomerResource::collection($find_customer->users),
                             ];
+                            $field_data = [];
+                            foreach($fileds as $customer_key => $customer_value){
+                                if(!str_starts_with($customer_key,'fields_')){
+                                    $field_data[] = [
+                                        'id' => $customer_key,
+                                        'val' => $value[$customer_value],
+                                    ];
+                                }
+                            }
+                            if(count($field_data) > 0){
+                                $find_customer->fields()->delete();
+                                foreach($field_data as $field){
+                                    $find_customer->fields()->create([
+                                        'field_id' => $field['id'],
+                                        'val' => $field['val'],
+                                    ]);
+                                }
+                            }
                         }else{
                             $field_data = [];
                             $custoemr_data=[];
@@ -327,6 +345,7 @@ class ProjectRepository implements ProjectInterface
                                     }
                                 }
                             }
+
                             $counter++;
                             }
                         }
@@ -946,6 +965,8 @@ class ProjectRepository implements ProjectInterface
         DB::beginTransaction();
         $form = $project->forms()->create([
             'name' => $request->name,
+            'import_method_id' => $request->import_method_id,
+            'tag_id' => $request->tag_id,
             'token' => $token,
             'link' => $link,
              'is_active' => 1,
@@ -974,6 +995,8 @@ class ProjectRepository implements ProjectInterface
         DB::beginTransaction();
         $item->update([
             'name' => $request->name,
+            'import_method_id' => $request->import_method_id,
+            'tag_id' => $request->tag_id,
             'description' => $request->description,
             'theme_name' => $request->theme_name,
             'theme_color' => $request->theme_color,

@@ -21,4 +21,12 @@ class Project_Form extends Model
     {
         return $this->belongsTo(Project::class, 'project_id');
     }
+    public function import_method(): BelongsTo
+    {
+        return $this->belongsTo(Import_Method::class, 'import_method_id');
+    }
+    public function tag(): BelongsTo
+    {
+        return $this->belongsTo(Tag::class, 'tag_id');
+    }
 }
