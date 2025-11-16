@@ -1060,8 +1060,38 @@ class ProjectRepository implements ProjectInterface
 
     public function get_customer_fields($project)
     {
-
-        $data = ['name','email','instagram_id','telegram_id','description' ,'date'];
+        $data = [
+            [
+                'value' => 'name',
+                'title' => 'نام',
+            ],
+            [
+                'value' => 'email',
+                'title' => 'ایمیل',
+            ],
+            [
+                'value' => 'instagram_id',
+                'title' => 'اینستاگرام',
+            ],
+            [
+                'value' => 'telegram_id',
+                'title' => 'تلگرام',
+            ],
+            [
+                'value' => 'description',
+                'title' => 'توضیحات',
+            ],
+            [
+                'value' => 'date',
+                'title' => 'تاریخ',
+            ],
+        ];
+        foreach ($project->fields()->orderBy('id','asc')->get() as $field){
+            $data[] = [
+                'value' => 'fields_'.$field->id,
+                'title' => $field->title,
+            ];
+        }
         return helper_response_fetch($data);
     }
 
