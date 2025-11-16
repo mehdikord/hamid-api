@@ -43,11 +43,13 @@ function helper_bot_send_group_invoice($invoice)
     ];
 
     // Check if invoice has products and add products array
-    if ($invoice->products && $invoice->products->count() > 0) {
-        $invoice_data['products'] = $invoice->products->pluck('name')->toArray();
-    } else {
-        $invoice_data['products'] = [];
+    if ($invoice->invoice_products) {
+
+        foreach($invoice->invoice_products as $invoice_product){
+            $invoice_data['products'][] = $invoice_product->product->name;
+        }
     }
+    $invoice_data['products'] = $invoice->products->pluck('name')->toArray();
     if($invoice->project)
     {
         $project = $invoice->project;
