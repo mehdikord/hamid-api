@@ -41,6 +41,13 @@ function helper_bot_send_group_invoice($invoice)
         'customer_id' => $invoice->project_customer?->customer?->telegram_id,
         "assignee"=> $invoice->user->name,
     ];
+
+    // Check if invoice has products and add products array
+    if ($invoice->products && $invoice->products->count() > 0) {
+        $invoice_data['products'] = $invoice->products->pluck('name')->toArray();
+    } else {
+        $invoice_data['products'] = [];
+    }
     if($invoice->project)
     {
         $project = $invoice->project;
