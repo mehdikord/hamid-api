@@ -8,10 +8,12 @@ use App\Http\Resources\Whatsapp\WhatsappNumber\WhatsappNumberSingleResource;
 use App\Http\Resources\Whatsapp\WhatsappNumber\WhatsappQueueIndexResource;
 use App\Interfaces\Whatsapp\WhatsappInterface;
 use App\Models\Customer;
+use App\Models\Project_Customer;
 use App\Models\Whatsapp\WhatsappLog;
 use App\Models\Whatsapp\WhatsappNumber;
 use App\Models\Whatsapp\WhatsappQueue;
 use App\Services\WhatsappService;
+use Illuminate\Support\Str;
 
 class WhatsappRepository implements WhatsappInterface
 {
@@ -81,8 +83,21 @@ class WhatsappRepository implements WhatsappInterface
             if (!empty($phone) && $phone[0] == '0') {
                 $phone = substr($phone, 1);
             }
+            $message = $request->message;
+
+            if($request->link == '1'){
+                $project_customer = Project_Customer::where('customer_id',$customer->id)->where('project_id',$request->project_id)->first();
+                if(!$project_customer->link){
+                   $project_customer->update([
+                    'link' => $project_customer->id.Str::random(3),
+                   ]);
+                }
+                $link = "https://i.tonl.ir/a/".$project_customer->link;
+                $message .= "\n\n".'لینک: '.$link;
+            }
+
             if($phone){
-                $result = $this->service->send_message($request->message,$phone,$customer->id,$request->project_id);
+                $result = $this->service->send_message($message,$phone,$customer->id,$request->project_id);
                 if($result == 'success'){
                     return helper_response_created('Message sent successfully');
                 }elseif($result == 'error'){
@@ -94,6 +109,8 @@ class WhatsappRepository implements WhatsappInterface
             return  helper_response_error(' customer Phone not found');
         }
         return helper_response_error('Customer or project not found');
+
+
     }
     public function send_message_multi($request)
     {
@@ -104,8 +121,19 @@ class WhatsappRepository implements WhatsappInterface
             if (!empty($phone) && $phone[0] == '0') {
                 $phone = substr($phone, 1);
             }
+            $message = $request->message;
+            if($request->link == '1'){
+                $project_customer = Project_Customer::where('customer_id',$customer->id)->where('project_id',$request->project_id)->first();
+                if(!$project_customer->link){
+                   $project_customer->update([
+                    'link' => $project_customer->id.Str::random(3),
+                   ]);
+                }
+                $link = "https://i.tonl.ir/a/".$project_customer->link;
+                $message .= "\n\n".'لینک: '.$link;
+            }
             if($phone){
-                $this->service->send_message($request->message,$phone,$customer->id,$request->project_id);
+                $this->service->send_message($message,$phone,$customer->id,$request->project_id);
             }
         }
         return helper_response_created('Successfully sent messages to customers');

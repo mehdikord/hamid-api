@@ -407,6 +407,18 @@ class UserCustomerRepository implements UserCustomerInterface
             }
         }
 
+        //handle reminder
+        if($request->filled("reminder_title") && $request->filled("reminder_date")){
+            auth('users')->user()->reminders()->create([
+                'title' => $request->reminder_title,
+                'description' => $request->reminder_description,
+                'date' => $request->reminder_date,
+                'time' => $request->reminder_time,
+                'offset' => $request->reminder_offset ?? '15',
+                'status' => 'pending',
+            ]);
+        }
+
         $user_project = User_Project::where('project_id', $customer->project_id)->where('user_id',auth()->id())->first();
         if ($user_project){
             $user_project->update(['total_price' => $user_project->total_price + $item->amount]);
@@ -564,6 +576,18 @@ class UserCustomerRepository implements UserCustomerInterface
                     'project_product_id' => $product_id,
                 ]);
             }
+        }
+        
+        //handle reminder
+        if($request->filled("reminder_title") && $request->filled("reminder_date")){
+            auth('users')->user()->reminders()->create([
+                'title' => $request->reminder_title,
+                'description' => $request->reminder_description,
+                'date' => $request->reminder_date,
+                'time' => $request->reminder_time,
+                'offset' => $request->reminder_offset ?? '15',
+                'status' => 'pending',
+            ]);
         }
 
         //activity log
