@@ -12,7 +12,6 @@ class ActionController extends Controller
 {
     public function activation($token)
     {
-
         if($token){
             $customer = Project_Customer::where('link',$token)->first();
             if($customer){
@@ -21,11 +20,10 @@ class ActionController extends Controller
                 if($tag){
                     $customer->tags()->attach($tag->id);
                 }
-                return helper_response_success('customer activated successfully');
+                return helper_response_main('customer activated successfully');
             }
-            return helper_response_error('customer not found');
-        }
-        return helper_response_error('token not found')
-
+        return helper_response_error('customer not found');
     }
+    return helper_response_error('token not found');
+}
 }
