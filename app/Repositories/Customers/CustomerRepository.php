@@ -69,6 +69,10 @@ class CustomerRepository implements CustomerInterface
        if ($request->filled('project_id') && $request->filled('fields')){
            $customer_project = $item->projects()->where('project_id', $request->project_id)->first();
            if ($customer_project){
+                $customer_project->update([
+                    'import_method_id' => $request->import_method_id,
+                ]);
+                $customer_project->tags()->sync($request->tag_ids);
                $customer_project->fields()->delete();
                foreach ($request->fields as $field_key => $field_value){
                    $customer_project->fields()->create([

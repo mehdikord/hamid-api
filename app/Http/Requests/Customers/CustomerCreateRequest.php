@@ -20,7 +20,7 @@ class CustomerCreateRequest extends FormRequest
         return [
             'province_id' => 'nullable|exists:provinces,id',
             'city_id' => 'nullable|exists:cities,id',
-            'name' => 'required|string|max:225',
+            'name' => 'nullable|string|max:225',
             'email' => 'nullable|string|email|unique:customers,email',
             'phone' => 'required|numeric|unique:customers,phone',
             'national_code' => 'nullable|numeric|unique:customers,national_code',
