@@ -40,6 +40,7 @@ function helper_bot_send_group_invoice($invoice)
         'customer_city'=> $invoice->project_customer?->customer?->city?->name,
         'customer_id' => $invoice->project_customer?->customer?->telegram_id,
         "assignee"=> $invoice->user->name,
+        "products"=>[],
     ];
 
     // Check if invoice has products and add products array
@@ -49,7 +50,6 @@ function helper_bot_send_group_invoice($invoice)
             $invoice_data['products'][] = $invoice_product->product->name;
         }
     }
-    $invoice_data['products'] = $invoice->products->pluck('name')->toArray();
     if($invoice->project)
     {
         $project = $invoice->project;
