@@ -26,6 +26,7 @@ use App\Interfaces\Users\UserReminderInterface;
 use App\Interfaces\Bot\BotInterface;
 use App\Interfaces\StatusMessages\StatusMessageInterface;
 use App\Interfaces\Telegram\TelegramInterface;
+use App\Interfaces\Users\UserReportingInterface;
 use App\Interfaces\Whatsapp\WhatsappInterface;
 use App\Repositories\Activities\ActivityRepository;
 use App\Repositories\Auth\AuthRepository;
@@ -51,6 +52,7 @@ use App\Repositories\Users\UserReminderRepository;
 use App\Repositories\Bot\BotRepository;
 use App\Repositories\StatusMessages\StatusMessageRepository;
 use App\Repositories\Telegram\TelegramRepository;
+use App\Repositories\Users\UserReportingRepository;
 use App\Repositories\Whatsapp\WhatsappRepository;
 use Carbon\Laravel\ServiceProvider;
 
@@ -108,6 +110,8 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(StatusMessageInterface::class,StatusMessageRepository::class);
 
         $this->app->bind(UserReminderInterface::class,UserReminderRepository::class);
+        
+        $this->app->bind(UserReportingInterface::class,UserReportingRepository::class);
     }
 
 }

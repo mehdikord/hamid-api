@@ -115,5 +115,11 @@ Route::group(['middleware' => ['auth:users']], function () {
         Route::get('',[\App\Http\Controllers\Users\Projects\ProjectController::class,'invoices'])->name('index');
     });
 
+    //Reporting
+
+    Route::prefix('reporting')->as('reporting.')->group(function () {
+        Route::get('invoices',[\App\Http\Controllers\Users\Reporting\ReportingController::class,'invoices'])->name('invoices');
+    });
+
 
 });
