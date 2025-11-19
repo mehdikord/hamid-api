@@ -101,8 +101,19 @@ Route::group(['middleware' => ['auth:users']], function () {
 
     });
 
+
     //Reminders
     Route::apiResource('reminders', \App\Http\Controllers\Users\Reminders\ReminderController::class)->names('reminders');
+
+    //reports
+    Route::prefix('reports')->as('reports.')->group(function () {
+        Route::get('',[\App\Http\Controllers\Users\Projects\ProjectController::class,'reports'])->name('index');
+    });
+
+    //invoices
+    Route::prefix('invoices')->as('invoices.')->group(function () {
+        Route::get('',[\App\Http\Controllers\Users\Projects\ProjectController::class,'invoices'])->name('index');
+    });
 
 
 });

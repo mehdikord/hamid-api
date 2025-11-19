@@ -5,5 +5,9 @@ interface UserProjectInterface
 
     public function all();
 
+    public function reports();
+
+    public function invoices();
+
 
 }

@@ -15,6 +15,8 @@ class ProjectController extends Controller
     protected ProjectLevelInterface $levelRepository;
     public function __construct(UserProjectInterface $userProject,ProjectStatusInterface $statusRepository,ProjectLevelInterface $levelRepository)
     {
+        $this->middleware('generate_fetch_query_params')->only('reports','invoices');
+
         $this->repository = $userProject;
         $this->statusRepository = $statusRepository;
         $this->levelRepository = $levelRepository;
@@ -33,6 +35,14 @@ class ProjectController extends Controller
     public function levels(Project $project)
     {
         return $this->levelRepository->all($project);
+    }
+    public function reports()
+    {
+        return $this->repository->reports();
+    }
+    public function invoices()
+    {
+        return $this->repository->invoices();
     }
 
 }
