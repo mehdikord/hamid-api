@@ -415,51 +415,54 @@ class ReportingRepository implements ReportingInterface
         if(!in_array($type,['customers','invoices','reports'])){
             return helper_response_error('Invalid type');
         }
-
+        $check_duplicate=[];
         foreach ($project->users as $user){
 
-            if($type == 'customers'){
-                if($is_same_date){
-                    $data = $user->user->customers()->whereHas('project_customer',function($query)use($project){
-                        $query->where('project_id',$project->id);
-                    })->whereDate('start_at',$from_date)->count();
-                } else {
-                    $data = $user->user->customers()->whereHas('project_customer',function($query)use($project){
-                        $query->where('project_id',$project->id);
-                    })->whereDate('start_at','>=',$from_date)->whereDate('start_at','<=',$to_date)->count();
-                }
-            }else if($type == 'reports'){
-                if($is_same_date){
-                    $data = $project->customers()->whereHas('reports',function($query)use($user,$from_date){
-                        $query->where('user_id',$user->user_id)->whereDate('created_at',$from_date);
-                    })->count();
-                } else {
-                    $data = $project->customers()->whereHas('reports',function($query)use($user,$from_date,$to_date){
-                        $query->where('user_id',$user->user_id)->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date);
-                    })->count();
-                }
-            }elseif($type == 'invoices'){
 
-                if($is_same_date){
-                    $data = $project->invoices()->whereHas('user',function($query)use($user,$from_date){
-                        $query->where('user_id',$user->user_id);
-                    })->whereDate('created_at',$from_date)->sum('amount');
-                } else {
-                    $data = $project->invoices()->whereHas('user',function($query)use($user,$from_date,$to_date){
-                        $query->where('user_id',$user->user_id);
-                    })->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date)->sum('amount');
+            if(!in_array($user->user->id,$check_duplicate)){
+                if($type == 'customers'){
+                    if($is_same_date){
+                        $data = $user->user->customers()->whereHas('project_customer',function($query)use($project){
+                            $query->where('project_id',$project->id);
+                        })->whereDate('start_at',$from_date)->count();
+                    } else {
+                        $data = $user->user->customers()->whereHas('project_customer',function($query)use($project){
+                            $query->where('project_id',$project->id);
+                        })->whereDate('start_at','>=',$from_date)->whereDate('start_at','<=',$to_date)->count();
+                    }
+                }else if($type == 'reports'){
+                    if($is_same_date){
+                        $data = $project->customers()->whereHas('reports',function($query)use($user,$from_date){
+                            $query->where('user_id',$user->user_id)->whereDate('created_at',$from_date);
+                        })->count();
+                    } else {
+                        $data = $project->customers()->whereHas('reports',function($query)use($user,$from_date,$to_date){
+                            $query->where('user_id',$user->user_id)->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date);
+                        })->count();
+                    }
+                }elseif($type == 'invoices'){
+
+                    if($is_same_date){
+                        $data = $project->invoices()->whereHas('user',function($query)use($user,$from_date){
+                            $query->where('user_id',$user->user_id);
+                        })->whereDate('created_at',$from_date)->sum('amount');
+                    } else {
+                        $data = $project->invoices()->whereHas('user',function($query)use($user,$from_date,$to_date){
+                            $query->where('user_id',$user->user_id);
+                        })->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date)->sum('amount');
+                    }
+                }
+                if($user->user->is_active){
+                    $result[] = [
+                        'user' => [
+                            'id' => $user->user->id,
+                            'name' => $user->user->name,
+                        ],
+                        'data' => $data,
+                    ];
                 }
             }
-            if($user->user->is_active){
-                $result[] = [
-                    'user' => [
-                        'id' => $user->user->id,
-                        'name' => $user->user->name,
-                    ],
-                    'data' => $data,
-                ];
-            }
-
+            $check_duplicate[]=$user->user->id;
         }
         return helper_response_fetch($result);
     }
