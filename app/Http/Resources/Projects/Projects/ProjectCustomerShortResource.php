@@ -31,6 +31,7 @@ class ProjectCustomerShortResource extends JsonResource
             'customer' => new CustomerIndexResource($this->customer),
             'users' => UserProjectCustomerResource::collection($this->users),
             'import_method' => $this->import_method,
+            'selled' => $this->selled,
             'created_at' => $this->created_at,
 
         ];

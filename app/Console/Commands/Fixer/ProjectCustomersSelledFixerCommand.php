@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Fixer;
 
 use App\Models\Customer;
+use App\Models\Project;
 use App\Models\Project_Customer;
 use Illuminate\Console\Command;
 
@@ -27,16 +28,24 @@ class ProjectCustomersSelledFixerCommand extends Command
      */
     public function handle()
     {
-        foreach (Project_Customer::WhereHas('users',function ($query){$query->whereNotNull('target_price');})->get() as $customer) {
-            //get target
-            $target = $customer->users()->sum('target_price');
-            $invoices_prices = $customer->invoices()->sum('amount');
-            if ($invoices_prices >= $target) {
+        // Collect all customers from all projects
+        $customers = collect();
+        foreach (Project::all() as $project) {
+            $customers = $customers->merge($project->customers);
+        }
+
+        $this->info('Processing ' . $customers->count() . ' customers...');
+
+        // Process customers with progress bar
+        $this->withProgressBar($customers, function ($customer) {
+            if($customer->invoices()->sum('amount') >= $customer->target_price) {
                 $customer->update(['selled' => true]);
-            }else{
+            } else {
                 $customer->update(['selled' => false]);
             }
+        });
 
-        }
+        $this->newLine();
+        $this->info('Done! All customers processed successfully.');
     }
 }

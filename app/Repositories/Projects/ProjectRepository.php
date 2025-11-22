@@ -76,7 +76,7 @@ class ProjectRepository implements ProjectInterface
        $data = $project->customers();
        $data->whereHas('invoices');
        $this->advance_search($data);
-       $data->orderBy(request('sort_by'),request('sort_type'));
+       $data->orderByRaw('(SELECT MAX(created_at) FROM project_customer_invoices WHERE project_customer_invoices.project_customer_id = project_customers.id) DESC');
        return helper_response_fetch(ProjectCustomerClientsResource::collection($data->paginate(request('per_page')))->resource);
    }
 
@@ -862,6 +862,12 @@ class ProjectRepository implements ProjectInterface
                         'project_product_id' => $product_id,
                     ]);
                 }
+            }
+
+            // Check if total invoice amount >= target_price and update selled
+            $total_invoice_amount = $customer_project->invoices()->sum('amount');
+            if ($total_invoice_amount >= $customer_project->target_price) {
+                $customer_project->update(['selled' => true]);
             }
 
             // activity log

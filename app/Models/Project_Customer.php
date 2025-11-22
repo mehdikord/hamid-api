@@ -123,6 +123,21 @@ class Project_Customer extends Model
                 })),
             ],
             [
+                'field' => 'selled',
+                'title' => 'وضعیت فروش',
+                'type' => 'select',
+                'data' => [
+                    [
+                        'id' => 1,
+                        'name' => 'تکمیل شده',
+                    ],
+                    [
+                        'id' => 0,
+                        'name' => 'تکمیل نشده',
+                    ],
+                ],
+            ],
+            [
                 'field' => 'status',
                 'title' => 'وضعیت ارجاع',
                 'type' => 'select',
@@ -151,7 +166,7 @@ class Project_Customer extends Model
                 'field' => 'users.user_id',
                 'title' => 'کارشناس',
                 'type' => 'select',
-                'data' => User::select('id','name')->get(),
+                'data' => User::select('id','name')->where('is_active',true)->get(),
                 'relation' => 'has_many',
             ],
             [

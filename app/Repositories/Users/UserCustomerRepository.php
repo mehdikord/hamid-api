@@ -423,6 +423,13 @@ class UserCustomerRepository implements UserCustomerInterface
         if ($user_project){
             $user_project->update(['total_price' => $user_project->total_price + $item->amount]);
         }
+
+        // Check if total invoice amount >= target_price and update selled
+        $total_invoice_amount = $customer->invoices()->sum('amount');
+        if ($total_invoice_amount >= $customer->target_price) {
+            $customer->update(['selled' => true]);
+        }
+
         // activity log
         helper_activity_create(null,null,$customer->project_id,$customer->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$item->id."");
         helper_bot_send_group_invoice($item);
@@ -577,7 +584,7 @@ class UserCustomerRepository implements UserCustomerInterface
                 ]);
             }
         }
-        
+
         //handle reminder
         if($request->filled("reminder_title") && $request->filled("reminder_date")){
             auth('users')->user()->reminders()->create([
@@ -588,6 +595,12 @@ class UserCustomerRepository implements UserCustomerInterface
                 'offset' => $request->reminder_offset ?? '15',
                 'status' => 'pending',
             ]);
+        }
+
+        // Check if total invoice amount >= target_price and update selled
+        $total_invoice_amount = $project_customer->invoices()->sum('amount');
+        if ($total_invoice_amount >= $project_customer->target_price) {
+            $project_customer->update(['selled' => true]);
         }
 
         //activity log
