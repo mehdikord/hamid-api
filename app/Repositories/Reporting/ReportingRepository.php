@@ -316,10 +316,75 @@ class ReportingRepository implements ReportingInterface
                     $assigned_customers = $user->customers()->whereHas('project_customer',function($query)use($project){
                         $query->where('project_id',$project->id);
                     })->whereDate('start_at',$from_date)->count();
+                    $assigned_customers_with_invoices = $user->customers()
+                        ->join('project_customers', 'user_project_customers.project_customer_id', '=', 'project_customers.id')
+                        ->join('project_customer_invoices', 'project_customers.id', '=', 'project_customer_invoices.project_customer_id')
+                        ->where('project_customers.project_id', $project->id)
+                        ->whereDate('user_project_customers.start_at', $from_date)
+                        ->selectRaw('COUNT(DISTINCT user_project_customers.id) as count')
+                        ->value('count') ?? 0;
+
                 } else {
                     $assigned_customers = $user->customers()->whereHas('project_customer',function($query)use($project){
                         $query->where('project_id',$project->id);
                     })->whereDate('start_at','>=',$from_date)->whereDate('start_at','<=',$to_date)->count();
+                    $assigned_customers_with_invoices = $user->customers()
+                        ->join('project_customers', 'user_project_customers.project_customer_id', '=', 'project_customers.id')
+                        ->join('project_customer_invoices', 'project_customers.id', '=', 'project_customer_invoices.project_customer_id')
+                        ->where('project_customers.project_id', $project->id)
+                        ->whereDate('user_project_customers.start_at', '>=', $from_date)
+                        ->whereDate('user_project_customers.start_at', '<=', $to_date)
+                        ->selectRaw('COUNT(DISTINCT user_project_customers.id) as count')
+                        ->value('count') ?? 0;
+                }
+
+                if($assigned_customers > 0 && $assigned_customers_with_invoices > 0){
+                    $selled_precent = round(($assigned_customers_with_invoices / $assigned_customers) * 100,2);
+                } else {
+                    $selled_precent = 0;
+                }
+
+
+                //get total target price and invoice amount
+                if($is_same_date){
+                    $total_target_price = $user->customers()
+                        ->join('project_customers', 'user_project_customers.project_customer_id', '=', 'project_customers.id')
+                        ->where('project_customers.project_id', $project->id)
+                        ->whereDate('user_project_customers.start_at', $from_date)
+                        ->sum('project_customers.target_price');
+                    $total_invoice_amount = $project->invoices()->whereHas('user',function($query)use($user,$from_date){
+                        $query->where('user_id',$user->id);
+                    })->whereDate('created_at',$from_date)->sum('amount');
+                    $target_price_count = $user->customers()
+                        ->join('project_customers', 'user_project_customers.project_customer_id', '=', 'project_customers.id')
+                        ->where('project_customers.project_id', $project->id)
+                        ->whereDate('user_project_customers.start_at', $from_date)
+                        ->count();
+
+
+
+                } else {
+                    $total_target_price = $user->customers()
+                        ->join('project_customers', 'user_project_customers.project_customer_id', '=', 'project_customers.id')
+                        ->where('project_customers.project_id', $project->id)
+                        ->whereDate('user_project_customers.start_at', '>=', $from_date)
+                        ->whereDate('user_project_customers.start_at', '<=', $to_date)
+                        ->sum('project_customers.target_price');
+                    $total_invoice_amount = $project->invoices()->whereHas('user',function($query)use($user,$from_date,$to_date){
+                        $query->where('user_id',$user->id);
+                    })->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date)->sum('amount');
+                    $target_price_count = $user->customers()
+                        ->join('project_customers', 'user_project_customers.project_customer_id', '=', 'project_customers.id')
+                        ->where('project_customers.project_id', $project->id)
+                        ->whereDate('user_project_customers.start_at', '>=', $from_date)
+                        ->whereDate('user_project_customers.start_at', '<=', $to_date)
+                        ->count();
+                }
+
+                if($target_price_count > 0 && $total_invoice_amount > 0){
+                    $sell_avg = round($total_invoice_amount / $target_price_count,2);
+                } else {
+                    $sell_avg = 0;
                 }
 
                 if($is_same_date){
@@ -397,6 +462,11 @@ class ReportingRepository implements ReportingInterface
                     'info_statuses' => $info_statuses,
                     'first_level_count' => $first_level_count,
                     'second_level_count' => $second_level_count,
+                    'total_target_price' => $total_target_price,
+                    'total_invoice_amount' => $total_invoice_amount,
+                    'sell_avg' => $sell_avg,
+                    'assigned_customers_with_invoices' => $assigned_customers_with_invoices,
+                    'selled_precent' => $selled_precent,
                 ];
 
             }
