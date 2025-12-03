@@ -94,7 +94,6 @@ class ReportingRepository implements ReportingInterface
                 'invoices_price' => $invoices_price,
                 'invoices_target' => $invoices_target,
             ];
-
         }
 
         return helper_response_fetch($result);

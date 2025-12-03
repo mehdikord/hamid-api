@@ -52,6 +52,7 @@ Route::middleware('auth:admins')->group(function () {
         Route::get('all',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'all'])->name('all');
         Route::get('inactive',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'inactive'])->name('inactive');
         Route::get('{project}/activation',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'activation'])->name('activation');
+        Route::get('{project}/summery',[\App\Http\Controllers\Admins\Projects\ProjectController::class, 'summery'])->name('summery');
         Route::get('categories/all',[\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class, 'all'])->name('all');
         Route::apiResource('categories',\App\Http\Controllers\Admins\Projects\ProjectCategoryController::class);
 

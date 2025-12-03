@@ -65,6 +65,30 @@ class ProjectRepository implements ProjectInterface
        return helper_response_updated(new ProjectIndexResource($item));
    }
 
+   public function summery($item)
+   {
+    //get project summery data
+    $numbers = $item->customers()->count();
+    $referrals = $item->customers()->where('status', Project_Customer::STATUS_ASSIGNED)->count();
+    $customers = $item->customers()->whereHas('invoices')->count();
+    $amounts = $item->invoices()->sum('amount');
+    $target = $item->customers()->sum('target_price');
+    $convert_rate = 0;
+    if($referrals > 0){
+        $convert_rate = round(($customers / $referrals) * 100,2);
+    }
+    $result = [
+        'numbers' => $numbers,
+        'referrals' => $referrals,
+        'customers' => $customers,
+        'amounts' => $amounts,
+        'target' => $target,
+        'convert_rate' => $convert_rate,
+    ];
+    return helper_response_fetch($result);
+
+   }
+
    public function all()
    {
        $data = Project::query();

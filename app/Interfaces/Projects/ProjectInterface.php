@@ -7,6 +7,7 @@ interface ProjectInterface
     public function index();
     public function inactive();
     public function activation($item);
+    public function summery($item);
     public function all();
 
     public function customers_client_index($project);

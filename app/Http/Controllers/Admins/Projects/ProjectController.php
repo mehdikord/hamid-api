@@ -56,6 +56,11 @@ class ProjectController extends Controller
         return $this->repository->activation($project);
     }
 
+    public function summery(Project $project)
+    {
+        return $this->repository->summery($project);
+    }
+
     public function all()
     {
         return $this->repository->all();
