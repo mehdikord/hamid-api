@@ -3,7 +3,7 @@
 
 use App\Models\Activity;
 use Jenssegers\Agent\Agent;
-function helper_activity_create($admin_id = null,$user_id = null,$project_id = null,$customer_id = null,$title,$activity){
+function helper_activity_create($admin_id = null,$user_id = null,$project_id = null,$customer_id = null,$title = null,$activity = null){
     if(!$admin_id){
         $admin_id = auth('admins')->id();
     }

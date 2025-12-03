@@ -4,7 +4,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Morilog\Jalali\Jalalian;
 
-function helper_bot_send_markdown($id,$topic_id=null,$message)
+function helper_bot_send_markdown($id,$topic_id=null,$message = null)
 {
     $data = [
         "chat_id"=> $id,

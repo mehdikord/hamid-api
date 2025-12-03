@@ -18,6 +18,7 @@ class ProjectMessageController extends Controller
     public function __construct(ProjectMessageInterface $message)
     {
         $this->repository = $message;
+        $this->middleware('generate_fetch_query_params')->only('index','all');
     }
     public function index(Project $project)
     {
