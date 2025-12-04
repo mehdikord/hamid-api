@@ -83,7 +83,6 @@ class ProjectRepository implements ProjectInterface
     $user_data = [];
     foreach($item->users as $user){
         if(!in_array($user->user_id,$users_ids)){
-
             //get sum invoices amount by user
             $invoices_amount = $item->invoices()->where('user_id',$user->user_id)->sum('amount');
             //get sum target price by user
@@ -103,6 +102,61 @@ class ProjectRepository implements ProjectInterface
         }
     }
 
+    //get import methods data
+    $import_methods_data = [];
+    foreach($item->import_methods as $import_method){
+        $get = $item->customers()->where('import_method_id',$import_method->id)->count();
+        if($get > 0){
+            $import_methods_data[] = [
+                'id' => $import_method->id,
+                'name' => $import_method->name,
+                'count' => $get,
+            ];
+        }
+    }
+    $no_import_methods = $item->customers()->whereNull('import_method_id')->count();
+    if($no_import_methods > 0){
+        $import_methods_data[] = [
+            'id' => null,
+            'name' => 'بدون منبع',
+            'count' => $no_import_methods,
+        ];
+    }
+
+    //get levels info
+    $levels_data = [];
+    foreach($item->levels as $level){
+        $levels_data[] = [
+            'id' => $level->id,
+            'name' => $level->name,
+            'color' => $level->color,
+            'priority' => $level->priority,
+            'count' => $item->customers()->where('project_level_id',$level->id)->count(),
+        ];
+    }
+    $levels_data[] = [
+        'id' => null,
+        'name' => 'بدون وضعیت',
+        'color' => '#212121',
+        'priority' => 0,
+        'count' => $item->customers()->whereNull('project_level_id')->count(),
+    ];
+
+    // مرتب‌سازی آرایه بر اساس priority (از کوچک به بزرگ)
+    // priority = 0 (بدون وضعیت) باید همیشه در خانه اول باشد
+    usort($levels_data, function($a, $b) {
+        // اگر یکی priority = 0 باشد، آن را اول قرار بده
+        if ($a['priority'] == 0 && $b['priority'] != 0) {
+            return -1;
+        }
+        if ($a['priority'] != 0 && $b['priority'] == 0) {
+            return 1;
+        }
+        // در غیر این صورت بر اساس priority مرتب کن (از کوچک به بزرگ)
+        return $a['priority'] <=> $b['priority'];
+    });
+
+
 
     $result = [
         'user_data' => $user_data,
@@ -112,7 +166,14 @@ class ProjectRepository implements ProjectInterface
         'amounts' => $amounts,
         'target' => $target,
         'convert_rate' => $convert_rate,
+        'import_methods_data' => $import_methods_data,
+        'levels_data' => $levels_data,
     ];
+
+
+
+
+
     return helper_response_fetch($result);
 
    }
