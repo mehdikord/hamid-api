@@ -77,7 +77,35 @@ class ProjectRepository implements ProjectInterface
     if($referrals > 0){
         $convert_rate = round(($customers / $referrals) * 100,2);
     }
+
+    //get users data
+    $users_ids = [];
+    $user_data = [];
+    foreach($item->users as $user){
+        if(!in_array($user->user_id,$users_ids)){
+
+            //get sum invoices amount by user
+            $invoices_amount = $item->invoices()->where('user_id',$user->user_id)->sum('amount');
+            //get sum target price by user
+            $target_price = $item->customers()->whereHas('users',function ($query)use($user){
+                $query->where('user_id',$user->user_id);
+            })->sum('target_price');
+            $user_data[] = [
+                'user' => [
+                    'id' => $user->user_id,
+                    'name' => $user->user->name,
+                    'phone' => $user->user->phone,
+                ],
+                'invoices_amount' => $invoices_amount,
+                'target_price' => $target_price,
+            ];
+            $users_ids[] = $user->user_id;
+        }
+    }
+
+
     $result = [
+        'user_data' => $user_data,
         'numbers' => $numbers,
         'referrals' => $referrals,
         'customers' => $customers,
