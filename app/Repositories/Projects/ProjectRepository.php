@@ -156,6 +156,24 @@ class ProjectRepository implements ProjectInterface
         return $a['priority'] <=> $b['priority'];
     });
 
+    //get invoices data by days
+    $invoice_start_date = $item->invoices()->min('created_at');
+    $invoice_end_date = $item->invoices()->max('created_at');
+    $invoices_data = [];
+    if ($invoice_start_date && $invoice_end_date) {
+        $invoice_start_date = Carbon::parse($invoice_start_date);
+        $invoice_end_date = Carbon::parse($invoice_end_date);
+        while($invoice_start_date->lte($invoice_end_date)){
+            $invoices_data[] = [
+                'date' => $invoice_start_date->format('Y-m-d'),
+                'amount' => $item->invoices()->whereDate('created_at',$invoice_start_date)->sum('amount'),
+            ];
+            $invoice_start_date->addDay();
+        }
+    }
+
+
+
 
 
     $result = [
@@ -168,6 +186,7 @@ class ProjectRepository implements ProjectInterface
         'convert_rate' => $convert_rate,
         'import_methods_data' => $import_methods_data,
         'levels_data' => $levels_data,
+        'invoices_data' => $invoices_data,
     ];
 
 
