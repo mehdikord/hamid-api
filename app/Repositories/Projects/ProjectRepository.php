@@ -92,8 +92,8 @@ class ProjectRepository implements ProjectInterface
             $user_data[] = [
                 'user' => [
                     'id' => $user->user_id,
-                    'name' => $user->user->name,
-                    'phone' => $user->user->phone,
+                    'name' => $user?->user?->name,
+                    'phone' => $user?->user?->phone,
                 ],
                 'invoices_amount' => $invoices_amount,
                 'target_price' => $target_price,
