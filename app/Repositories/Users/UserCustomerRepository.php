@@ -210,6 +210,15 @@ class UserCustomerRepository implements UserCustomerInterface
             'user_id' => auth('users')->id(),
             'description' => $request->description,
         ]);
+        if($request->filled('messages')){
+            foreach($request->messages as $message_key => $message_value){
+                $item->message_options()->create([
+                    'message_option_id' => $message_value,
+                ]);
+
+            }
+        }
+
         $customer->update([
             'project_customer_status_id' => $request->status_id,
             'project_level_id' => $request->project_level_id,

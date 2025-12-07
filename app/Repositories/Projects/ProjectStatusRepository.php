@@ -78,7 +78,7 @@ class ProjectStatusRepository implements ProjectStatusInterface
     {
 
          if(Status_Message::find($request->status_message_id)){
-            if ($request->filled('status_message->_id')) {
+            if ($request->filled('status_message_id')) {
                 // Check if the message is already attached to avoid duplicates
                 if (!$status->status_messages()->where('status_message_id', $request->status_message_id)->exists()) {
                     $status->status_messages()->attach($request->status_message_id);

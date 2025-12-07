@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User_Project_Customer_Status extends Model
 {
@@ -37,5 +39,9 @@ class User_Project_Customer_Status extends Model
         return $this->belongsTo(Project_Level::class,'project_level_id');
     }
 
+    public function message_options():HasMany
+    {
+        return $this->hasMany(Customer_Status_Option::class,'customer_status_id');
+    }
 
 }
