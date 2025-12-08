@@ -172,9 +172,26 @@ class ProjectRepository implements ProjectInterface
         }
     }
 
-
-
-
+    //statuses messages data
+    $status_data = [];
+    $statuses = $item->statuses()->whereHas('status_messages')->get();
+    foreach ($statuses as $status) {
+        foreach($status->status_messages as $message){
+            $option_data = [];
+            if($message->options()->count() > 0){
+                foreach($message->options as $option){
+                    $option_data[]=[
+                        'name' => $option->option,
+                        'count' => $option->customers()->count(),
+                    ];
+                }
+            }
+            $status_data[] = [
+                'name' => $message->name,
+                'options' => $option_data,
+            ];
+        }
+    }
 
     $result = [
         'user_data' => $user_data,
@@ -187,6 +204,7 @@ class ProjectRepository implements ProjectInterface
         'import_methods_data' => $import_methods_data,
         'levels_data' => $levels_data,
         'invoices_data' => $invoices_data,
+        'status_data' => $status_data,
     ];
 
 
