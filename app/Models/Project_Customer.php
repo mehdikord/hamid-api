@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use App\Models\Fields\Project_Customer_Field;
+use App\Models\Projects\Project_Customer_Price;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project_Customer extends Model
 {
+    use SoftDeletes;
     protected $table = 'project_customers';
     protected $guarded=[];
 
@@ -77,6 +80,11 @@ class Project_Customer extends Model
     public function import_method(): BelongsTo
     {
         return $this->belongsTo(Import_Method::class, 'import_method_id');
+    }
+
+    public function prices():HasMany
+    {
+        return $this->hasMany(Project_Customer_Price::class, 'project_customer_id');
     }
 
     public static function columns($project){
