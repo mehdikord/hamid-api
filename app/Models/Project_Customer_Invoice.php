@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Projects\Invoice_Order;
 use App\Models\Projects\Invoice_Product;
 use App\Models\Projects\Project_Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,7 +51,11 @@ class Project_Customer_Invoice extends Model
             'project_product_id' // Local key on invoice_products table
         );
     }
-    
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Invoice_Order::class, 'invoice_id');
+    }
 
     public static function columns($project)
     {

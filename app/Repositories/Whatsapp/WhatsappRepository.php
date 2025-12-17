@@ -89,10 +89,10 @@ class WhatsappRepository implements WhatsappInterface
                 $project_customer = Project_Customer::where('customer_id',$customer->id)->where('project_id',$request->project_id)->first();
                 if(!$project_customer->link){
                    $project_customer->update([
-                    'link' => $project_customer->id.Str::random(3),
+                    'link' => $project_customer->id.Str::random(1),
                    ]);
                 }
-                $link = "https://i.tonl.ir/a/".$project_customer->link;
+                $link = "https://phne.ir/a/".$project_customer->link;
                 $message .= "\n\n".'لینک: '.$link;
             }
 
@@ -126,10 +126,10 @@ class WhatsappRepository implements WhatsappInterface
                 $project_customer = Project_Customer::where('customer_id',$customer->id)->where('project_id',$request->project_id)->first();
                 if(!$project_customer->link){
                    $project_customer->update([
-                    'link' => $project_customer->id.Str::random(3),
+                    'link' => $project_customer->id.Str::random(1),
                    ]);
                 }
-                $link = "https://i.tonl.ir/a/".$project_customer->link;
+                $link = "https://phne.ir/a/".$project_customer->link;
                 $message .= "\n\n".'لینک: '.$link;
             }
             if($phone){

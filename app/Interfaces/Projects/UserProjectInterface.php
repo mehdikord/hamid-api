@@ -8,6 +8,7 @@ interface UserProjectInterface
     public function reports();
 
     public function invoices();
+    public function fields($project);
 
 
 }

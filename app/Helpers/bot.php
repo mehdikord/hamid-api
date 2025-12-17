@@ -31,27 +31,24 @@ function helper_bot_send_group_invoice($invoice)
 
     $invoice_data = [
         'image'=> $invoice->file_url ? env('APP_URL').$invoice->file_url : null,
-        "price_deal"=> $invoice->project_customer->target_price,
+        "price_deal"=> $invoice->invoice->target_price,
         "price_deposit"=> $invoice->amount,
         "date"=> Jalalian::fromCarbon(Carbon::make($invoice->created_at))->format('Y-m-d'),
-        "customer_name"=> $invoice->project_customer->customer->name,
-        "customer_phone"=> $invoice->project_customer->customer->phone,
-        'customer_province'=> $invoice->project_customer?->customer?->province?->name,
-        'customer_city'=> $invoice->project_customer?->customer?->city?->name,
-        'customer_id' => $invoice->project_customer?->customer?->telegram_id,
-        "assignee"=> $invoice->user->name,
+        "customer_name"=> $invoice?->invoice?->project_customer?->customer?->name,
+        "customer_phone"=> $invoice?->invoice?->project_customer?->customer?->phone,
+        'customer_province'=> $invoice?->invoice?->project_customer?->customer?->province?->name,
+        'customer_city'=> $invoice?->invoice?->project_customer?->customer?->city?->name,
+        'customer_id' => $invoice?->invoice?->project_customer?->customer?->telegram_id,
+        "assignee"=> $invoice?->invoice->user->name,
         "products"=>[],
     ];
 
     // Check if invoice has products and add products array
-    if ($invoice->invoice_products) {
-
-        foreach($invoice->invoice_products as $invoice_product){
-            $invoice_data['products'][] = $invoice_product->product->name;
-        }
+    if ($invoice->product_id) {
+        $invoice_data['products'][] = $invoice->product->name;
     }
-    if($invoice->project)
-    {
+
+    if($invoice->project){
         $project = $invoice->project;
         foreach($project->telegram_groups as $group){
             if($group->telegram_id){
@@ -63,13 +60,6 @@ function helper_bot_send_group_invoice($invoice)
                 helper_core_send_post_request($url,$invoice_data);
             }
         }
-
-
     }
-
     return true;
 }
-
-
-
-

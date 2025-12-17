@@ -28,9 +28,9 @@ Route::group(['middleware' => ['auth:users']], function () {
     //Customers
     Route::prefix('customers')->as('customers.')->group(function () {
 
+        Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'customers'])->name('customers');
         Route::get('consultant',[\App\Http\Controllers\Users\Customers\CustomerController::class,'consultant'])->name('consultant');
         Route::get('consultant/old',[\App\Http\Controllers\Users\Customers\CustomerController::class,'consultant_old'])->name('consultant.old');
-
         Route::get('seller',[\App\Http\Controllers\Users\Customers\CustomerController::class,'seller'])->name('seller');
 
 
@@ -56,8 +56,9 @@ Route::group(['middleware' => ['auth:users']], function () {
 
             Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'invoices_index'])->name('index');
             Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'invoices_store'])->name('store');
-            Route::get('latest',[\App\Http\Controllers\Users\Customers\CustomerController::class,'all_invoice_latest'])->name('latest');
 
+
+            Route::get('latest',[\App\Http\Controllers\Users\Customers\CustomerController::class,'all_invoice_latest'])->name('latest');
             Route::post('target',[\App\Http\Controllers\Users\Customers\CustomerController::class,'invoices_target_store'])->name('target_store');
 
         });
@@ -82,7 +83,7 @@ Route::group(['middleware' => ['auth:users']], function () {
 
         //Statuses
 
-        Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'index'])->name('index');
+        // Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'index'])->name('index');
 
         Route::get('{customer}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'show'])->name('show');
 
@@ -95,9 +96,14 @@ Route::group(['middleware' => ['auth:users']], function () {
     Route::prefix('projects')->as('projects.')->group(function () {
         Route::get('all',[\App\Http\Controllers\Users\Projects\ProjectController::class,'all'])->name('all');
         Route::get('{project}/statuses',[\App\Http\Controllers\Users\Projects\ProjectController::class,'statuses'])->name('statuses.all');
+        Route::get('{project}/products',[\App\Http\Controllers\Users\Projects\ProjectController::class,'products'])->name('products.all');
 
         Route::get('{project}/levels',[\App\Http\Controllers\Users\Projects\ProjectController::class,'levels'])->name('levels.all');
 
+        Route::get('{project}/tags',[\App\Http\Controllers\Users\Projects\ProjectController::class,'tags'])->name('tags.all');
+
+        Route::get('{project}/import-methods',[\App\Http\Controllers\Users\Projects\ProjectController::class,'import_methods'])->name(name: 'import_methods.all');
+        Route::get('{project}/fields',[\App\Http\Controllers\Users\Projects\ProjectController::class,'fields'])->name('fields');
 
     });
 

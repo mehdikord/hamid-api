@@ -24,7 +24,7 @@ class CustomerController extends Controller
     protected ProjectLevelInterface $project_level_repository;
     public function __construct(UserCustomerInterface $customer,CustomerSettingsStatusInterface $customerSettingsStatus,ProjectLevelInterface $level)
     {
-        $this->middleware('generate_fetch_query_params')->only('index','reports_index');
+        $this->middleware('generate_fetch_query_params')->only('index','reports_index','invoices_index','projects','customers','seller','consultant_old');
 
         $this->repository = $customer;
         $this->setting_repository = $customerSettingsStatus;
@@ -34,6 +34,12 @@ class CustomerController extends Controller
     public function index()
     {
         return $this->repository->users_index(auth('users')->user());
+    }
+
+    public function customers()
+    {
+
+        return $this->repository->users_customers(auth('users')->user());
     }
 
     public function consultant()

@@ -10,6 +10,7 @@ use App\Models\Project_Customer;
 use App\Models\Project_Customer_Invoice;
 use App\Models\Project_Customer_Report;
 use App\Models\Projects\Invoice_Product;
+use App\Models\Projects\Project_Product;
 use App\Models\User_Project;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -107,6 +108,71 @@ class UserCustomerRepository implements UserCustomerInterface
         return helper_response_fetch(UserCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
 
     }
+
+
+    public function users_customers($user)
+    {
+        $data = $user->customers();
+
+        if (request()->filled('search')) {
+            if (!empty(request()->search['project_id']) && request()->search['project_id'] != 'all'){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->where('project_id', request()->search['project_id']);
+                });
+            }
+            if (!empty(request()->search['status_id']) && request()->search['status_id'] != 'all'){
+
+                if(request()->search['status_id'] == 'no'){
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->whereNull('project_customer_status_id');
+                    });
+                }else{
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->where('project_customer_status_id', request()->search['status_id']);
+                    });
+                }
+            }
+            if (!empty(request()->search['level_id']) && request()->search['level_id'] != 'all'){
+                if(request()->search['level_id'] == 'no'){
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->whereNull('project_level_id');
+                    });
+                }else{
+                    $data->whereHas('project_customer', function ($query) {
+                        $query->where('project_level_id', request()->search['level_id']);
+                    });
+                }
+            }
+
+            if (!empty(request()->search['tag_id']) && request()->search['tag_id'] != 'all'){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->whereHas('tags', function ($tag) {
+                        $tag->where('tag_id', request()->search['tag_id']);
+                    });
+                });
+            }
+
+            if (!empty(request()->search['import_method_id']) && request()->search['import_method_id'] != 'all'){
+                $data->whereHas('project_customer', function ($query) {
+                    $query->whereHas('import_method', function ($import_method) {
+                        $import_method->where('import_method_id', request()->search['import_method_id']);
+                    });
+                });
+            }
+
+            if (!empty(request()->search['phone'])){
+                $data->whereHas('project_customer', function ($project) {
+                    $project->whereHas('customer', function ($customer) {
+                        $customer->where('phone', 'LIKE', '%' . request()->search['phone'] . '%');
+                    });
+                });
+            }
+        }
+        $data->orderBy(request('sort_by'),request('sort_type'));
+        return helper_response_fetch(UserCustomerIndexResource::collection($data->paginate(request('per_page')))->resource);
+
+    }
+
 
     public function users_consultants_old($user)
     {
@@ -210,20 +276,29 @@ class UserCustomerRepository implements UserCustomerInterface
             'user_id' => auth('users')->id(),
             'description' => $request->description,
         ]);
-        if($request->filled('messages')){
-            foreach($request->messages as $message_key => $message_value){
-                $item->message_options()->create([
-                    'message_option_id' => $message_value,
-                ]);
 
+        if($request->filled('messages')){
+
+            if(is_array($request->messages)){
+                foreach($request->messages as $message_key => $message_value){
+                    $item->message_options()->create([
+                        'message_option_id' => $message_value,
+                    ]);
+                }
+            }else{
+                foreach(json_decode($request->messages,true) as $message_key => $message_value){
+                    $item->message_options()->create([
+                        'message_option_id' => $message_value,
+                    ]);
+                }
             }
         }
-
         $customer->update([
             'project_customer_status_id' => $request->status_id,
             'project_level_id' => $request->project_level_id,
         ]);
-        return helper_response_fetch(new UserCustomerIndexResource($customer->user));
+
+        return helper_response_fetch(new UserCustomerIndexResource($customer->users()->where('user_id',auth('users')->id())->first()));
     }
 
     //Reports
@@ -247,7 +322,7 @@ class UserCustomerRepository implements UserCustomerInterface
         //check change status
         if ($request->filled('status_id') && $request->status_id != $customer->project_customer_status_id ){
 
-             $customer->statuses()->create([
+             $new_status = $customer->statuses()->create([
                 'customer_status_id' => $request->status_id,
                 'customer_id' => $customer->customer_id,
                 'user_id' => auth('users')->id(),
@@ -256,7 +331,16 @@ class UserCustomerRepository implements UserCustomerInterface
             $customer->update([
                 'project_customer_status_id' => $request->status_id,
             ]);
+            if($request->filled('messages')){
+                foreach(json_decode($request->messages,true) as $message_key => $message_value){
+                    $new_status->message_options()->create([
+                        'message_option_id' => $message_value,
+                    ]);
+
+                }
+            }
         }
+
         if ($request->filled('project_level_id') && $request->project_level_id != $customer->project_level_id ){
 
              $customer->statuses()->create([
@@ -269,7 +353,6 @@ class UserCustomerRepository implements UserCustomerInterface
                 'project_level_id' => $request->project_level_id,
             ]);
         }
-
         $item = $customer->reports()->create([
             'user_id' => auth('users')->id(),
             'project_id' => $customer->project_id,
@@ -326,6 +409,7 @@ class UserCustomerRepository implements UserCustomerInterface
     }
     public function invoices_index($customer)
     {
+        
         $projects = helper_core_get_user_customer_access($customer);
         $data = Project_Customer_Invoice::query();
         $data->whereIn('project_customer_id', $projects);
@@ -376,10 +460,35 @@ class UserCustomerRepository implements UserCustomerInterface
     //Invoices
     public function invoices_store($customer, $request)
     {
+        $product = Project_Product::find($request->project_product_id);
+
+
         //check sum invoices amount
-        if ($customer->invoices()->sum('amount') + $request->price > $customer->target_price ){
-            return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
+        if ($request->price > $request->target_price){
+            return helper_response_error('مبلغ فاکتور نباید بیشتر از مبلغ معامله باشد');
         }
+
+        $date = Carbon::now();
+        if ($request->filled('date')){
+            $date = Carbon::make($request->date);
+        }
+        $paid = 0;
+        if($request->price == $request->target_price){
+            $paid = 1;
+        }
+
+        //create invoice
+        $item = $customer->invoices()->create([
+            'user_id' => auth('users')->id(),
+            'description' => $request->description,
+            'amount' => $request->price,
+            'target_price' => $request->target_price,
+            'paid' => $paid,
+        ]);
+
+
+        //handle file
+
         $file_url = null;
         $file_size = null;
         $file_path = null;
@@ -391,30 +500,18 @@ class UserCustomerRepository implements UserCustomerInterface
             $file_url = Storage::url($file_path);
         }
 
-        $date = Carbon::now();
-        if ($request->filled('date')){
-            $date = Carbon::make($request->date);
-        }
-        $item = $customer->invoices()->create([
-            'user_id' => auth('users')->id(),
+        //create order
+        $order = $item->orders()->create([
+            'product_id' => $product->id,
             'project_id' => $customer->project_id,
-            'description' => $request->description,
+            'quantity' => 1,
             'amount' => $request->price,
-            'created_at' => $date,
             'file_path' => $file_path,
             'file_url' => $file_url,
-            'file_size' => $file_size,
-            'file_name' => $file_name,
+            'created_at' => $date,
         ]);
 
-        // Handle products if provided
-        if ($request->filled('products') && is_array($request->products)) {
-            foreach ($request->products as $product_id) {
-                $item->invoice_products()->create([
-                    'project_product_id' => $product_id,
-                ]);
-            }
-        }
+
 
         //handle reminder
         if($request->filled("reminder_title") && $request->filled("reminder_date")){
@@ -433,16 +530,14 @@ class UserCustomerRepository implements UserCustomerInterface
             $user_project->update(['total_price' => $user_project->total_price + $item->amount]);
         }
 
-        // Check if total invoice amount >= target_price and update selled
-        $total_invoice_amount = $customer->invoices()->sum('amount');
-        if ($total_invoice_amount >= $customer->target_price) {
-            $customer->update(['selled' => true]);
-        }
-
         // activity log
         helper_activity_create(null,null,$customer->project_id,$customer->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$item->id."");
-        helper_bot_send_group_invoice($item);
+        helper_bot_send_group_invoice($order);
+
+
         return helper_response_fetch(new UserCustomerInvoiceResource($item));
+
+
     }
 
     public function invoices_target_store($customer,$request)
@@ -453,7 +548,11 @@ class UserCustomerRepository implements UserCustomerInterface
             $user_project_customer = $customer->users()->where('user_id',auth()->id())->first();
             return helper_response_fetch(new UserCustomerIndexResource($user_project_customer));
         }
+
+
         return helper_response_error('ُTarget price already exists !');
+
+
     }
 
     public function dashboard($customer)
@@ -515,7 +614,7 @@ class UserCustomerRepository implements UserCustomerInterface
         //check change status
         if ($request->filled('status_id') && $request->status_id != $project_customer->project_customer_status_id ){
 
-            $project_customer->statuses()->create([
+           $new_status = $project_customer->statuses()->create([
                 'customer_status_id' => $request->status_id,
                 'project_level_id' => $request->project_level_id,
                 'customer_id' => $project_customer->customer_id,
@@ -527,6 +626,14 @@ class UserCustomerRepository implements UserCustomerInterface
                 'project_level_id' => $request->project_level_id,
 
             ]);
+            if($request->filled('messages')){
+                foreach(json_decode( $request->messages) as $message_key => $message_value){
+                    $new_status->message_options()->create([
+                        'message_option_id' => $message_value,
+                    ]);
+
+                }
+            }
         }
 
         $item = $project_customer->reports()->create([
@@ -554,8 +661,8 @@ class UserCustomerRepository implements UserCustomerInterface
         }
 
         //check sum invoices amount
-        if ($project_customer->invoices()->sum('amount') + $request->price > $project_customer->target_price ){
-            return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
+        if ($request->price > $request->target_price){
+            return helper_response_error('مبلغ فاکتور نباید بیشتر از مبلغ معامله باشد');
         }
 
         $file_url = null;
@@ -568,31 +675,34 @@ class UserCustomerRepository implements UserCustomerInterface
             $file_path = Storage::put('public/users/invoices/'.$project_customer->id.'/', $request->file('file'),'public');
             $file_url = Storage::url($file_path);
         }
-
         $date = Carbon::now();
         if ($request->filled('date')){
             $date = Carbon::make($request->date);
         }
+        $paid = 0;
+        if($request->price == $request->target_price){
+            $paid = 1;
+        }
+
         $item = $project_customer->invoices()->create([
             'user_id' => auth('users')->id(),
-            'project_id' => $project_customer->project_id,
             'description' => $request->description,
             'amount' => $request->price,
+            'target_price' => $request->target_price,
+            'paid' => $paid,
             'created_at' => $date,
-            'file_path' => $file_path,
-            'file_url' => $file_url,
-            'file_size' => $file_size,
-            'file_name' => $file_name,
         ]);
 
-        // Handle products if provided
-        if ($request->filled('products')) {
-            foreach ($request->products as $product_id) {
-                $item->invoice_products()->create([
-                    'project_product_id' => $product_id,
-                ]);
-            }
-        }
+        //create order
+        $order = $item->orders()->create([
+            'product_id' => $request->project_product_id,
+            'quantity' => 1,
+            'amount' => $request->price,
+            'file_path' => $file_path,
+            'file_url' => $file_url,
+            'created_at' => $date,
+        ]);
+
 
         //handle reminder
         if($request->filled("reminder_title") && $request->filled("reminder_date")){
@@ -604,12 +714,6 @@ class UserCustomerRepository implements UserCustomerInterface
                 'offset' => $request->reminder_offset ?? '15',
                 'status' => 'pending',
             ]);
-        }
-
-        // Check if total invoice amount >= target_price and update selled
-        $total_invoice_amount = $project_customer->invoices()->sum('amount');
-        if ($total_invoice_amount >= $project_customer->target_price) {
-            $project_customer->update(['selled' => true]);
         }
 
         //activity log

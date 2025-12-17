@@ -32,13 +32,11 @@ class UserCustomerInvoiceResource extends JsonResource
             'project_customer' => new UserCustomerProjectCustomerResource($this->project_customer),
             'user' => new UserShortResource($this->user),
             'amount' => $this->amount,
+            'target_price' => $this->target_price,
+            'paid' => $this->paid,
             'description' => $this->description,
-            'file_name' => $this->file_name,
-            'file_url' => $this->file_url,
             'created_at' => $this->created_at,
-            'products' => $this->when($this->relationLoaded('products') && $this->products->isNotEmpty(), function () {
-                return ProjectProductShortResource::collection($this->products);
-            }),
+            'orders' => UserCustomerInvoiceOrdersResource::collection($this->orders),
         ];
     }
 }

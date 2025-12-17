@@ -82,10 +82,7 @@ class Project_Customer extends Model
         return $this->belongsTo(Import_Method::class, 'import_method_id');
     }
 
-    public function prices():HasMany
-    {
-        return $this->hasMany(Project_Customer_Price::class, 'project_customer_id');
-    }
+
 
     public static function columns($project){
 

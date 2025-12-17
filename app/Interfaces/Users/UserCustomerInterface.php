@@ -6,8 +6,9 @@ interface UserCustomerInterface
 {
     public function users_index($user);
 
+    public function users_customers($user);
     public function users_consultants($user);
-    
+
     public function users_seller($user);
 
     public function users_consultants_old($user);

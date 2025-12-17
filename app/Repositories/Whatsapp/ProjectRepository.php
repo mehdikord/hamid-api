@@ -1119,7 +1119,7 @@ class ProjectRepository implements ProjectInterface
     public function store_forms($project, $request)
     {
         $token = Str::random(2).$project->id.Str::random(2);
-        $link = "https://phne.ir/".$token;
+        $link = "https://i.tonl.ir/".$token;
         DB::beginTransaction();
         $form = $project->forms()->create([
             'name' => $request->name,
