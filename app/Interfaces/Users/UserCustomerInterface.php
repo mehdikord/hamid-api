@@ -4,6 +4,7 @@ use App\Models\Customer;
 
 interface UserCustomerInterface
 {
+
     public function users_index($user);
 
     public function users_customers($user);
@@ -30,6 +31,7 @@ interface UserCustomerInterface
 
     public function all_invoice_latest($customer);
 
+    
     //invoices
     public function invoices_store($customer,$request);
 

@@ -1,5 +1,7 @@
 <?php
 namespace App\Repositories\Users;
+
+use App\Http\Resources\Projects\Projects\ProjectRelationResource;
 use App\Http\Resources\Projects\Projects\ProjectShortResource;
 use App\Http\Resources\User_Customers\Customers\UserCustomerProfileResource;
 use App\Http\Resources\User_Customers\UserCustomerInvoiceResource;
@@ -320,7 +322,7 @@ class UserCustomerRepository implements UserCustomerInterface
         }
 
         //check change status
-        if ($request->filled('status_id') && $request->status_id != $customer->project_customer_status_id ){
+        if ($request->filled('status_id')){
 
              $new_status = $customer->statuses()->create([
                 'customer_status_id' => $request->status_id,
@@ -332,16 +334,26 @@ class UserCustomerRepository implements UserCustomerInterface
                 'project_customer_status_id' => $request->status_id,
             ]);
             if($request->filled('messages')){
-                foreach(json_decode($request->messages,true) as $message_key => $message_value){
-                    $new_status->message_options()->create([
-                        'message_option_id' => $message_value,
-                    ]);
+                if(is_array($request->messages)){
+                    foreach($request->messages as $message_key => $message_value){
+                        $new_status->message_options()->create([
+                            'message_option_id' => $message_value,
+                        ]);
+                    }
 
+                }else{
+                    foreach(json_decode($request->messages,true) as $message_key => $message_value){
+                        $new_status->message_options()->create([
+                            'message_option_id' => $message_value,
+                        ]);
+
+                    }
                 }
+
             }
         }
 
-        if ($request->filled('project_level_id') && $request->project_level_id != $customer->project_level_id ){
+        if ($request->filled('project_level_id')){
 
              $customer->statuses()->create([
                 'project_level_id' => $request->project_level_id,
@@ -353,6 +365,7 @@ class UserCustomerRepository implements UserCustomerInterface
                 'project_level_id' => $request->project_level_id,
             ]);
         }
+
         $item = $customer->reports()->create([
             'user_id' => auth('users')->id(),
             'project_id' => $customer->project_id,
@@ -363,6 +376,20 @@ class UserCustomerRepository implements UserCustomerInterface
             'report' => $request->report,
             'created_at' => $date,
         ]);
+
+
+        //check reminder data
+        if($request->filled('reminder_title') && $request->filled('reminder_date')){
+            auth('users')->user()->reminders()->create([
+                'project_customer_id' => $customer->id,
+                'title' => $request->reminder_title,
+                'date' => $request->reminder_date,
+                'offset' => $request->reminder_offset ?? '15',
+                'status' => 'pending',
+            ]);
+        }
+
+
         $user_project = User_Project::where('project_id', $customer->project_id)->where('user_id',auth()->id())->first();
         if ($user_project){
             $user_project->update(['total_reports' => $user_project->total_reports + 1]);
@@ -409,7 +436,7 @@ class UserCustomerRepository implements UserCustomerInterface
     }
     public function invoices_index($customer)
     {
-        
+
         $projects = helper_core_get_user_customer_access($customer);
         $data = Project_Customer_Invoice::query();
         $data->whereIn('project_customer_id', $projects);
@@ -571,7 +598,7 @@ class UserCustomerRepository implements UserCustomerInterface
             }
         }
 
-        return helper_response_fetch(ProjectShortResource::collection($result));
+        return helper_response_fetch(ProjectRelationResource::collection($result));
     }
 
     public function projects_own($customer, $project)

@@ -2,10 +2,7 @@
 
 namespace App\Http\Resources\Projects\Projects;
 
-use App\Http\Resources\Fields\FieldIndexResource;
-use App\Http\Resources\Projects\Categories\ProjectCategoryShortResource;
-use App\Http\Resources\Projects\Products\ProjectProductShortResource;
-use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

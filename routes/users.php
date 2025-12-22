@@ -35,6 +35,11 @@ Route::group(['middleware' => ['auth:users']], function () {
 
 
 
+        Route::get('{customer}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'show'])->name('show');
+
+        Route::put('{customer}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'update'])->name('update');
+
+
         //Statuses
         Route::prefix('{customer}/statuses')->as('statuses.')->group(function () {
 
@@ -73,10 +78,10 @@ Route::group(['middleware' => ['auth:users']], function () {
                Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_invoice_store'])->name('store');
             });
 
-            Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects'])->name('index');
             Route::get('own/{project}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_own'])->name('index');
             Route::get('fields/{project}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_fields'])->name('fields');
             Route::get('levels/{project}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_levels'])->name('levels');
+            Route::get( '',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects'])->name('index');
 
         });
 
@@ -85,12 +90,8 @@ Route::group(['middleware' => ['auth:users']], function () {
 
         // Route::get('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'index'])->name('index');
 
-        Route::get('{customer}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'show'])->name('show');
-
-        Route::put('{customer}',[\App\Http\Controllers\Users\Customers\CustomerController::class,'update'])->name('update');
-
-
     });
+
 
     //Project
     Route::prefix('projects')->as('projects.')->group(function () {

@@ -124,6 +124,7 @@ class CustomerController extends Controller
 
     public function projects(Customer $customer)
     {
+        
         return $this->repository->projects($customer);
     }
 
