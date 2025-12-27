@@ -153,6 +153,10 @@ class ProjectController extends Controller
     {
         return $this->repository->delete_customers($project,$customer);
     }
+    public function delete_user(Project $project,Project_Customer $customer,Request $request)
+    {
+        return $this->repository->delete_user($project,$customer,$request);
+    }
 
     public function delete_multi(Project $project,Request $request)
     {

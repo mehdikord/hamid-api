@@ -507,6 +507,7 @@ class UserCustomerRepository implements UserCustomerInterface
         //create invoice
         $item = $customer->invoices()->create([
             'user_id' => auth('users')->id(),
+            'project_id' => $customer->project_id,
             'description' => $request->description,
             'amount' => $request->price,
             'target_price' => $request->target_price,

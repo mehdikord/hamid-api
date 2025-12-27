@@ -712,6 +712,24 @@ class ProjectRepository implements ProjectInterface
         return helper_response_deleted();
     }
 
+    public function delete_user($project, $customer, $request)
+    {
+        //find user
+        if($request->filled('user_id') && $request->filled('position_id')){
+            $user = User_Project_Customer::where('user_id',$request->user_id)->where('position_id',$request->position_id)->where('project_customer_id',$customer->id)->first();
+            if ($user){
+                $user->delete();
+                //update customer status
+                $customer->update(['status' => Project_Customer::STATUS_PENDING]);
+                //activity log
+                helper_activity_create(null,null,$project->id,$customer->customer_id,'حذف کارشناس'," : حذف کارشناس ".$request->user_id." به عنوان : ".$request->position_id."");
+            }
+            return helper_response_deleted();
+        }
+        return helper_response_error('Invalid Request');
+
+    }
+
     public function assigned_customers($item,$request)
     {
         $customers=[];
