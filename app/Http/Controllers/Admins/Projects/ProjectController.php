@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admins\Projects;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Projects\Assigned\ProjectAssignedSingleRequest;
 use App\Http\Requests\Projects\Categories\ProjectCategoryCreateRequest;
 use App\Http\Requests\Projects\Categories\ProjectCategoryUpdateRequest;
 use App\Http\Requests\Projects\Customers\ProjectCustomersAssignedRequest;
@@ -169,7 +170,7 @@ class ProjectController extends Controller
         return $this->repository->assigned_customers($project,$request);
     }
 
-    public function assigned_customers_single(Project $project,Request $request)
+    public function assigned_customers_single(Project $project,ProjectAssignedSingleRequest $request)
     {
         return $this->repository->assigned_customers_single($project,$request);
     }

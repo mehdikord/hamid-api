@@ -800,9 +800,10 @@ class ProjectRepository implements ProjectInterface
             $message = "تعداد ۱ شماره از پروژه : ".$item->name." به عنوان : ".$position." به شما تخصیص داده شد";
             $user = User::find($request->user_id);
             helper_bot_send_markdown($user->telegram_id,null,$message);
-        }
+            return helper_response_fetch(new ProjectCustomerIndexResource($data));
 
-        return helper_response_fetch(new ProjectCustomerIndexResource($data));
+        }
+        return helper_response_error('Invalid Request');
     }
 
     public function assigned_customers_multi($item, $request)
@@ -984,7 +985,18 @@ class ProjectRepository implements ProjectInterface
 
          //find customer_project
         $customer_project = Project_Customer::find($request->project_customer_id);
+
+
         if ($customer_project){
+            //check sum invoices amount
+            if ($request->amount > $request->target_price){
+                return helper_response_error('مبلغ فاکتور نباید بیشتر از مبلغ معامله باشد');
+            }
+            $paid = 0;
+            if($request->amount == $request->target_price){
+                $paid = 1;
+            }
+
             $file_url = null;
             $file_size = null;
             $file_path = null;
@@ -1000,47 +1012,38 @@ class ProjectRepository implements ProjectInterface
                 $date = Carbon::make($request->date);
             }
 
-            //find project customer user
-            $user = $customer_project->users()->where('user_id',$request->user_id)->first();
-            if($user){
-                if($request->target_price){
-                    $user->update(['target_price' => $request->target_price]);
-                }
 
-            }
-
-            $data = Project_Customer_Invoice::create([
-                'project_id' => $item->id,
-                'project_customer_id' =>  $request->project_customer_id,
+            $data = $customer_project->invoices()->create([
                 'user_id' => $request->user_id,
-                'admin_id' => auth('admins')->id(),
+                'project_id' => $customer_project->project_id,
                 'description' => $request->description,
                 'amount' => $request->amount,
-                'file_path' => $file_path,
-                'file_url' => $file_url,
-                'file_size' => $file_size,
-                'file_name' => $file_name,
+                'target_price' => $request->target_price,
+                'paid' => $paid,
                 'created_at' => $date,
-            ]);
+                ]
+            );
 
             // Handle products if provided
-            if ($request->filled('products') && is_array($request->products)) {
-                foreach ($request->products as $product_id) {
-                    $data->invoice_products()->create([
-                        'project_product_id' => $product_id,
-                    ]);
-                }
-            }
-
-            // Check if total invoice amount >= target_price and update selled
-            $total_invoice_amount = $customer_project->invoices()->sum('amount');
-            if ($total_invoice_amount >= $customer_project->target_price) {
-                $customer_project->update(['selled' => true]);
+            if ($request->filled('products')) {
+                 //create order
+               foreach ($request->products as $product_id) {
+                $data->orders()->create([
+                    'product_id' => $product_id,
+                    'project_id' => $customer_project->project_id,
+                    'quantity' => 1,
+                    'amount' => $request->amount,
+                    'file_path' => $file_path,
+                    'file_url' => $file_url,
+                    'created_at' => $date,
+                ]);
+               }
             }
 
             // activity log
             helper_activity_create(null,$request->user_id,$item->id,$customer_project->customer_id,'ثبت فاکتور',"# : ثبت فاکتور ".$data->id."");
             return helper_response_created(new ProjectInvoiceIndexResource($data));
+
         }
 
     }

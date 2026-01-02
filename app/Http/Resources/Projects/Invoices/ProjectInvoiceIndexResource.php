@@ -32,20 +32,15 @@ class ProjectInvoiceIndexResource extends JsonResource
         }
         return [
             'id' => $this->id,
+            'project_customer_id' => $this->project_customer_id,
             'amount' => $this->amount,
+            'target_price' => $this->target_price,
+            'paid' => $this->paid,
             'description' => $this->description,
-            'target_price' => $this->project_customer->target_price,
-            'paid' => $this->project_customer->invoices()->where('id','!=',$this->id)->sum('amount'),
-            'paid_amount' => $this->project_customer->invoices()->where('id','!=',$this->id)->sum('amount'),
+            'created_at' => $this->created_at,
             'orders' => ProjectInvoiceOrdersResource::collection($this->orders),
             'user' => new UserShortResource($this->user),
             'customer' => $customer,
-            'settle' => $this->settle,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-
-
-
         ];
     }
 }
