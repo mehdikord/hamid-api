@@ -118,18 +118,36 @@ class WhatsappService
     }
 
     public function send_request($data){
+        try {
+            if($this->api_key){
+                $data['api_key'] = $this->api_key;
+                $url = 'https://web.officebaz.ir/api/send-text.php';
+                $response = Http::post($url, $data);
 
-        if($this->api_key){
-            $data['api_key'] = $this->api_key;
-            $url = 'https://web.officebaz.ir/api/send-text.php';
-            $response = Http::post($url, $data);
-            $result = $response->json();
-            if(isset($result['status']) && $result['status'] == 'success'){
-                return ['status' => true, 'message' => 'Message sent successfully'];
+                // Check if request was successful
+                if($response->failed()){
+                    return ['status' => false, 'message' => 'HTTP request failed with status: ' . $response->status()];
+                }
+
+                $result = $response->json();
+
+                // Check if JSON parsing was successful
+                if($result === null){
+                    return ['status' => false, 'message' => 'Invalid response from API'];
+                }
+
+                if(isset($result['status']) && $result['status'] == 'success'){
+                    return ['status' => true, 'message' => 'Message sent successfully'];
+                }
+
+                return ['status' => false, 'message' => $result['message'] ?? 'Unknown error occurred'];
             }
-            return ['status' => false, 'message' => $result['message']];
+            return ['status' => false, 'message' => 'API key is not set'];
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return ['status' => false, 'message' => 'Connection error: ' . $e->getMessage()];
+        } catch (\Exception $e) {
+            return ['status' => false, 'message' => 'An error occurred: ' . $e->getMessage()];
         }
-        return ['status' => false, 'message' => 'API key is not set'];
     }
 
 
