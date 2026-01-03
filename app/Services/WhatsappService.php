@@ -138,8 +138,8 @@ class WhatsappService
                     return ['status' => false, 'message' => 'Invalid response from API'];
                 }
 
-                if(isset($result['status']) && $result['status'] == 'success'){
-                    return ['status' => true, 'message' => 'Message sent successfully'];
+                if(isset($result['success']) && $result['success'] == 'true'){
+                    return ['status' => true, 'message' => 'Message sent successfully with device: '.$data['device_name']];
                 }
 
                 return ['status' => false, 'message' => $result['message'] ?? 'Unknown error occurred'];
