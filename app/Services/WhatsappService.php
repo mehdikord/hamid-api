@@ -11,6 +11,7 @@ use App\Models\Whatsapp\WhatsappLog;
 use App\Models\Whatsapp\WhatsappNumber;
 use App\Models\Whatsapp\WhatsappQueue;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class WhatsappService
 {
@@ -85,7 +86,7 @@ class WhatsappService
         if($null_use_count){
             return $null_use_count;
         }
-        $last_used = WhatsappNumber::where('admin_id',$admin_id ?? auth('admins')->id())->where('is_active',true)->where('is_block',false)->where('last_used', '<', now()->subMinutes(5))->orderBy('last_used','desc')->first();
+        $last_used = WhatsappNumber::where('admin_id',$admin_id ?? auth('admins')->id())->where('is_active',true)->where('is_block',false)->where('last_used', '<', now()->subMinutes(2))->orderBy('last_used','desc')->first();
         if($last_used){
             return $last_used;
         }
@@ -139,6 +140,7 @@ class WhatsappService
                 }
 
                 if(isset($result['success']) && $result['success'] == 'true'){
+                    Log::info('Message sent successfully with device: '.$data['device_name']);
                     return ['status' => true, 'message' => 'Message sent successfully with device: '.$data['device_name']];
                 }
 
