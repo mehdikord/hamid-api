@@ -15,10 +15,12 @@ use Illuminate\Support\Facades\Http;
 class WhatsappService
 {
     private $api_key;
+    public $base_url;
 
     public function __construct()
     {
         $this->api_key = env('WHATSAPP_API');
+        $this->base_url = "https://web.officebaz.ir/wh/";
     }
 
     public function send_message($message,$phone,$customer_id=null,$project_id=null)
@@ -36,9 +38,9 @@ class WhatsappService
         $number = $this->active_number(admin_id: $admin_id);
         $data =[];
         $data['message'] = $message;
-        $data['number'] = $phone;
+        $data['recipient'] = $phone;
         if($number){
-            $data['sender'] = $number->name;
+            $data['device_name'] = $number->name;
             $result = $this->send_request($data);
             $number->update([
                 'last_used' => now(),
@@ -121,7 +123,7 @@ class WhatsappService
         try {
             if($this->api_key){
                 $data['api_key'] = $this->api_key;
-                $url = 'https://web.officebaz.ir/api/send-text.php';
+                $url = $this->base_url.'send_text.php';
                 $response = Http::post($url, $data);
 
                 // Check if request was successful
