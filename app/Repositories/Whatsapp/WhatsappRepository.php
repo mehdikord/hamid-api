@@ -119,7 +119,7 @@ class WhatsappRepository implements WhatsappInterface
         foreach($customers as $customer){
             $phone = $customer->phone;
             if (!empty($phone) && $phone[0] == '0') {
-                $phone = substr($phone, 1);
+                $phone = '98'.substr($phone, 1);
             }
             $message = $request->message;
             if($request->link == '1'){
