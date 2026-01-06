@@ -250,11 +250,11 @@ class ProjectRepository implements ProjectInterface
                 }
             }
             if(isset(request()->search['import_method'])){
-                $data->where('import_method_id',request()->search['import_method']);
+                $data->whereIn('import_method_id',request()->search['import_method']);
             }
             if(isset(request()->search['tag'])){
                 $data->whereHas('tags',function ($query){
-                    $query->where('tag_id',request()->search['tag']);
+                    $query->whereIn('tag_id',request()->search['tag']);
                 });
             }
             if(isset(request()->search['from_date']) && !empty(request()->search['from_date'])){

@@ -4,6 +4,7 @@ namespace App\Http\Resources\Customers\Projects;
 
 use App\Http\Resources\Projects\Categories\ProjectCategoryShortResource;
 use App\Http\Resources\Projects\Statuses\ProjectStatusShortResource;
+use App\Http\Resources\Users\UserShortResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,6 +28,7 @@ class CustomerProjectStatusesResource extends JsonResource
             'id' => $this->id,
             'status' => new ProjectStatusShortResource($this->status),
             'level' => $this->level,
+            'user' => new UserShortResource($this->user),
             'description' => $this->description,
             'created_at' => $this->created_at,
         ];
