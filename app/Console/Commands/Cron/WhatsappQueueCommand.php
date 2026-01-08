@@ -37,9 +37,8 @@ class WhatsappQueueCommand extends Command
 
                 foreach($numbers as $number){
                     $phone = $number->phone;
-                    
                     if($phone){
-                        $service->send_message($number->message, $phone,$number->customer_id,$number->project_id);
+                        $service->send_message($number->message, $number->project_message_id, $number->link, $phone,$number->customer_id,$number->project_id);
                     }
                     $number->delete();
                 }

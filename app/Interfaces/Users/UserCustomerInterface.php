@@ -31,7 +31,7 @@ interface UserCustomerInterface
 
     public function all_invoice_latest($customer);
 
-    
+
     //invoices
     public function invoices_store($customer,$request);
 
@@ -46,6 +46,8 @@ interface UserCustomerInterface
     public function projects_own($customer,$project);
 
     public function projects_report_store($customer,$project,$request);
+
+    public function projects_invoice_pending($customer,$project);
 
     public function projects_invoice_store($customer,$project,$request);
 

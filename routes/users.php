@@ -75,6 +75,7 @@ Route::group(['middleware' => ['auth:users']], function () {
                Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_report_store'])->name('store');
             });
             Route::prefix('{project}/invoices')->as('invoices.')->group(function () {
+               Route::get('pending',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_invoice_pending'])->name('pending');
                Route::post('',[\App\Http\Controllers\Users\Customers\CustomerController::class,'projects_invoice_store'])->name('store');
             });
 

@@ -124,7 +124,7 @@ class CustomerController extends Controller
 
     public function projects(Customer $customer)
     {
-        
+
         return $this->repository->projects($customer);
     }
 
@@ -136,6 +136,11 @@ class CustomerController extends Controller
     public function projects_report_store(Customer $customer,Project $project,UserCustomerReportStoreRequest $request)
     {
         return $this->repository->projects_report_store($customer,$project,$request);
+    }
+
+    public function projects_invoice_pending(Customer $customer,Project $project)
+    {
+        return $this->repository->projects_invoice_pending($customer,$project);
     }
 
     public function projects_invoice_store(Customer $customer,Project $project,UserCustomerInvoiceStoreRequest $request)

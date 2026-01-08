@@ -26,6 +26,7 @@ use App\Models\Project_Customer_Report;
 use App\Models\Project_Customer_Status;
 use App\Models\Project_Level;
 use App\Models\Projects\Invoice_Product;
+use App\Models\Projects\Project_Product;
 use App\Models\User;
 use App\Models\User_Project;
 use App\Models\User_Project_Customer;
@@ -898,27 +899,53 @@ class ProjectRepository implements ProjectInterface
     public function invoices_update($project, $invoice, $request)
     {
         //check sum invoices amount
-        if (($request->amount > $invoice->amount) && $invoice->project_customer->invoices()->where('id','!=',$invoice->id)->sum('amount') + $request->amount > $invoice->project_customer->target_price ){
-            return helper_response_error('مجموع مبلغ فاکتور های ثبت شده نباید بیشتر از مبلغ معامله باشد');
+        if ($request->amount > $request->target_price){
+            return helper_response_error('مبلغ فاکتور نباید بیشتر از مبلغ معامله باشد');
+        }
+        $date = Carbon::now();
+        if ($request->filled('date')){
+            $date = Carbon::make($request->date);
+        }
+        $paid = 0;
+        if($request->amount == $request->target_price){
+            $paid = 1;
         }
         $invoice->update([
-            'amount' => $request->amount,
-            'user_id' => $request->user_id,
+            'user_id' => auth('users')->id(),
+            'project_id' => $project->id,
             'description' => $request->description,
-            'created_at' => $request->created_at,
+            'amount' => $request->amount,
+            'target_price' => $request->target_price,
+            'paid' => $paid,
         ]);
 
-        // Remove all existing invoice products
-        $invoice->invoice_products()->delete();
-
-        // Handle products if provided
-        if ($request->filled('products') && is_array($request->products)) {
+        if($request->filled('products') && is_array($request->products)){
             foreach ($request->products as $product_id) {
-                $invoice->invoice_products()->create([
-                    'project_product_id' => $product_id,
+                //handle file
+                $file_url = null;
+                $file_size = null;
+                $file_path = null;
+                $file_name = null;
+                if ($request->hasFile('file')){
+                    $file_name = $request->file('file')->getClientOriginalName();
+                    $file_size = $request->file('file')->getSize();
+                    $file_path = Storage::put('public/users/invoices/'.$invoice->project_customer->customer_id.'/', $request->file('file'),'public');
+                    $file_url = Storage::url($file_path);
+                }
+                //create order
+                $order = $invoice->orders()->create([
+                    'product_id' => $product_id,
+                    'project_id' => $project->id,
+                    'quantity' => 1,
+                    'amount' => $request->amount,
+                    'file_path' => $file_path,
+                    'file_url' => $file_url,
+                    'created_at' => $date,
                 ]);
+
             }
         }
+
 
         $invoice->load('user');
         // activity log

@@ -7,6 +7,7 @@ This service is used to send and receive whatsapp messages from and to customers
 namespace App\Services;
 
 use App\Models\Project;
+use App\Models\Projects\Project_Message;
 use App\Models\Whatsapp\WhatsappLog;
 use App\Models\Whatsapp\WhatsappNumber;
 use App\Models\Whatsapp\WhatsappQueue;
@@ -24,9 +25,8 @@ class WhatsappService
         $this->base_url = "https://web.officebaz.ir/wh/";
     }
 
-    public function send_message($message,$phone,$customer_id=null,$project_id=null)
+    public function send_message($message,$message_id = null, $link = null,$phone,$customer_id=null,$project_id=null)
     {
-
         $admin_id = null;
         if(auth('admins')->check()){
             $admin_id = auth('admins')->id();
@@ -38,8 +38,38 @@ class WhatsappService
         }
         $number = $this->active_number(admin_id: $admin_id);
         $data =[];
-        $data['message'] = $message;
         $data['recipient'] = $phone;
+        if($message_id){
+            $buttons = [];
+            if($link){
+                $buttons[] = [
+                    'name' => 'ثبت درخواست',
+                    'buttonParamsJson' => ['display_text' => 'ثبت درخواست' , 'url' => $link,'merchant_url' => $link],
+                ];
+            }
+            $get_message = Project_Message::find($message_id);
+            if($get_message){
+                if($get_message->buttons){
+
+                    foreach(json_decode($get_message->buttons, true) as $button){
+                        $buttons[] = [
+                            'name' => $button['title'],
+                            'buttonParamsJson' => ['display_text' => $button['title'] , 'url' => $button['link'],'merchant_url' => $button['link']],
+                        ];
+                    }
+                }
+                $data['message_text'] = '.';
+                $data['cards'] = [
+                    [
+                        'title' => $get_message->title,
+                        'message' => $message,
+                        'image' => $get_message->file ? env('APP_URL').$get_message->file : null,
+                        'buttons' => $buttons,
+                    ]
+                ];
+
+            }
+        }
         if($number){
             $data['device_name'] = $number->name;
             $result = $this->send_request($data);
@@ -55,10 +85,9 @@ class WhatsappService
                 return 'error';
             }
         }
-        $this->add_to_queue($message,$phone,$customer_id, $project_id,$admin_id);
+        $this->add_to_queue($message,$message_id,$link,$phone,$customer_id, $project_id,$admin_id);
         return 'queued';
     }
-
 
     public function check_queue()
     {
@@ -93,7 +122,7 @@ class WhatsappService
         return null;
     }
 
-    public function add_to_queue($message,$phone,$customer_id=null,$project_id=null,$admin_id = null)
+    public function add_to_queue($message,$message_id = null,$link = null,$phone,$customer_id=null,$project_id=null,$admin_id = null)
     {
         WhatsappQueue::create([
             'admin_id' => $admin_id ?? auth('admins')->id(),
@@ -101,6 +130,8 @@ class WhatsappService
             'phone' => $phone,
             'customer_id' => $customer_id,
             'project_id' => $project_id,
+            'project_message_id' => $message_id,
+            'link' => $link,
         ]);
 
     }
@@ -124,7 +155,7 @@ class WhatsappService
         try {
             if($this->api_key){
                 $data['api_key'] = $this->api_key;
-                $url = $this->base_url.'send_text.php';
+                $url = $this->base_url.'send_cards.php';
                 $response = Http::post($url, $data);
 
                 // Check if request was successful

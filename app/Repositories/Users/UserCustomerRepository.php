@@ -568,6 +568,14 @@ class UserCustomerRepository implements UserCustomerInterface
 
     }
 
+    public function projects_invoice_pending($customer,$project)
+    {
+        $project_customer = $customer->projects()->where('project_id', $project->id)->first();
+        if ($project_customer){
+            $data = $project_customer->invoices()->where('paid',0)->get();
+            return helper_response_fetch(UserCustomerInvoiceResource::collection($data));
+        }
+    }
     public function invoices_target_store($customer,$request)
     {
         if (!$customer->target_price){

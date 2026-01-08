@@ -85,6 +85,7 @@ class WhatsappRepository implements WhatsappInterface
             }
             $message = $request->message;
 
+            $link = null;
             if($request->link == '1'){
                 $project_customer = Project_Customer::where('customer_id',$customer->id)->where('project_id',$request->project_id)->first();
                 if(!$project_customer->link){
@@ -93,11 +94,10 @@ class WhatsappRepository implements WhatsappInterface
                    ]);
                 }
                 $link = "https://phne.ir/a/".$project_customer->link;
-                $message .= "\n\n".'لینک: '.$link;
             }
 
             if($phone){
-                $result = $this->service->send_message($message,$phone,$customer->id,$request->project_id);
+                $result = $this->service->send_message($message,$request->project_message_id,$link,$phone,$customer->id,$request->project_id);
                 if($result == 'success'){
                     return helper_response_created('Message sent successfully');
                 }elseif($result == 'error'){
@@ -112,6 +112,7 @@ class WhatsappRepository implements WhatsappInterface
 
 
     }
+
     public function send_message_multi($request)
     {
 
@@ -122,6 +123,7 @@ class WhatsappRepository implements WhatsappInterface
                 $phone = '98'.substr($phone, 1);
             }
             $message = $request->message;
+            $link = null;
             if($request->link == '1'){
                 $project_customer = Project_Customer::where('customer_id',$customer->id)->where('project_id',$request->project_id)->first();
                 if(!$project_customer->link){
@@ -130,10 +132,9 @@ class WhatsappRepository implements WhatsappInterface
                    ]);
                 }
                 $link = "https://phne.ir/a/".$project_customer->link;
-                $message .= "\n\n".'لینک: '.$link;
             }
             if($phone){
-                $this->service->send_message($message,$phone,$customer->id,$request->project_id);
+                $this->service->send_message($message,$request->project_message_id,$link,$phone,$customer->id,$request->project_id);
             }
         }
         return helper_response_created('Successfully sent messages to customers');
