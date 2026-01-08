@@ -50,7 +50,6 @@ class WhatsappService
             $get_message = Project_Message::find($message_id);
             if($get_message){
                 if($get_message->buttons){
-
                     foreach(json_decode($get_message->buttons, true) as $button){
                         $buttons[] = [
                             'name' => $button['title'],
@@ -72,7 +71,7 @@ class WhatsappService
         }
         if($number){
             $data['device_name'] = $number->name;
-            $result = $this->send_request($data);
+            $result = $this->send_request( $data);
             $number->update([
                 'last_used' => now(),
                 'use_count' => $number->use_count + 1,
