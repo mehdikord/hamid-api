@@ -44,7 +44,7 @@ class WhatsappService
             if($link){
                 $buttons[] = [
                     'name' => 'ثبت درخواست',
-                    'buttonParamsJson' => ['display_text' => 'ثبت درخواست' , 'url' => $link,'merchant_url' => $link],
+                    'buttonParamsJson' => json_encode(['display_text' => 'ثبت درخواست' , 'url' => $link,'merchant_url' => $link]),
                 ];
             }
             $get_message = Project_Message::find($message_id);
@@ -53,7 +53,7 @@ class WhatsappService
                     foreach(json_decode($get_message->buttons, true) as $button){
                         $buttons[] = [
                             'name' => $button['title'],
-                            'buttonParamsJson' => ['display_text' => $button['title'] , 'url' => $button['link'],'merchant_url' => $button['link']],
+                            'buttonParamsJson' => json_encode(['display_text' => $button['title'] , 'url' => $button['link'],'merchant_url' => $button['link']]),
                         ];
                     }
                 }
