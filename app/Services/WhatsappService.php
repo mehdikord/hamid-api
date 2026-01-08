@@ -53,7 +53,7 @@ class WhatsappService
                     foreach(json_decode($get_message->buttons, true) as $button){
                         $buttons[] = [
                             'name' => $button['title'],
-                            'buttonParamsJson' => json_encode(['display_text' => $button['title'] , 'url' => $button['link'],'merchant_url' => $button['link']]),
+                            'buttonParamsJson' => "{\"display_text\": \"Visit Website\", \"url\": \"https://example.com\", \"merchant_url\": \"https://example.com\"}",
                         ];
                     }
                 }
