@@ -62,8 +62,8 @@ class WhatsappService
                 $data['cards'] = [
                     [
                         'title' => $get_message->title,
-                        'message' => $message,
-                        'image' => $get_message->file ? env('APP_URL').$get_message->file : null,
+                        'body' => $message,
+                        'image' => $get_message->file ? ['url' => env('APP_URL').$get_message->file] : null,
                         'buttons' => $buttons,
                     ]
                 ];
